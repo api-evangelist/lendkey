@@ -1,0 +1,21 @@
+generated: '2026-07-19'
+method: derived
+source: openapi/lendkey-esign-openapi.yml, openapi/lendkey-partner-integration-internal-openapi.yml,
+  openapi/lendkey-treasury-management-openapi.yml
+summary:
+  types:
+  - oauth2
+  oauth2_flows:
+  - clientCredentials
+schemes:
+- name: oauth2
+  type: oauth2
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /oauth2/token
+    scopes: 0
+  description: OAuth2 client credentials flow via Kong Gateway
+  sources:
+  - openapi/lendkey-esign-openapi.yml
+  - openapi/lendkey-partner-integration-internal-openapi.yml
+  - openapi/lendkey-treasury-management-openapi.yml
