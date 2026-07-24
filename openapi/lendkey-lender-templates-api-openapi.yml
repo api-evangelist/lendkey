@@ -1,0 +1,266 @@
+openapi: 3.0.3
+info:
+  title: LendKey E-Sign API (via Kong Gateway) Application Contracts Lender Templates API
+  version: 0.1
+  description: "# LendKey E-Sign API - Kong Gateway Documentation\n\n## Overview\n\nThe LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.\nThis API is accessed through Kong Gateway, which handles authentication via OAuth2.\n\n## Authentication\n\nAll requests to this API require OAuth2 authentication through Kong Gateway.\n\n### Step 1: Get OAuth2 Token\n\nBefore calling any endpoint, you must obtain an access token:\n\n**Production Environment:**\n```bash\ncurl -X POST https://api.lendkey.com/esign/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Response:**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 7200\n}\n```\n\n### Step 2: Use Token in API Calls\n\nInclude the access token in the `Authorization` header:\n```\nAuthorization: Bearer YOUR_ACCESS_TOKEN\n```\n\n**Token Lifetime:** 2 hours (7200 seconds)\n\n## Base URLs (Kong Gateway)\n\n| Environment | Kong Base URL | Backend Kubernetes Service |\n|------------|---------------|---------------------------|\n| **Production** | `https://api.lendkey.com/esign` | `main-esign-kotlin.ci.lkeyprod.com` |\n\n## How Kong Routes Requests\n\nWhen you call Kong:\n```\nhttps://api.lendkey.com/esign/applications\n```\n\nKong:\n1. Validates your OAuth2 token\n2. Strips the `/esign` prefix\n3. Forwards to: `http://main-esign-kotlin.ci.lkeyprod.com/applications`\n\nYou don't need to manage any backend authentication - Kong handles everything!\n\n## Getting Started\n\n1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal\n2. **Get Token:** Use the OAuth2 token endpoint for your environment\n3. **Call API:** Use the token in the Authorization header\n4. **Refresh:** Get a new token every 2 hours\n"
+  contact:
+    name: LendKey Platform Team
+    url: https://lendkey.com
+servers:
+- url: https://api.lendkey.com/esign
+  description: Production Environment
+security:
+- oauth2: []
+tags:
+- name: Lender Templates
+  description: Manage DocuSign template assignments for lenders
+paths:
+  /templates:
+    get:
+      summary: Search/List Templates
+      description: 'Retrieves all DocuSign templates (including soft deleted).
+
+        If lender_uuid is provided, only templates for that lender will be returned.
+
+
+        **Kong Route:** `/templates`
+
+        **Backend:** `/templates`
+
+        '
+      tags:
+      - Lender Templates
+      operationId: listTemplates
+      parameters:
+      - name: lender_uuid
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+        description: Filter templates by lender UUID
+        example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: List of templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LenderTemplate'
+        '401':
+          description: Unauthorized (invalid or expired token)
+        '500':
+          description: Internal server error
+    post:
+      summary: Assign Template to Lender
+      description: 'Assigns a DocuSign template to a lender.
+
+        If the lender already has an active template, it will be soft deleted and replaced with the new template.
+
+
+        **Kong Route:** `/templates`
+
+        **Backend:** `/templates`
+
+        '
+      tags:
+      - Lender Templates
+      operationId: assignLenderTemplate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignLenderTemplateRequest'
+            examples:
+              assignTemplate:
+                summary: Assign template to lender
+                value:
+                  lender_uuid: 550e8400-e29b-41d4-a716-446655440000
+                  program_id: '1234567890'
+                  borrower_template_id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                  coborrower_template_id: b2c3d4e5-f6g7-8901-bcde-f12345678901
+      responses:
+        '200':
+          description: Template successfully assigned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignLenderTemplateResponse'
+        '400':
+          description: Bad request (validation errors)
+        '401':
+          description: Unauthorized (invalid or expired token)
+        '500':
+          description: Internal server error
+  /templates/{id}:
+    get:
+      summary: Get Template by ID
+      description: 'Retrieves a DocuSign template by its ID (includes soft deleted templates).
+
+
+        **Kong Route:** `/templates/{id}`
+
+        **Backend:** `/templates/{id}`
+
+        '
+      tags:
+      - Lender Templates
+      operationId: getTemplateById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+        description: Template ID
+        example: 123
+      responses:
+        '200':
+          description: Template details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LenderTemplate'
+        '401':
+          description: Unauthorized (invalid or expired token)
+        '404':
+          description: Template not found
+        '500':
+          description: Internal server error
+  /templates/{lender_uuid}/program/{program_id}:
+    get:
+      summary: Get Templates by Lender and Program
+      description: 'Retrieves the active DocuSign template for a specific lender and program.
+
+
+        **Kong Route:** `/templates/{lender_uuid}/program/{program_id}`
+
+        **Backend:** `/templates/{lender_uuid}/program/{program_id}`
+
+        '
+      tags:
+      - Lender Templates
+      operationId: getTemplateByLenderAndProgram
+      parameters:
+      - name: lender_uuid
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Lender UUID
+        example: 550e8400-e29b-41d4-a716-446655440000
+      - name: program_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Program identifier
+        example: '1234567890'
+      responses:
+        '200':
+          description: Template details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LenderTemplate'
+        '401':
+          description: Unauthorized (invalid or expired token)
+        '500':
+          description: Internal server error
+components:
+  schemas:
+    AssignLenderTemplateRequest:
+      type: object
+      required:
+      - lender_uuid
+      - program_id
+      - coborrower_template_id
+      properties:
+        lender_uuid:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        program_id:
+          type: string
+          example: '1234567890'
+        borrower_template_id:
+          type: string
+          format: uuid
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        coborrower_template_id:
+          type: string
+          format: uuid
+          example: b2c3d4e5-f6g7-8901-bcde-f12345678901
+    AssignLenderTemplateResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123
+        lender_uuid:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        program_id:
+          type: string
+          example: '1234567890'
+        borrower_template_id:
+          type: string
+          format: uuid
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        coborrower_template_id:
+          type: string
+          format: uuid
+          example: b2c3d4e5-f6g7-8901-bcde-f12345678901
+        created_at:
+          type: string
+          format: date-time
+          example: '2025-01-15T10:30:00Z'
+        replaced_existing:
+          type: boolean
+          example: false
+    LenderTemplate:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123
+        lender_uuid:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        program_id:
+          type: string
+          example: '1234567890'
+        borrower_template_id:
+          type: string
+          format: uuid
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        coborrower_template_id:
+          type: string
+          format: uuid
+          example: b2c3d4e5-f6g7-8901-bcde-f12345678901
+        created_at:
+          type: string
+          format: date-time
+          example: '2025-01-15T10:30:00Z'
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: OAuth2 client credentials flow via Kong Gateway
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/token
+          scopes: {}

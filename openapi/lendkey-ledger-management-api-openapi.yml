@@ -1,0 +1,135 @@
+openapi: 3.0.3
+info:
+  title: LendKey E-Sign API (via Kong Gateway) Application Contracts Ledger Management API
+  version: 0.1
+  description: "# LendKey E-Sign API - Kong Gateway Documentation\n\n## Overview\n\nThe LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.\nThis API is accessed through Kong Gateway, which handles authentication via OAuth2.\n\n## Authentication\n\nAll requests to this API require OAuth2 authentication through Kong Gateway.\n\n### Step 1: Get OAuth2 Token\n\nBefore calling any endpoint, you must obtain an access token:\n\n**Production Environment:**\n```bash\ncurl -X POST https://api.lendkey.com/esign/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Response:**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 7200\n}\n```\n\n### Step 2: Use Token in API Calls\n\nInclude the access token in the `Authorization` header:\n```\nAuthorization: Bearer YOUR_ACCESS_TOKEN\n```\n\n**Token Lifetime:** 2 hours (7200 seconds)\n\n## Base URLs (Kong Gateway)\n\n| Environment | Kong Base URL | Backend Kubernetes Service |\n|------------|---------------|---------------------------|\n| **Production** | `https://api.lendkey.com/esign` | `main-esign-kotlin.ci.lkeyprod.com` |\n\n## How Kong Routes Requests\n\nWhen you call Kong:\n```\nhttps://api.lendkey.com/esign/applications\n```\n\nKong:\n1. Validates your OAuth2 token\n2. Strips the `/esign` prefix\n3. Forwards to: `http://main-esign-kotlin.ci.lkeyprod.com/applications`\n\nYou don't need to manage any backend authentication - Kong handles everything!\n\n## Getting Started\n\n1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal\n2. **Get Token:** Use the OAuth2 token endpoint for your environment\n3. **Call API:** Use the token in the Authorization header\n4. **Refresh:** Get a new token every 2 hours\n"
+  contact:
+    name: LendKey Platform Team
+    url: https://lendkey.com
+servers:
+- url: https://api.lendkey.com/esign
+  description: Production Environment
+security:
+- oauth2: []
+tags:
+- name: Ledger Management
+  description: Capital ledger operations
+paths:
+  /v1/updateExternalId:
+    patch:
+      summary: Update External ID
+      description: 'Updates external IDs in the Capital Ledger Target table.
+
+
+        Use this endpoint to update the external identifier for a capital ledger record.
+
+
+        **Kong Route:** `/v1/updateExternalId`
+
+        **Backend:** `/TreasuryManagement_API/rest/v1/updateExternalId`
+
+        '
+      tags:
+      - Ledger Management
+      operationId: updateExternalId
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateExternalIdRequest'
+            examples:
+              updateId:
+                summary: Update external ID
+                value:
+                  capitalLedgerTargetId: 12345
+                  externalId: NEW-EXT-ID-2025
+      responses:
+        '200':
+          description: External ID successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateExternalIdResponse'
+        '400':
+          description: Bad request (validation errors)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized (invalid or expired token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    UpdateExternalIdResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Success indicator
+          example: true
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 200
+        errors:
+          type: array
+          description: Array of error messages (if any)
+          items:
+            type: string
+    UpdateExternalIdRequest:
+      type: object
+      required:
+      - capitalLedgerTargetId
+      - externalId
+      properties:
+        capitalLedgerTargetId:
+          type: integer
+          format: int64
+          description: Capital Ledger Target record ID
+          example: 12345
+        externalId:
+          type: string
+          description: New external identifier
+          example: NEW-EXT-ID-2025
+    ErrorResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Success indicator (always false for errors)
+          example: false
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        error:
+          type: string
+          description: Error message
+          example: Invalid request
+        errors:
+          type: array
+          description: Detailed error messages
+          items:
+            type: string
+          example:
+          - Field 'loanUUID' is required
+          - Field 'amount' must be greater than 0
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: OAuth2 client credentials flow via Kong Gateway
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/token
+          scopes: {}

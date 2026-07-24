@@ -1,0 +1,178 @@
+openapi: 3.0.3
+info:
+  title: LendKey E-Sign API (via Kong Gateway) Application Contracts internal API
+  version: 0.1
+  description: "# LendKey E-Sign API - Kong Gateway Documentation\n\n## Overview\n\nThe LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.\nThis API is accessed through Kong Gateway, which handles authentication via OAuth2.\n\n## Authentication\n\nAll requests to this API require OAuth2 authentication through Kong Gateway.\n\n### Step 1: Get OAuth2 Token\n\nBefore calling any endpoint, you must obtain an access token:\n\n**Production Environment:**\n```bash\ncurl -X POST https://api.lendkey.com/esign/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Response:**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 7200\n}\n```\n\n### Step 2: Use Token in API Calls\n\nInclude the access token in the `Authorization` header:\n```\nAuthorization: Bearer YOUR_ACCESS_TOKEN\n```\n\n**Token Lifetime:** 2 hours (7200 seconds)\n\n## Base URLs (Kong Gateway)\n\n| Environment | Kong Base URL | Backend Kubernetes Service |\n|------------|---------------|---------------------------|\n| **Production** | `https://api.lendkey.com/esign` | `main-esign-kotlin.ci.lkeyprod.com` |\n\n## How Kong Routes Requests\n\nWhen you call Kong:\n```\nhttps://api.lendkey.com/esign/applications\n```\n\nKong:\n1. Validates your OAuth2 token\n2. Strips the `/esign` prefix\n3. Forwards to: `http://main-esign-kotlin.ci.lkeyprod.com/applications`\n\nYou don't need to manage any backend authentication - Kong handles everything!\n\n## Getting Started\n\n1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal\n2. **Get Token:** Use the OAuth2 token endpoint for your environment\n3. **Call API:** Use the token in the Authorization header\n4. **Refresh:** Get a new token every 2 hours\n"
+  contact:
+    name: LendKey Platform Team
+    url: https://lendkey.com
+servers:
+- url: https://api.lendkey.com/esign
+  description: Production Environment
+security:
+- oauth2: []
+tags:
+- name: internal
+  description: Internal API operations for request logging
+paths:
+  /requestLog:
+    post:
+      tags:
+      - internal
+      summary: Create Request Log
+      description: 'Creates a new request log entry for tracking API requests.
+
+        Returns a requestLogId that should be used in the PUT endpoint to update the log with response details.
+
+        '
+      operationId: Common_CreateRequestLog
+      parameters:
+      - name: X-Organization-Id
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ''
+        description: Contains the UUID of the organization on behalf of which this request was created.
+      - name: requestSource
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ''
+        description: "- Contains the name of the source on behalf of which the request was made.\n- Request sources can be added and updated using the program rollover tool.\n- Naming Convention: \"sourcetype_productname_sourcename\"\n    - sourcetype : Could be either \"INT\" for internal sources and \"EXT\" for the external sources.\n    - productname : Name of the product. Example: \"HIL\", \"PSL\", \"ALIRO\" etc.\n    - sourcename : Name of the source. Example: \"MERCHANT_PORTAL\", \"GREENHOUSE\", \"LYON\" etc.\n- Examples:\n    - INT_HIL_MERCHANT_PORTAL\n    - INT_HIL_GREENHOUSE\n    - EXT_HIL_LYON\n"
+      - name: requestedBy
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ''
+        description: Contains the email address of the user sending the request.
+      requestBody:
+        description: '- requestBody: Should contain the stringified JSON of the request body.
+
+          - requestUrl: Contains the endpoint URL to which the request was made.
+
+          - requestCallType: Contains the call type of the endpoint which was called. Refer to the Partner Integration API documentation for valid call types.
+
+          - searchableValues: Contains all the searchable text separated with ''###''. This string is used by the search feature on the ''Partner API Dashboard''.
+
+
+          EXAMPLE: Suppose your request has ''applicationUuid'' and ''customerName'', you can create a string in the following way: "abcd-1234-abcd-1234###John Doe"
+
+          '
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestLog'
+      responses:
+        '200':
+          description: 'SUCCESS (Status Code: 200):
+
+            Will return the ''requestLogId'' which should be used as an input to the PUT endpoint.
+
+
+            FAILURE (Status Code: 400, 403, 404, 500, 503):
+
+            Will return the error message.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogRequestResponse'
+    put:
+      tags:
+      - internal
+      summary: Update Request Log
+      description: Updates an existing request log entry with response details and success status.
+      operationId: Common_UpdateRequestLog
+      requestBody:
+        description: '- requestLogId (Long Integer): The identifier of the request log record to be updated.
+
+          - responseBody (Text): Should contain the stringified JSON of the response body.
+
+          - wasRequestSuccessful (Boolean): Contains whether the API request successful.
+
+          - searchableValues (Text): Contains all the searchable text separated with ''###''. This string is used by the search feature on the ''Partner API Dashboard''.
+
+
+          EXAMPLE: Suppose your request has ''applicationUuid'' and ''customerName'', you can create a string in the following way: "abcd-1234-abcd-1234###John Doe"
+
+          '
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResponseLog'
+      responses:
+        '200':
+          description: 'SUCCESS (Status Code: 200):
+
+            Will return the ''requestLogId'' which should be used as an input to the PUT endpoint.
+
+
+            FAILURE (Status Code: 400, 403, 404, 500, 503):
+
+            Will return the error message.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogRequestResponse'
+components:
+  schemas:
+    ResponseLog:
+      description: Response log details to update an existing request log
+      type: object
+      properties:
+        requestLogId:
+          type: integer
+          format: int64
+          example: 1234567891234567
+        responseBody:
+          type: string
+          default: ''
+        wasRequestSuccessful:
+          type: boolean
+          example: false
+        searchableValues:
+          type: string
+          default: ''
+    LogRequestResponse:
+      description: Response containing the request log ID and optional error message
+      type: object
+      properties:
+        requestLogId:
+          type: integer
+          format: int64
+          example: 1234567891234567
+        error:
+          type: string
+          default: ''
+    RequestLog:
+      description: Request log details to be created
+      type: object
+      properties:
+        requestBody:
+          type: string
+          default: ''
+        requestUrl:
+          type: string
+          default: ''
+        requestCallType:
+          type: string
+          default: ''
+        searchableValues:
+          type: string
+          default: ''
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: OAuth2 client credentials flow via Kong Gateway
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/token
+          scopes: {}

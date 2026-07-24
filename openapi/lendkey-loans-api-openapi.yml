@@ -1,0 +1,249 @@
+openapi: 3.0.3
+info:
+  title: LendKey E-Sign API (via Kong Gateway) Application Contracts Loans API
+  version: 0.1
+  description: "# LendKey E-Sign API - Kong Gateway Documentation\n\n## Overview\n\nThe LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.\nThis API is accessed through Kong Gateway, which handles authentication via OAuth2.\n\n## Authentication\n\nAll requests to this API require OAuth2 authentication through Kong Gateway.\n\n### Step 1: Get OAuth2 Token\n\nBefore calling any endpoint, you must obtain an access token:\n\n**Production Environment:**\n```bash\ncurl -X POST https://api.lendkey.com/esign/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Response:**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 7200\n}\n```\n\n### Step 2: Use Token in API Calls\n\nInclude the access token in the `Authorization` header:\n```\nAuthorization: Bearer YOUR_ACCESS_TOKEN\n```\n\n**Token Lifetime:** 2 hours (7200 seconds)\n\n## Base URLs (Kong Gateway)\n\n| Environment | Kong Base URL | Backend Kubernetes Service |\n|------------|---------------|---------------------------|\n| **Production** | `https://api.lendkey.com/esign` | `main-esign-kotlin.ci.lkeyprod.com` |\n\n## How Kong Routes Requests\n\nWhen you call Kong:\n```\nhttps://api.lendkey.com/esign/applications\n```\n\nKong:\n1. Validates your OAuth2 token\n2. Strips the `/esign` prefix\n3. Forwards to: `http://main-esign-kotlin.ci.lkeyprod.com/applications`\n\nYou don't need to manage any backend authentication - Kong handles everything!\n\n## Getting Started\n\n1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal\n2. **Get Token:** Use the OAuth2 token endpoint for your environment\n3. **Call API:** Use the token in the Authorization header\n4. **Refresh:** Get a new token every 2 hours\n"
+  contact:
+    name: LendKey Platform Team
+    url: https://lendkey.com
+servers:
+- url: https://api.lendkey.com/esign
+  description: Production Environment
+security:
+- oauth2: []
+tags:
+- name: Loans
+  description: Loan creation and management
+paths:
+  /v1/createLoan:
+    post:
+      summary: Create Loan
+      description: 'Creates loan inventory and treasury management entries.
+
+
+        This endpoint creates complete loan records including:
+
+        - Loan details (principal, term, product)
+
+        - Associated persons and parties
+
+        - Initial disbursements
+
+
+        **Kong Route:** `/v1/createLoan`
+
+        **Backend:** `/TreasuryManagement_API/rest/v1/createLoan`
+
+        '
+      tags:
+      - Loans
+      operationId: createLoan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateLoanRequest'
+            examples:
+              basicLoan:
+                summary: Basic loan creation
+                value:
+                - name: Personal Loan 2025
+                  externalID: LOAN-12345
+                  applicationID: APP-67890
+                  maxPrincipal: 50000.0
+                  productName: Standard Personal Loan
+                  term: 60
+                  startDate: '2025-01-15'
+                  disbursement:
+                  - amount: 50000.0
+                    externalID: DISB-12345
+                    startDate: '2025-01-15'
+                  loanPerson:
+                  - personId: PER-001
+                    role: Borrower
+                  loanParty:
+                  - partyId: PARTY-001
+                    role: Lender
+      responses:
+        '200':
+          description: Loan successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateLoanResponse'
+        '207':
+          description: Multi-status (partial success)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateLoanResponse'
+        '400':
+          description: Bad request (validation errors)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized (invalid or expired token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    CreateLoanResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Overall success indicator
+          example: true
+        statusCode:
+          type: integer
+          description: HTTP status code (200, 207, 400, 500)
+          example: 200
+        responseDetails:
+          type: array
+          items:
+            type: object
+            properties:
+              uuid:
+                type: string
+                format: uuid
+                description: Generated loan UUID
+                example: 550e8400-e29b-41d4-a716-446655440000
+              externalId:
+                type: string
+                description: External loan identifier
+                example: LOAN-12345
+              errors:
+                type: array
+                description: Array of error messages (if any)
+                items:
+                  type: string
+    CreateLoanRequest:
+      type: object
+      required:
+      - name
+      - externalID
+      - applicationID
+      - maxPrincipal
+      - productName
+      - term
+      properties:
+        name:
+          type: string
+          description: Loan name/description
+          example: Personal Loan 2025
+        externalID:
+          type: string
+          description: External loan identifier
+          example: LOAN-12345
+        applicationID:
+          type: string
+          description: Associated application ID
+          example: APP-67890
+        maxPrincipal:
+          type: number
+          format: double
+          description: Maximum principal amount
+          example: 50000.0
+        productName:
+          type: string
+          description: Loan product name
+          example: Standard Personal Loan
+        term:
+          type: integer
+          description: Loan term in months
+          example: 60
+        startDate:
+          type: string
+          format: date
+          description: Loan start date (YYYY-MM-DD)
+          example: '2025-01-15'
+        endDate:
+          type: string
+          format: date
+          description: Loan end date (YYYY-MM-DD)
+          example: '2030-01-15'
+        disbursement:
+          type: array
+          description: Initial disbursements for the loan
+          items:
+            type: object
+            properties:
+              amount:
+                type: number
+                format: double
+                example: 50000.0
+              externalID:
+                type: string
+                example: DISB-12345
+              startDate:
+                type: string
+                format: date
+                example: '2025-01-15'
+        loanPerson:
+          type: array
+          description: Persons associated with the loan
+          items:
+            type: object
+            properties:
+              personId:
+                type: string
+                example: PER-001
+              role:
+                type: string
+                example: Borrower
+        loanParty:
+          type: array
+          description: Parties associated with the loan
+          items:
+            type: object
+            properties:
+              partyId:
+                type: string
+                example: PARTY-001
+              role:
+                type: string
+                example: Lender
+    ErrorResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Success indicator (always false for errors)
+          example: false
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        error:
+          type: string
+          description: Error message
+          example: Invalid request
+        errors:
+          type: array
+          description: Detailed error messages
+          items:
+            type: string
+          example:
+          - Field 'loanUUID' is required
+          - Field 'amount' must be greater than 0
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: OAuth2 client credentials flow via Kong Gateway
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/token
+          scopes: {}

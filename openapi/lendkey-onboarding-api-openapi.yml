@@ -1,0 +1,499 @@
+openapi: 3.0.3
+info:
+  title: LendKey E-Sign API (via Kong Gateway) Application Contracts onboarding API
+  version: 0.1
+  description: "# LendKey E-Sign API - Kong Gateway Documentation\n\n## Overview\n\nThe LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.\nThis API is accessed through Kong Gateway, which handles authentication via OAuth2.\n\n## Authentication\n\nAll requests to this API require OAuth2 authentication through Kong Gateway.\n\n### Step 1: Get OAuth2 Token\n\nBefore calling any endpoint, you must obtain an access token:\n\n**Production Environment:**\n```bash\ncurl -X POST https://api.lendkey.com/esign/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Response:**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 7200\n}\n```\n\n### Step 2: Use Token in API Calls\n\nInclude the access token in the `Authorization` header:\n```\nAuthorization: Bearer YOUR_ACCESS_TOKEN\n```\n\n**Token Lifetime:** 2 hours (7200 seconds)\n\n## Base URLs (Kong Gateway)\n\n| Environment | Kong Base URL | Backend Kubernetes Service |\n|------------|---------------|---------------------------|\n| **Production** | `https://api.lendkey.com/esign` | `main-esign-kotlin.ci.lkeyprod.com` |\n\n## How Kong Routes Requests\n\nWhen you call Kong:\n```\nhttps://api.lendkey.com/esign/applications\n```\n\nKong:\n1. Validates your OAuth2 token\n2. Strips the `/esign` prefix\n3. Forwards to: `http://main-esign-kotlin.ci.lkeyprod.com/applications`\n\nYou don't need to manage any backend authentication - Kong handles everything!\n\n## Getting Started\n\n1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal\n2. **Get Token:** Use the OAuth2 token endpoint for your environment\n3. **Call API:** Use the token in the Authorization header\n4. **Refresh:** Get a new token every 2 hours\n"
+  contact:
+    name: LendKey Platform Team
+    url: https://lendkey.com
+servers:
+- url: https://api.lendkey.com/esign
+  description: Production Environment
+security:
+- oauth2: []
+tags:
+- name: onboarding
+paths:
+  /v1/onboarding/onboard:
+    post:
+      tags:
+      - onboarding
+      summary: Submits an application LendKey for boarding.
+      description: Includes all application information as well as accepted loan offer information to board the application as a loan within LendKeys LOS.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/boardApplicationRequest'
+      responses:
+        200:
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/boardApplicationResponse'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/UnexpectedError'
+components:
+  schemas:
+    boardApplicationRequest:
+      type: object
+      required:
+      - submissionUuid
+      - applicants
+      - project
+      - consentOfDisclosures
+      - contractorId
+      - requestedLoanAmount
+      - selectedOffer
+      properties:
+        submissionUuid:
+          type: string
+          format: uuid
+          description: A unique identifying UUID that will be used to correlate this application to the loan it is transforming into.
+          example: 40121260-4082-4c22-b70c-b5be137bf2a0
+        applicants:
+          type: array
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/applicant'
+        project:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/project'
+        authorizedUser:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/authorizedUser'
+        consentOfDisclosures:
+          type: boolean
+          example: true
+        contractorNetworkId:
+          type: string
+        contractorId:
+          type: integer
+        requestedLoanAmount:
+          type: number
+        selectedOffer:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/selectedOffer'
+        merchantUseOnly:
+          type: string
+          example: ''
+        promoCode:
+          type: string
+          example: null
+        applicationType:
+          type: string
+          example: null
+        preferredLanguage:
+          type: string
+          example: english
+        referenceNumber:
+          type: string
+          example: ''
+    eligibility:
+      type: object
+      required:
+      - primaryResidence
+      - propertyOwnership
+      - citizenship
+      properties:
+        primaryResidence:
+          type: boolean
+        propertyOwnership:
+          type: boolean
+        citizenship:
+          type: string
+          description: One of US, permanentResident, non-US
+      example:
+        primaryResidence: true
+        propertyOwnership: true
+        citizenship: US
+    phoneNumber:
+      type: object
+      required:
+      - type
+      - phoneNumber
+      properties:
+        type:
+          type: string
+          description: The type of phone number.  Only valid values are Cell, Home, Work
+        phoneNumber:
+          type: string
+      example:
+        type: Cell
+        phoneNumber: '8005882300'
+    project:
+      type: object
+      required:
+      - projectCost
+      - projectAddress
+      - addressLineOne
+      - city
+      - state
+      - zipCode
+      properties:
+        projectCost:
+          type: number
+        projectAddress:
+          type: string
+        addressLineOne:
+          type: string
+        addressLineTwo:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        isSameAsPrimaryResidence:
+          type: boolean
+        yearOfHomePurchase:
+          type: string
+        housingStatus:
+          type: string
+        applicantsOnDeedOrTitle:
+          type: boolean
+        currentHomeValue:
+          type: number
+        mortgageBalance:
+          type: number
+        monthlyHousingPayments:
+          type: number
+        projectType:
+          type: string
+        projectDescription:
+          type: string
+        projectExpectedDuration:
+          type: string
+        projectStatus:
+          type: string
+        termsRequested:
+          type: string
+      example:
+        projectCost: 500000
+        projectAddress: 500 Main Street, PORTLAND, OR 97209
+        addressLineOne: 500 Main Street
+        addressLineTwo: null
+        city: PORTLAND
+        state: OR
+        zipCode: '97209'
+        isSameAsPrimaryResidence: null
+        yearOfHomePurchase: null
+        housingStatus: null
+        applicantsOnDeedOrTitle: null
+        currentHomeValue: null
+        mortgageBalance: null
+        monthlyHousingPayments: null
+        projectType: null
+        projectDescription: null
+        projectExpectedDuration: null
+        projectStatus: null
+        termsRequested: null
+    error:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        timestamp:
+          type: string
+        message:
+          type: string
+        debugMessage:
+          type: string
+        subErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/suberror'
+      example:
+        id: null
+        status: BAD_REQUEST
+        timestamp: '2019-10-21 14:07:59'
+        message: Validation error
+        debugMessage: null
+        subErrors:
+        - object: Resource
+          field: name
+          rejectedValue: null
+          message: must not be null
+    boardApplicationResponse:
+      type: object
+      required:
+      - loanId
+      - loanKey
+      - url
+      - applicants
+      properties:
+        applicantId:
+          type: integer
+        coApplicantId:
+          type: integer
+        loanId:
+          type: integer
+        loanKey:
+          type: string
+        url:
+          type: string
+      example:
+        loanId: 9323
+        loanKey: HIL-615486020
+        url: http://homeImprovement-apply.lvh.me/access/HIL-615486020/by_token?auth=a7127e56d48a6cd5cc4054451c26530b67813c3a0f754d4f502037db96a199b71b26a1c404c30bc2834451a7c1b2be9a2c5c4bbd61567f1d91b71e89b0
+        applicants:
+        - role: primaryApplicant
+          returningApplicantId: 593093
+        - role: coborrower
+          returningApplicantId: 593094
+    applicant:
+      type: object
+      required:
+      - role
+      - firstName
+      - lastName
+      - dob
+      - ssn
+      - email
+      - totalAnnualIncome
+      - monthlyHousingExpense
+      - eligibility
+      - employer
+      properties:
+        returningApplicantId:
+          type: integer
+          description: Optional - provide when an applicant is being onboarded with their 2nd+ offer to avoid locking them out.
+        role:
+          type: string
+          description: The role of the applicant.  Valid values are primaryApplicant, coborrower
+          example: primaryApplicant
+        name:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/name'
+        dob:
+          type: string
+          example: 11-22-1990
+        ssn:
+          type: string
+          example: '123456789'
+        driversLicense:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/driversLicense'
+        isMarried:
+          type: boolean
+          example: true
+        militaryStatus:
+          type: string
+          example: Active Duty
+        email:
+          type: string
+          example: test@email.com
+        employer:
+          type: string
+          example: Company A
+        employerPhone:
+          type: string
+          example: 360-901-9917
+        phoneNumbers:
+          type: array
+          items:
+            $ref: '#/components/schemas/phoneNumber'
+        preferredPhone:
+          type: string
+          description: The preferred phone number.  The only valid values are Home, Cell, and Work.
+          example: Cell
+        smsAllowed:
+          type: boolean
+          example: true
+        consentToContact:
+          type: boolean
+          example: true
+        address:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/address'
+        totalAnnualIncome:
+          type: number
+          example: 130000
+        otherIncome:
+          type: number
+          example: 5000
+        monthlyHousingExpense:
+          type: number
+          example: 2100
+        eligibility:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/eligibility'
+        relationship:
+          type: string
+          description: Required for coApplicant.  Valid values are Parent, Spouse, Relative, Friend, Other
+          example: Relative
+    authorizedUser:
+      type: object
+      required:
+      - name
+      - email
+      - relationship
+      properties:
+        name:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/name'
+        phoneNumber:
+          type: string
+          example: '8005882300'
+        email:
+          type: string
+          example: j.doe@gmail.com
+        relationship:
+          type: string
+          example: Father
+    driversLicense:
+      type: object
+      required:
+      - number
+      - state
+      - expirationDate
+      properties:
+        number:
+          type: string
+        state:
+          type: string
+        expirationDate:
+          type: string
+      example:
+        number: TA923290
+        state: OH
+        expirationDate: 11-22-2023
+    suberror:
+      type: object
+      properties:
+        object:
+          type: string
+        field:
+          type: string
+        rejectedValue:
+          type: string
+        message:
+          type: string
+      example:
+        object: Resource
+        field: name
+        rejectedValue: null
+        message: must not be null
+    address:
+      type: object
+      required:
+      - addressLineOne
+      - city
+      - state
+      - zipCode
+      properties:
+        addressLineOne:
+          type: string
+        addressLineTwo:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        country:
+          type: string
+        township:
+          type: string
+      example:
+        addressLineOne: 500 Main Street
+        addressLineTwo: ''
+        city: PORTLAND
+        state: OR
+        zipCode: '97209'
+        country: null
+        township: null
+    selectedOffer:
+      type: object
+      required:
+      - programId
+      - termInMonths
+      - loanRate
+      - rateIndex
+      - maximumLoanAmount
+      properties:
+        programId:
+          type: integer
+        fomQueryId:
+          type: integer
+        termInMonths:
+          type: integer
+        loanRate:
+          type: number
+        rateIndex:
+          type: string
+        maximumLoanAmount:
+          type: number
+      example:
+        program_id: 1473
+        fom_query_id: 4146689
+        loanRate: 1.5
+        rateIndex: prime
+        termInMonths: 120
+        maximumLoanAmount: 85000
+    name:
+      type: object
+      properties:
+        firstName:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        suffix:
+          type: string
+          description: Valid values are Jr. Sr. II III IV V
+      example:
+        firstName: John
+        middleName: M
+        lastName: Doe
+        suffix: Jr.
+  responses:
+    UnexpectedError:
+      description: An unexpected server error occurred.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: INTERNAL_SERVER_ERROR
+            timestamp: '2019-10-21 14:07:59'
+            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
+            debugMessage: null
+    BadRequest:
+      description: Invalid request, unable to process the request with the information provided.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: BAD_REQUEST
+            timestamp: '2019-10-21 14:07:59'
+            message: Describes what was invalid about the request, if possible.
+            debugMessage: null
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: OAuth2 client credentials flow via Kong Gateway
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/token
+          scopes: {}
