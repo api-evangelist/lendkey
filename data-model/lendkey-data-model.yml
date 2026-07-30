@@ -1,0 +1,261 @@
+generated: '2026-07-19'
+method: derived
+source: >-
+  openapi/lendkey-integration-openapi.yml, openapi/lendkey-treasury-management-openapi.yml,
+  openapi/lendkey-esign-openapi.yml, openapi/lendkey-partner-integration-internal-openapi.yml
+note: >-
+  Derived from OpenAPI schema $ref links and id-reference fields across the four
+  published specs. LendKey publishes no object reference page, so entity boundaries
+  are inferred from the request/response schemas. There is no single unified object
+  model: the Integration API (origination intake, credit and leads), the Treasury
+  Management API (loan ledger) and the E-Sign API (contract envelopes) are separate
+  services joined by shared external identifiers rather than by shared resources.
+
+identifier_conventions:
+  uuid_fields:
+  - application_uuid
+  - customer_uuid
+  - organization_uuid
+  - lender_uuid
+  - loanUUID
+  - disbursement_uuid
+  - submissionUuid
+  external_id_fields:
+  - externalID
+  - external_id
+  - externalId
+  - loanExternalId
+  - loan_identifier
+  - loanKey
+  - paymentId
+  - applicationID
+  - program_id
+  - referenceNumber
+  note: >-
+    Cross-service joins are made on caller-supplied external identifiers, not on
+    LendKey-issued UUIDs. Example: Treasury Management createLoan takes an
+    applicationID and externalID supplied by the integrator; createPayment then
+    references the loan by loanExternalId rather than by loanUUID. Sample id shapes
+    seen in spec examples: HIL-12345 (loanKey), LOAN-12345, DISB-2025-001,
+    PMT-2025-001, APP-67890, PER-001, PARTY-001, ACC-12345.
+
+domains:
+- name: origination-intake
+  api: integration
+  description: Lead capture, credit assessment, scoring and application boarding.
+- name: loan-ledger
+  api: treasury-management
+  description: Loan inventory, disbursements, payments and capital ledger entries.
+- name: contracts
+  api: esign
+  description: DocuSign envelope creation, signer management and lender templates.
+- name: observability
+  api: partner-integration-internal
+  description: Internal request/response logging for the partner integration surface.
+
+entities:
+- name: Lead
+  domain: origination-intake
+  schema: openapi/lendkey-integration-openapi.yml#/components/schemas/createLeadRequest
+  created_by: POST /v1/leads/create
+  key_fields: [email, firstName, lastName, source, sourceKey, sourceApplicationId, creditRiskModel]
+- name: Applicant
+  domain: origination-intake
+  schema: openapi/lendkey-integration-openapi.yml#/components/schemas/applicant
+  key_fields: [returningApplicantId, role, ssn, dob, email, totalAnnualIncome, relationship]
+- name: Application
+  domain: origination-intake
+  schema: openapi/lendkey-integration-openapi.yml#/components/schemas/boardApplicationRequest
+  created_by: POST /v1/onboarding/onboard
+  key_fields: [submissionUuid, contractorNetworkId, contractorId, requestedLoanAmount, applicationType, referenceNumber]
+- name: Project
+  domain: origination-intake
+  schema: openapi/lendkey-integration-openapi.yml#/components/schemas/project
+  description: Home-improvement project the loan finances (cost, address, type, status).
+- name: SelectedOffer
+  domain: origination-intake
+  schema: openapi/lendkey-integration-openapi.yml#/components/schemas/selectedOffer
+  key_fields: [programId, fomQueryId, termInMonths, loanRate, maximumLoanAmount]
+- name: CreditProfile
+  domain: origination-intake
+  schema: openapi/lendkey-integration-openapi.yml#/components/schemas/softCreditResponse
+  created_by: POST /v1/credit/soft_pull
+- name: ApplicationStatus
+  domain: origination-intake
+  schema: openapi/lendkey-integration-openapi.yml#/components/schemas/applicationStatus
+  key_fields: [loanKey, loanStatus, loanAmount, blockages]
+- name: EmailRecord
+  domain: origination-intake
+  schema: openapi/lendkey-integration-openapi.yml#/components/schemas/emailRecord
+- name: EmailTemplate
+  domain: origination-intake
+  schema: openapi/lendkey-integration-openapi.yml#/components/schemas/emailTemplate
+- name: Loan
+  domain: loan-ledger
+  schema: openapi/lendkey-treasury-management-openapi.yml#/components/schemas/CreateLoanRequest
+  created_by: createLoan
+  key_fields: [externalID, applicationID, name, maxPrincipal, productName, term, startDate, endDate]
+  issued_id: uuid (returned on CreateLoanResponse.responseDetails[].uuid)
+- name: Disbursement
+  domain: loan-ledger
+  schema: openapi/lendkey-treasury-management-openapi.yml#/components/schemas/CreateDisbursementRequest
+  created_by: createDisbursement
+  cancelled_by: cancelDisbursement
+  key_fields: [loanUUID, amount, externalID, startDate]
+- name: Payment
+  domain: loan-ledger
+  schema: openapi/lendkey-treasury-management-openapi.yml#/components/schemas/CreatePaymentRequest
+  created_by: createPayment
+  key_fields: [paymentId, loanExternalId, subledgerCategory, subledgerItemCode, amount, payorEntityType]
+  enums:
+    subledgerItemCode: [INTEREST, PRINCIPAL, Late Fee, NSF Fee, Other]
+- name: LoanPerson
+  domain: loan-ledger
+  description: Person-to-loan association carrying a role (e.g. Borrower).
+  key_fields: [personId, role]
+- name: LoanParty
+  domain: loan-ledger
+  description: Party-to-loan association carrying a role (e.g. Lender).
+  key_fields: [partyId, role]
+- name: CapitalLedgerTarget
+  domain: loan-ledger
+  schema: openapi/lendkey-treasury-management-openapi.yml#/components/schemas/UpdateExternalIdRequest
+  updated_by: updateExternalId
+  key_fields: [capitalLedgerTargetId, externalId]
+- name: ApplicationEnvelope
+  domain: contracts
+  schema: openapi/lendkey-esign-openapi.yml#/components/schemas/ApplicationEnvelopeSummary
+  created_by: createApplicationContract
+  key_fields: [application_uuid, organization_uuid, program_id, loan_identifier]
+- name: EnvelopeStatus
+  domain: contracts
+  schema: openapi/lendkey-esign-openapi.yml#/components/schemas/EnvelopeStatus
+  read_by: getApplicationStatuses
+- name: Borrower
+  domain: contracts
+  schema: openapi/lendkey-esign-openapi.yml#/components/schemas/Borrower
+  key_fields: [customer_uuid, first_name, last_name, email, ssn, dob, fico_score]
+- name: Coborrower
+  domain: contracts
+  schema: openapi/lendkey-esign-openapi.yml#/components/schemas/Coborrower
+- name: Address
+  domain: contracts
+  schema: openapi/lendkey-esign-openapi.yml#/components/schemas/Address
+- name: LenderTemplate
+  domain: contracts
+  schema: openapi/lendkey-esign-openapi.yml#/components/schemas/LenderTemplate
+  created_by: assignLenderTemplate
+  read_by: [listTemplates, getTemplateById, getTemplateByLenderAndProgram]
+- name: Signer
+  domain: contracts
+  schema: openapi/lendkey-esign-openapi.yml#/components/schemas/SignerDetailsResponse
+  read_by: getSignerDetails
+- name: RequestLog
+  domain: observability
+  schema: openapi/lendkey-partner-integration-internal-openapi.yml#/components/schemas/RequestLog
+  created_by: Common_CreateRequestLog
+  updated_by: Common_UpdateRequestLog
+  key_fields: [requestLogId, requestUrl, requestCallType, searchableValues]
+
+relationships:
+- from: Application
+  to: Applicant
+  type: has_many
+  via: applicants
+- from: Application
+  to: Project
+  type: has_one
+  via: project
+- from: Application
+  to: SelectedOffer
+  type: has_one
+  via: selectedOffer
+- from: Application
+  to: AuthorizedUser
+  type: has_one
+  via: authorizedUser
+- from: Applicant
+  to: PhoneNumber
+  type: has_many
+  via: phoneNumbers
+- from: Applicant
+  to: Address
+  type: has_one
+  via: address
+- from: Applicant
+  to: DriversLicense
+  type: has_one
+  via: driversLicense
+- from: Applicant
+  to: Eligibility
+  type: has_one
+  via: eligibility
+- from: Applicant
+  to: Name
+  type: has_one
+  via: name
+- from: ApplicationStatus
+  to: Application
+  type: belongs_to
+  via: loanKey
+- from: Loan
+  to: Disbursement
+  type: has_many
+  via: disbursement
+- from: Loan
+  to: LoanPerson
+  type: has_many
+  via: loanPerson
+- from: Loan
+  to: LoanParty
+  type: has_many
+  via: loanParty
+- from: Disbursement
+  to: Loan
+  type: belongs_to
+  via: loanUUID
+- from: Payment
+  to: Loan
+  type: belongs_to
+  via: loanExternalId
+- from: Loan
+  to: Application
+  type: belongs_to
+  via: applicationID
+  cross_domain: true
+  note: Joins the loan ledger back to origination intake by caller-supplied id.
+- from: ApplicationEnvelope
+  to: Borrower
+  type: has_one
+  via: borrower
+- from: ApplicationEnvelope
+  to: Coborrower
+  type: has_one
+  via: coborrower
+- from: Borrower
+  to: Address
+  type: has_one
+  via: address
+- from: ApplicationEnvelope
+  to: EnvelopeStatus
+  type: has_many
+  via: application_uuid
+- from: ApplicationEnvelope
+  to: Signer
+  type: has_many
+  via: customer_uuid
+- from: ApplicationEnvelope
+  to: LenderTemplate
+  type: belongs_to
+  via: program_id + lender_uuid
+- from: LenderTemplate
+  to: Lender
+  type: belongs_to
+  via: lender_uuid
+- from: RequestLog
+  to: Organization
+  type: belongs_to
+  via: X-Organization-Id
+
+render: null
+render_note: No subway/ or diagram artifact exists in this repo yet.

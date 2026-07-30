@@ -1,0 +1,1018 @@
+openapi: 3.0.3
+info:
+  title: LendKey E-Sign API (via Kong Gateway)
+  version: 0.1
+  description: |
+    # LendKey E-Sign API - Kong Gateway Documentation
+
+    ## Overview
+
+    The LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.
+    This API is accessed through Kong Gateway, which handles authentication via OAuth2.
+
+    ## Authentication
+
+    All requests to this API require OAuth2 authentication through Kong Gateway.
+
+    ### Step 1: Get OAuth2 Token
+
+    Before calling any endpoint, you must obtain an access token:
+
+    **Production Environment:**
+    ```bash
+    curl -X POST https://api.lendkey.com/esign/oauth2/token \
+      -d "grant_type=client_credentials" \
+      -d "client_id=YOUR_CLIENT_ID" \
+      -d "client_secret=YOUR_CLIENT_SECRET"
+    ```
+
+    **Response:**
+    ```json
+    {
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "token_type": "bearer",
+      "expires_in": 7200
+    }
+    ```
+
+    ### Step 2: Use Token in API Calls
+
+    Include the access token in the `Authorization` header:
+    ```
+    Authorization: Bearer YOUR_ACCESS_TOKEN
+    ```
+
+    **Token Lifetime:** 2 hours (7200 seconds)
+
+    ## Base URLs (Kong Gateway)
+
+    | Environment | Kong Base URL | Backend Kubernetes Service |
+    |------------|---------------|---------------------------|
+    | **Production** | `https://api.lendkey.com/esign` | `main-esign-kotlin.ci.lkeyprod.com` |
+
+    ## How Kong Routes Requests
+
+    When you call Kong:
+    ```
+    https://api.lendkey.com/esign/applications
+    ```
+
+    Kong:
+    1. Validates your OAuth2 token
+    2. Strips the `/esign` prefix
+    3. Forwards to: `http://main-esign-kotlin.ci.lkeyprod.com/applications`
+
+    You don't need to manage any backend authentication - Kong handles everything!
+
+    ## Getting Started
+
+    1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal
+    2. **Get Token:** Use the OAuth2 token endpoint for your environment
+    3. **Call API:** Use the token in the Authorization header
+    4. **Refresh:** Get a new token every 2 hours
+
+  contact:
+    name: LendKey Platform Team
+    url: https://lendkey.com
+
+servers:
+  - url: https://api.lendkey.com/esign
+    description: Production Environment
+
+security:
+  - oauth2: []
+
+paths:
+  /oauth2/token:
+    post:
+      summary: Get OAuth2 Access Token
+      description: |
+        Obtain an OAuth2 access token for authenticating API requests.
+        This endpoint is provided by Kong Gateway.
+
+        **Token expires after 2 hours** - you'll need to request a new token when it expires.
+      tags:
+        - Authentication
+      operationId: getOAuth2Token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - grant_type
+                - client_id
+                - client_secret
+              properties:
+                grant_type:
+                  type: string
+                  enum: [client_credentials]
+                  description: OAuth2 grant type (always "client_credentials")
+                client_id:
+                  type: string
+                  description: Your client ID from Kong Developer Portal
+                  example: "abc123def456"
+                client_secret:
+                  type: string
+                  format: password
+                  description: Your client secret from Kong Developer Portal
+                  example: "xyz789secret123"
+      responses:
+        '200':
+          description: Access token successfully generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: JWT access token to use in Authorization header
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  token_type:
+                    type: string
+                    enum: [bearer]
+                    description: Token type (always "bearer")
+                  expires_in:
+                    type: integer
+                    description: Token lifetime in seconds (7200 = 2 hours)
+                    example: 7200
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /applications:
+    get:
+      summary: Get Application Contracts
+      description: |
+        Retrieves application envelope summaries for a specific lender and program.
+
+        **Kong Route:** `/applications`
+        **Backend:** `/applications`
+      tags:
+        - Application Contracts
+      operationId: getApplicationContracts
+      parameters:
+        - name: lender_uuid
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Lender UUID
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        - name: program_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Program identifier
+          example: "1234567890"
+      responses:
+        '200':
+          description: List of application envelope summaries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApplicationEnvelopeSummary'
+        '401':
+          description: Unauthorized (invalid or expired token)
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+
+    post:
+      summary: Create New Application Contract
+      description: |
+        Creates a new e-signature contract envelope in DocuSign for a loan application.
+        The contract is created from a lender-specific template and includes all applicant
+        information, property details, and loan terms.
+
+        **Kong Route:** `/applications`
+        **Backend:** `/applications`
+      tags:
+        - Application Contracts
+      operationId: createApplicationContract
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewApplicationRequest'
+            examples:
+              singleBorrower:
+                summary: Single borrower loan application
+                value:
+                  application_uuid: "550e8400-e29b-41d4-a716-446655440000"
+                  organization_uuid: "660e8400-e29b-41d4-a716-446655440000"
+                  program_id: "1234567890"
+                  loan_consumation_date: "2025-01-15"
+                  loan_maturity_date: "2030-01-15"
+                  loan_identifier: "LOAN-2025-001"
+                  apr: 5.99
+                  finance_charge: 5000.00
+                  amount_financed: 50000.00
+                  total_of_payments: 55000.00
+                  variable_rate: false
+                  term_months: 60
+                  payment_amount: 966.67
+                  interest_rate_percent: 5.99
+                  loan_amount: 50000.00
+                  merchant_name: "ABC Home Improvements"
+                  borrower:
+                    customer_uuid: "770e8400-e29b-41d4-a716-446655440000"
+                    first_name: "John"
+                    last_name: "Doe"
+                    email: "john.doe@example.com"
+                    address:
+                      address_line_1: "123 Main St"
+                      city: "Springfield"
+                      state: "IL"
+                      zip: "62701"
+                    fico_score: 720
+                    fico_score_percentile: 75
+                    fico_score_date: "2025-01-01"
+                    dob: "1985-06-15"
+                    preferred_phone: "5551234567"
+                    ssn: "123456789"
+      responses:
+        '204':
+          description: Contract envelope successfully created
+        '400':
+          description: Bad request (validation errors)
+        '401':
+          description: Unauthorized (invalid or expired token)
+        '404':
+          description: Not found (template or application not found)
+        '409':
+          description: Conflict (envelope already exists)
+        '500':
+          description: Internal server error
+
+  /applications/{application_uuid}/statuses:
+    get:
+      summary: Get Application Statuses
+      description: |
+        Retrieves the status history of a specific application envelope.
+
+        **Kong Route:** `/applications/{application_uuid}/statuses`
+        **Backend:** `/applications/{application_uuid}/statuses`
+      tags:
+        - Application Contracts
+      operationId: getApplicationStatuses
+      parameters:
+        - name: application_uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Application UUID
+          example: "550e8400-e29b-41d4-a716-446655440000"
+      responses:
+        '200':
+          description: List of envelope statuses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EnvelopeStatus'
+        '401':
+          description: Unauthorized (invalid or expired token)
+        '404':
+          description: Application not found
+        '500':
+          description: Internal server error
+
+  /applications/{application_uuid}/signers/{customer_uuid}:
+    get:
+      summary: Get Signer Details
+      description: |
+        Retrieves the details of a specific signer for a completed application envelope.
+        Returns signer information and form field data collected from the signer.
+
+        **Note:** Only available after envelope is completed.
+
+        **Kong Route:** `/applications/{application_uuid}/signers/{customer_uuid}`
+        **Backend:** `/applications/{application_uuid}/signers/{customer_uuid}`
+      tags:
+        - Application Contracts
+      operationId: getSignerDetails
+      parameters:
+        - name: application_uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Application UUID
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        - name: customer_uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Customer UUID
+          example: "770e8400-e29b-41d4-a716-446655440000"
+      responses:
+        '200':
+          description: Signer details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignerDetailsResponse'
+        '401':
+          description: Unauthorized (invalid or expired token)
+        '404':
+          description: Signer not found
+        '500':
+          description: Internal server error
+
+  /applications/{application_uuid}/signers/{customer_uuid}/embedded-link:
+    get:
+      summary: Generate Embedded Signing Link
+      description: |
+        Generates an embedded signing URL for a signer to sign documents directly within an iframe.
+        The signing URL is time-limited and should be used immediately after generation.
+
+        **Kong Route:** `/applications/{application_uuid}/signers/{customer_uuid}/embedded-link`
+        **Backend:** `/applications/{application_uuid}/signers/{customer_uuid}/embedded-link`
+      tags:
+        - Application Contracts
+      operationId: generateEmbeddedSigningLink
+      parameters:
+        - name: application_uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Application UUID
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        - name: customer_uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Customer UUID
+          example: "770e8400-e29b-41d4-a716-446655440000"
+        - name: return_url
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uri
+          description: URL where signer will be redirected after completing or canceling signing
+          example: "https://yourapp.com/signing-complete"
+      responses:
+        '200':
+          description: Embedded signing link generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmbeddedSigningLinkResponse'
+        '401':
+          description: Unauthorized (invalid or expired token)
+        '500':
+          description: Internal server error
+
+  /templates:
+    get:
+      summary: Search/List Templates
+      description: |
+        Retrieves all DocuSign templates (including soft deleted).
+        If lender_uuid is provided, only templates for that lender will be returned.
+
+        **Kong Route:** `/templates`
+        **Backend:** `/templates`
+      tags:
+        - Lender Templates
+      operationId: listTemplates
+      parameters:
+        - name: lender_uuid
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+          description: Filter templates by lender UUID
+          example: "550e8400-e29b-41d4-a716-446655440000"
+      responses:
+        '200':
+          description: List of templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LenderTemplate'
+        '401':
+          description: Unauthorized (invalid or expired token)
+        '500':
+          description: Internal server error
+
+    post:
+      summary: Assign Template to Lender
+      description: |
+        Assigns a DocuSign template to a lender.
+        If the lender already has an active template, it will be soft deleted and replaced with the new template.
+
+        **Kong Route:** `/templates`
+        **Backend:** `/templates`
+      tags:
+        - Lender Templates
+      operationId: assignLenderTemplate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignLenderTemplateRequest'
+            examples:
+              assignTemplate:
+                summary: Assign template to lender
+                value:
+                  lender_uuid: "550e8400-e29b-41d4-a716-446655440000"
+                  program_id: "1234567890"
+                  borrower_template_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                  coborrower_template_id: "b2c3d4e5-f6g7-8901-bcde-f12345678901"
+      responses:
+        '200':
+          description: Template successfully assigned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignLenderTemplateResponse'
+        '400':
+          description: Bad request (validation errors)
+        '401':
+          description: Unauthorized (invalid or expired token)
+        '500':
+          description: Internal server error
+
+  /templates/{id}:
+    get:
+      summary: Get Template by ID
+      description: |
+        Retrieves a DocuSign template by its ID (includes soft deleted templates).
+
+        **Kong Route:** `/templates/{id}`
+        **Backend:** `/templates/{id}`
+      tags:
+        - Lender Templates
+      operationId: getTemplateById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Template ID
+          example: 123
+      responses:
+        '200':
+          description: Template details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LenderTemplate'
+        '401':
+          description: Unauthorized (invalid or expired token)
+        '404':
+          description: Template not found
+        '500':
+          description: Internal server error
+
+  /templates/{lender_uuid}/program/{program_id}:
+    get:
+      summary: Get Templates by Lender and Program
+      description: |
+        Retrieves the active DocuSign template for a specific lender and program.
+
+        **Kong Route:** `/templates/{lender_uuid}/program/{program_id}`
+        **Backend:** `/templates/{lender_uuid}/program/{program_id}`
+      tags:
+        - Lender Templates
+      operationId: getTemplateByLenderAndProgram
+      parameters:
+        - name: lender_uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Lender UUID
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        - name: program_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Program identifier
+          example: "1234567890"
+      responses:
+        '200':
+          description: Template details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LenderTemplate'
+        '401':
+          description: Unauthorized (invalid or expired token)
+        '500':
+          description: Internal server error
+
+  /webhooks/docusign:
+    post:
+      summary: Handle DocuSign Webhook
+      description: |
+        Receives webhook notifications from DocuSign Connect when envelope events occur.
+        The endpoint validates the envelope exists in the system, stores the status update,
+        and extracts/stores signer data when envelope is completed.
+
+        **Events handled:**
+        - Envelope is sent
+        - Envelope is delivered to recipients
+        - Envelope is signed/completed
+        - Envelope is declined
+        - Envelope is voided
+        - Recipient events
+
+        **Kong Route:** `/webhooks/docusign`
+        **Backend:** `/webhooks/docusign`
+      tags:
+        - Webhooks
+      operationId: handleDocuSignWebhook
+      security: []
+      parameters:
+        - name: X-DocuSign-Signature-1
+          in: header
+          required: false
+          schema:
+            type: string
+          description: HMAC signature for verification (optional)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              description: DocuSign webhook payload
+      responses:
+        '200':
+          description: Webhook processed successfully
+        '400':
+          description: Bad request (invalid payload)
+        '404':
+          description: Envelope not found in system
+        '500':
+          description: Internal server error
+
+  /webhooks/docusign/health:
+    get:
+      summary: Webhook Health Check
+      description: |
+        Simple endpoint to verify the webhook URL is accessible (for DocuSign Connect verification).
+
+        **Kong Route:** `/webhooks/docusign/health`
+        **Backend:** `/webhooks/docusign/health`
+      tags:
+        - Webhooks
+      operationId: webhookHealthCheck
+      security: []
+      responses:
+        '200':
+          description: Webhook endpoint is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+                  service:
+                    type: string
+                    example: "docusign-webhook"
+
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: OAuth2 client credentials flow via Kong Gateway
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/token
+          scopes: {}
+
+  schemas:
+    ApplicationEnvelopeSummary:
+      type: object
+      properties:
+        applicationEnvelopeId:
+          type: integer
+          format: int64
+          example: 123
+        applicationUuid:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        envelopeId:
+          type: string
+          description: DocuSign envelope ID
+          example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        roleUserIds:
+          type: object
+          additionalProperties:
+            type: string
+          description: Map of role names to user IDs
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+
+    NewApplicationRequest:
+      type: object
+      required:
+        - application_uuid
+        - organization_uuid
+        - program_id
+        - loan_consumation_date
+        - loan_maturity_date
+        - loan_identifier
+        - merchant_name
+        - borrower
+      properties:
+        application_uuid:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        organization_uuid:
+          type: string
+          format: uuid
+          example: "660e8400-e29b-41d4-a716-446655440000"
+        program_id:
+          type: string
+          example: "1234567890"
+        loan_consumation_date:
+          type: string
+          format: date
+          example: "2025-01-15"
+        loan_maturity_date:
+          type: string
+          format: date
+          example: "2030-01-15"
+        loan_identifier:
+          type: string
+          example: "LOAN-2025-001"
+        apr:
+          type: number
+          format: double
+          example: 5.99
+        finance_charge:
+          type: number
+          format: double
+          example: 5000.00
+        amount_financed:
+          type: number
+          format: double
+          example: 50000.00
+        total_of_payments:
+          type: number
+          format: double
+          example: 55000.00
+        variable_rate:
+          type: boolean
+          example: false
+        term_months:
+          type: integer
+          example: 60
+        payment_amount:
+          type: number
+          format: double
+          example: 966.67
+        interest_rate_percent:
+          type: number
+          format: double
+          example: 5.99
+        loan_amount:
+          type: number
+          format: double
+          example: 50000.00
+        construction_period_days:
+          type: integer
+          example: 0
+        staged_funding_percent_before_final_distribution:
+          type: number
+          format: double
+          example: 0.0
+        staged_funding_percent_reserved_for_final_distribution:
+          type: number
+          format: double
+          example: 0.0
+        merchant_name:
+          type: string
+          example: "ABC Home Improvements"
+        borrower:
+          $ref: '#/components/schemas/Borrower'
+        coborrower:
+          $ref: '#/components/schemas/Coborrower'
+        other_fields:
+          type: object
+          additionalProperties: true
+          description: Custom fields
+
+    Borrower:
+      type: object
+      required:
+        - customer_uuid
+        - first_name
+        - last_name
+        - email
+        - address
+      properties:
+        customer_uuid:
+          type: string
+          format: uuid
+          example: "770e8400-e29b-41d4-a716-446655440000"
+        first_name:
+          type: string
+          example: "John"
+        last_name:
+          type: string
+          example: "Doe"
+        email:
+          type: string
+          format: email
+          example: "john.doe@example.com"
+        address:
+          $ref: '#/components/schemas/Address'
+        fico_score:
+          type: integer
+          example: 720
+        fico_score_percentile:
+          type: integer
+          example: 75
+        fico_score_date:
+          type: string
+          format: date
+          example: "2025-01-01"
+        dob:
+          type: string
+          format: date
+          example: "1985-06-15"
+        home_phone:
+          type: string
+          example: "5551234567"
+        work_phone:
+          type: string
+          example: "5551234568"
+        cell_phone:
+          type: string
+          example: "5551234569"
+        preferred_phone:
+          type: string
+          example: "5551234567"
+        ssn:
+          type: string
+          example: "123456789"
+        other_fields:
+          type: object
+          additionalProperties: true
+
+    Coborrower:
+      type: object
+      required:
+        - customer_uuid
+        - first_name
+        - last_name
+        - email
+        - address
+      properties:
+        customer_uuid:
+          type: string
+          format: uuid
+          example: "880e8400-e29b-41d4-a716-446655440000"
+        first_name:
+          type: string
+          example: "Jane"
+        last_name:
+          type: string
+          example: "Doe"
+        email:
+          type: string
+          format: email
+          example: "jane.doe@example.com"
+        address:
+          $ref: '#/components/schemas/Address'
+        fico_score:
+          type: integer
+          example: 740
+        fico_score_percentile:
+          type: integer
+          example: 80
+        fico_score_date:
+          type: string
+          format: date
+          example: "2025-01-01"
+        other_fields:
+          type: object
+          additionalProperties: true
+
+    Address:
+      type: object
+      required:
+        - address_line_1
+        - city
+        - state
+        - zip
+      properties:
+        address_line_1:
+          type: string
+          example: "123 Main St"
+        address_line_2:
+          type: string
+          example: "Apt 4B"
+        address_line_3:
+          type: string
+          example: ""
+        city:
+          type: string
+          example: "Springfield"
+        state:
+          type: string
+          example: "IL"
+        zip:
+          type: string
+          example: "62701"
+
+    EnvelopeStatus:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123
+        applicationEnvelopeId:
+          type: integer
+          format: int64
+          example: 456
+        status:
+          type: string
+          example: "sent"
+        eventData:
+          type: object
+          additionalProperties: true
+          description: DocuSign event data
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+
+    SignerDetailsResponse:
+      type: object
+      properties:
+        customerUuid:
+          type: string
+          format: uuid
+          example: "770e8400-e29b-41d4-a716-446655440000"
+        roleName:
+          type: string
+          example: "Borrower"
+        signerCreatedAt:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        signerData:
+          type: object
+          additionalProperties: true
+          description: Form field data collected from signer
+
+    EmbeddedSigningLinkResponse:
+      type: object
+      properties:
+        signing_url:
+          type: string
+          format: uri
+          example: "https://demo.docusign.net/Signing/MTRedeem/v1/abc123..."
+        envelope_id:
+          type: string
+          example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+
+    LenderTemplate:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123
+        lender_uuid:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        program_id:
+          type: string
+          example: "1234567890"
+        borrower_template_id:
+          type: string
+          format: uuid
+          example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        coborrower_template_id:
+          type: string
+          format: uuid
+          example: "b2c3d4e5-f6g7-8901-bcde-f12345678901"
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+
+    AssignLenderTemplateRequest:
+      type: object
+      required:
+        - lender_uuid
+        - program_id
+        - coborrower_template_id
+      properties:
+        lender_uuid:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        program_id:
+          type: string
+          example: "1234567890"
+        borrower_template_id:
+          type: string
+          format: uuid
+          example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        coborrower_template_id:
+          type: string
+          format: uuid
+          example: "b2c3d4e5-f6g7-8901-bcde-f12345678901"
+
+    AssignLenderTemplateResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123
+        lender_uuid:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        program_id:
+          type: string
+          example: "1234567890"
+        borrower_template_id:
+          type: string
+          format: uuid
+          example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        coborrower_template_id:
+          type: string
+          format: uuid
+          example: "b2c3d4e5-f6g7-8901-bcde-f12345678901"
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        replaced_existing:
+          type: boolean
+          example: false
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid request"
+        message:
+          type: string
+          example: "Application UUID is required"
+
+tags:
+  - name: Authentication
+    description: OAuth2 authentication endpoints
+  - name: Application Contracts
+    description: Endpoints for creating and managing loan application contracts
+  - name: Lender Templates
+    description: Manage DocuSign template assignments for lenders
+  - name: Webhooks
+    description: Endpoints for receiving DocuSign webhook notifications

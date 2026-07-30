@@ -1,0 +1,41 @@
+generated: '2026-07-19'
+method: searched
+source: live probes of LendKey API and portal hosts
+note: >-
+  No .well-known documents are published on any LendKey host. developer.lendkey.com
+  is a Kong Developer Portal single-page app that returns HTTP 200 with the portal
+  HTML shell for every unmatched path, so its /.well-known/* responses are soft 404s
+  (verified against a control path that does not exist) and are NOT real documents.
+  Recorded here so a later re-run can detect a change. No WellKnown or SecurityTxt
+  pointer is wired in apis.yml because nothing was actually found.
+hosts:
+- host: https://api.lendkey.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+- host: https://www.lendkey.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+- host: https://developer.lendkey.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    soft_404: true
+    content_type: text/html
+  - path: /.well-known/openid-configuration
+    status: 200
+    soft_404: true
+    content_type: text/html

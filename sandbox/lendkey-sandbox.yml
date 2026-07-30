@@ -1,0 +1,107 @@
+generated: '2026-07-19'
+method: searched
+source: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+sources:
+- https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+- https://developer.lendkey.com/default/documentation/integration-api
+summary: >-
+  LendKey publishes named non-production environments (DEV, QA, Staging) alongside
+  Production for its Kong-fronted APIs, each with its own host and route prefix.
+  There is no self-serve sandbox and no published magic test values, test cards or
+  fixture tooling — credentials for every environment are issued through the Kong
+  Developer Portal or by contacting LendKey. Nothing here is invented; only values
+  the portal documents verbatim are recorded.
+self_serve: false
+test_live_separation:
+  mechanism: separate-host-and-route-prefix
+  detail: >-
+    There are no test/live key prefixes or a mode flag. The environment is
+    determined entirely by which host and Kong route prefix you call, and each
+    environment issues its own client_id / client_secret.
+environments:
+- name: DEV
+  api: treasury-management
+  kong_base_url: https://api.lkeyqa.com/TreasuryMgmtDev
+  token_url: https://api.lkeyqa.com/TreasuryMgmtDev/oauth2/token
+  backend: https://lendkey-dev.outsystemsenterprise.com
+- name: QA
+  api: treasury-management
+  kong_base_url: https://api.lkeyqa.com/TreasuryMgmtQa
+  token_url: https://api.lkeyqa.com/TreasuryMgmtQa/oauth2/token
+  backend: https://os.lkeyqa.com
+- name: Staging
+  api: treasury-management
+  kong_base_url: https://api.lkeystaging.com/TreasuryMgmt
+  token_url: https://api.lkeystaging.com/TreasuryMgmt/oauth2/token
+  backend: https://os.lkeystaging.com
+- name: Production
+  api: treasury-management
+  kong_base_url: https://api.lendkey.com/TreasuryMgmt
+  token_url: https://api.lendkey.com/TreasuryMgmt/oauth2/token
+  backend: https://os.lendkey.com
+- name: QA
+  api: integration
+  base_url: https://proxy.kong.eks-1.use-1.lkeyqa.com/integration/integration-api-spring-boot-main/
+  description: >-
+    "This is the QA host for our API endpoints. Please use this for all development
+    and testing purposes." (verbatim from the Integration API servers[] description)
+- name: Staging
+  api: integration
+  base_url: https://proxy.kong.lkeystaging.com/integration/
+  description: >-
+    "This is the staging host for our API endpoints. Please note that the ability to
+    create a soft-pull is disabled in this environment. If credit pull testing in
+    this environment is needed, please reach out to coordinate that." (verbatim)
+- name: Production
+  api: integration
+  base_url: https://proxy.kong.lkeyprod.com/integration/
+- name: CI / ephemeral
+  api: integration
+  base_url: "{protocol}://{env}-integration-api-spring-boot.ci.lkeyqa.com:{port}/{basePath}"
+  description: >-
+    Templated per-branch testing server; the env variable takes values such as a PR
+    number (PR-1112) or "develop". Ports 8443 or 443.
+- name: Local
+  api: integration
+  base_url: "http://localhost:{port}/{basePath}"
+  description: Local development server declared in the spec, default port 8080.
+- name: Production
+  api: esign
+  kong_base_url: https://api.lendkey.com/esign
+  token_url: https://api.lendkey.com/esign/oauth2/token
+  backend: main-esign-kotlin.ci.lkeyprod.com
+- name: Production
+  api: partner-integration-internal
+  kong_base_url: https://api.lendkey.com/lo_partnerintegrationinternalapi
+  token_url: https://api.lendkey.com/lo_partnerintegrationinternalapi/oauth2/token
+capability_differences:
+- environment: Staging (Integration API)
+  restriction: >-
+    Soft credit pull creation (POST /v1/credit/soft_pull) is disabled. Credit-pull
+    testing in staging must be coordinated with LendKey.
+credentials:
+  issuance: Kong Developer Portal
+  registration_url: https://developer.lendkey.com/default/register
+  login_url: https://developer.lendkey.com/default/login
+  process: >-
+    "Get Credentials: Contact your Kong admin or use the Kong Developer Portal"
+    (verbatim from the Treasury Management getting-started section).
+  note: Per-environment client_id / client_secret; no shared or published test credentials.
+test_values:
+  published: false
+  note: >-
+    LendKey publishes no magic test identifiers, test card numbers, test bank
+    accounts, test SSNs or seeded fixtures. The UUIDs, loan ids and applicant details
+    that appear in the specs (e.g. 550e8400-e29b-41d4-a716-446655440000,
+    LOAN-12345, "John Doe") are OpenAPI documentation examples, NOT working sandbox
+    values — do not treat them as usable test data.
+test_clock:
+  supported: false
+fixtures:
+  supported: false
+triggers:
+  supported: false
+  note: >-
+    The one simulation-adjacent endpoint is GET /webhooks/docusign/health on the
+    E-Sign API, a reachability check for DocuSign Connect verification — not an
+    event trigger.

@@ -1,0 +1,1636 @@
+openapi: 3.0.2
+info:
+  title: Integration API
+  description: "This API collection represents the integration APIs LendKey offers for 3rd party dependencies/integrations, and is for dev/qa use only. External connections are not prohibited following this document."
+  termsOfService: 'http://www.lendkey.com'
+  license:
+    name: Lendkey License
+    url: 'http://www.lendkey.com'
+  version: 1.0.0
+  contact:
+    name: "LendKey Product Operations Team"
+    url: "http://www.lendkey.com"
+    email: "HIL_product_team@lendkey.com"
+servers:
+  - url: 'https://proxy.kong.lkeyprod.com/integration/'
+    description: "This is the production host for our API endpoints."
+  - url: 'https://proxy.kong.lkeystaging.com/integration/'
+    description: "This is the staging host for our API endpoints. Please note that the ability to create a soft-pull is disabled in this environment. If credit pull testing in this environment is needed, please reach out to coordinate that."
+  - url: 'https://proxy.kong.eks-1.use-1.lkeyqa.com/integration/integration-api-spring-boot-main/'
+    description: "This is the QA host for our API endpoints. Please use this for all development and testing purposes."
+  - url: '{protocol}://{env}-integration-api-spring-boot.ci.lkeyqa.com:{port}/{basePath}'
+    description: "The testing API server"
+    variables:
+      protocol:
+        enum:
+          - "http"
+          - "https"
+        default: "https"
+      env:
+        default: "staging"
+        description: "This value is related to the environment you are running. ie: PR-1112, develop"
+      port:
+        enum:
+          - "8443"
+          - "443"
+        default: "8443"
+      basePath:
+        description: "Version path. ie: v1"
+        default: ""
+  - url: 'http://localhost:{port}/{basePath}'
+    description: "The local development server"
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: https
+      env:
+        default: "develop"
+        description: "this value is related to the environment you are running. ie: PR-1112, develop"
+      port:
+        default: '8080'
+      basePath:
+        description: "Version path. ie: v1"
+        default: ""
+paths:
+  /v1/oauth2/token:
+    post:
+      tags:
+        - auth
+      summary: "Obtain an authorization token"
+      description: "Performs client credentials authentication and returns an access token that is valid for 60 minutes."
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          description: "The word basic followed by a space and a base64-encoded string of clientId:clientSecret"
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                grant_type:
+                  type: string
+                  description: "Value should be 'client_credentials'"
+              required:
+                - grant_type
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/authenticationResponse'
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/UnexpectedError"
+  /v1/application/status:
+    post:
+      tags:
+        - applications
+      summary: "Retrieve the current status of one or more applications"
+      description: "Provide your requester identification UUID and a set of application/loan reference keys to get an up-to-date status on them."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/applicationStatusRequest"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/applicationStatusResponse'
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/UnexpectedError"
+  /v1/credit/soft_pull:
+    post:
+      tags:
+        - Credit Risk
+      summary: "Performs a soft credit pull"
+      description: "Performs a soft credit pull for the given applicant, and returns their credit profile."
+      requestBody:
+        content:
+          application/hal+json:
+            schema:
+              $ref: '#/components/schemas/softCreditRequest'
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/softCreditResponse'
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/UnexpectedError"
+  /v1/credit/combined_monthly_debt:
+    post:
+      tags:
+        - Credit Risk
+      summary: "Calculates the combined monthly debt between two credit profiles"
+      description: "Given two credit profile IDs, calculates the monthly debt between the two profiles."
+      requestBody:
+        content:
+          application/hal+json:
+            schema:
+              $ref: '#/components/schemas/combinedMonthlyDebtRequest'
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/combinedMonthlyDebtResponse'
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/UnexpectedError"
+  /v1/credit/resolve_attributes:
+    post:
+      tags:
+        - Credit Risk
+      summary: "Resolves the values for all credit attributes passed."
+      description: "Given a credit profile ID, calculates/resolves all the values for the attributes requested."
+      requestBody:
+        content:
+          application/hal+json:
+            schema:
+              $ref: '#/components/schemas/resolveCreditAttributesRequest'
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/resolvedAttributesResponse'
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/UnexpectedError"
+  /v1/scoring/score:
+    post:
+      tags:
+        - Credit Risk
+      summary: "Score a given set of attributes against a PMML model"
+      description: "Calls the scoring engine to evaluate the given set of attributes against the given PMML model UUID."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/scoringRequest"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/hal+json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/scoringResponsePass'
+                  - $ref: '#/components/schemas/scoringResponseFail'
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/UnexpectedError"
+  /v1/leads/create:
+    post:
+      tags:
+        - leads
+      summary: "Creates a new lead to represent a potential customer"
+      description: "Creates a lead record in the Greenhouse LOS to capture information about potential customers and where their traffic was driven in from."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createLeadRequest"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/leadResponse'
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/UnexpectedError"
+  /v1/notifications/emails:
+    summary: "Endpoints for all things email related."
+    post:
+      tags:
+        - email
+      summary: "Send An Email Notification"
+      description: "Sends an email notification."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/emailRecordRequestPayload"
+      responses:
+        202:
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: "#/components/schemas/emailRecord"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/UnexpectedError"
+  /v1/notifications/emails/templates:
+    get:
+      tags:
+        - email
+      summary: "Returns a list of ALL email templates available for use via notifier-api."
+      description: "Lists out ALL email templates known to this service, regardless of their provider (i.e. SendGrid)."
+      responses:
+        200:
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: "#/components/schemas/emailTemplateList"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/UnexpectedError"
+  /v1/onboarding/onboard:
+    post:
+      tags:
+        - onboarding
+      summary: "Submits an application LendKey for boarding."
+      description: "Includes all application information as well as accepted loan offer information to board the application as a loan within LendKeys LOS."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/boardApplicationRequest"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/boardApplicationResponse'
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/UnexpectedError"
+components:
+  parameters:
+    page:
+      in: query
+      name: page
+      description: "Number of the page to be requested."
+      schema:
+        type: integer
+        minimum: 1
+    size:
+      in: query
+      name: size
+      description: "Number of registers in the page to be requested."
+      schema:
+        type: integer
+        minimum: 1
+    sort:
+      in: query
+      name: sort
+      description: "Sort instruction in the form of {attribute_name},{direction}. Default direction is ascending. examples: sort=name: will sort by name with ascending order. sort=name,desc: will sort by name with descending order. You can send several sort params to apply combined sorting."
+      schema:
+        type: string
+    filter:
+      in: query
+      name: filter
+      schema:
+        type: object
+      style: deepObject
+      explode: true
+      description: "Options for filtering the results"
+      required: false
+  responses:
+    Forbidden:
+      description: "Forbidden"
+      content:
+        application/hal+json:
+          schema:
+            $ref: "#/components/schemas/error"
+          example:
+            id: "b6c52a48-551a-42ef-b361-f642d25cfeb7"
+            status: "403"
+            timestamp: "2019-10-21 14:07:59"
+            message: "Forbidden."
+            debugMessage: null
+    NotFound:
+      description: "Not Found"
+      content:
+        application/hal+json:
+          schema:
+            $ref: "#/components/schemas/error"
+          example:
+            id: "b6c52a48-551a-42ef-b361-f642d25cfeb7"
+            status: "NOT_FOUND"
+            timestamp: "2019-10-21 14:07:59"
+            message: "Not found"
+            debugMessage: null
+    BadRequest:
+      description: "Invalid request, unable to process the request with the information provided."
+      content:
+        application/hal+json:
+          schema:
+            $ref: "#/components/schemas/error"
+          example:
+            id: "b6c52a48-551a-42ef-b361-f642d25cfeb7"
+            status: "BAD_REQUEST"
+            timestamp: "2019-10-21 14:07:59"
+            message: "Describes what was invalid about the request, if possible."
+            debugMessage: null
+    UnexpectedError:
+      description: "An unexpected server error occurred."
+      content:
+        application/hal+json:
+          schema:
+            $ref: "#/components/schemas/error"
+          example:
+            id: "b6c52a48-551a-42ef-b361-f642d25cfeb7"
+            status: "INTERNAL_SERVER_ERROR"
+            timestamp: "2019-10-21 14:07:59"
+            message: "An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message."
+            debugMessage: null
+  schemas:
+    authenticationResponse:
+      type: object
+      properties:
+        expires_in:
+          type: integer
+          description: "The number of milliseconds the access token will expire in."
+          example: 3600
+        token_type:
+          type: string
+          description: "The type of authentication token returned"
+          example: "bearer"
+        access_token:
+          type: string
+          description: "The access token to use"
+          example: "A3IaUdTbwrZcYjeKKKgTsUDgrsmwbTRx"
+    applicationStatusRequest:
+      type: object
+      required:
+        - referenceKeys
+        - requester
+      properties:
+        referenceKeys:
+          type: array
+          items:
+            allOf:
+              - type: string
+          example:
+            - "HIL-12345"
+            - "HIL-98765"
+        requester:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/requester"
+    applicationStatusResponse:
+      type: object
+      properties:
+        applications:
+          type: array
+          items:
+            allOf:
+              - $ref: "#/components/schemas/applicationStatus"
+        errors:
+          type: array
+          items:
+            allOf:
+              - type: string
+                example: "String reference key of unretrievable application."
+    applicationStatus:
+      type: object
+      properties:
+        loanStatus:
+          type: string
+          description: "What stage the application/loan is on within the LendKey system."
+        loanKey:
+          type: string
+          description: "Unique identifier for application/loan"
+          example: "HIL-12345"
+        loanAmount:
+          type: number
+          description: "The loan amount for the application/loan - this is not the current balance for the account."
+          example: 50000.00
+        blockages:
+          type: array
+          items:
+            allOf:
+              - type: string
+          description: "A set of text describing what may be preventing the application/loan from advancing."
+          example:
+            - "Waiting for contractor to submit a disbursement request."
+    requester:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          example: "40121260-4082-4c22-b70c-b5be137bf2a0"
+    softCreditRequest:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - ssn
+        - street
+        - city
+        - state
+        - zipCode
+        - creditBureauName
+        - creditRiskModel
+        - preamble
+        - subCode
+      properties:
+        firstName:
+          type: string
+          description: The full first name should be entered when available. The minimum entry is the first name initial. Blanks and special characters (except dash) are not allowed. Compound names should contain a dash (e.g., Billy-Bob)
+          example: "John"
+        lastName:
+          type: string
+          description: The full applicant’s surname is required. If the surname contains two surnames, then split the surnames with a hyphen (e.g., Smith-Jones). The surname can also be input with an apostrophe (e.g., O’Brien), although apostrophe usage is limited to the letters D, L, and O.
+          example: "Doe"
+        ssn:
+          type: string
+          description: Full Social Security number should be entered. The social may be input with or without hyphens (e.g., 123456789 or 123-45-6789).
+          example: "999-99-9999"
+        street:
+          type: string
+          description: Include the house number, directional, street name, street type, and street suffix data (Apt #, Building #, Suite #, etc.) as part of the address if available.
+          example: "9999 Carver Road Suite 400"
+        city:
+          type: string
+          example: "Cincinnati"
+        state:
+          type: string
+          description: The 2-letter state abbreviation
+          example: "OH"
+        zipCode:
+          type: string
+          description: ZIP code designation. It may be 9 characters and may contain a hyphen to separate the first 5 digits from the last 4 digits. It is required on all current address data. Canadian zip codes (6 digits), Mexican and Canadian country codes are allowed.
+          example: "45242"
+        creditBureauName:
+          type: string
+          description: Only "Experian" is currently supported.
+          example: Experian
+        creditRiskModel:
+          type: string
+          description: FICOv3, FICOv8, and FICOv9 are supported. Which one to use is defined by the program.
+          example: FICOv8
+        preamble:
+          type: string
+          description: Varies by lender.
+          example: TBD2
+        subCode:
+          type: string
+          description: Varies by lender.
+          example: 1928032
+    softCreditResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1234
+    leadResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        uuid:
+          type: string
+          format: uuid
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        createdAt:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date
+        source:
+          type: string
+        sourceKey:
+          type: string
+        sourceApplicationId:
+          type: string
+        creditRiskModel:
+          type: string
+      example:
+        id: 1
+        uuid: "3441eb74-e5e6-483a-bb53-4201edf7210e"
+        email: "no-reply@lendkey.com"
+        firstName: "John"
+        lastName: "Doe"
+        createdAt: "2021-09-21T19:21:53.726626200Z"
+        updatedAt: "2021-09-21T19:21:53.726626200Z"
+        source: "unqork"
+        sourceKey: "8f8898ae-dda1-4bde-a627-44d6fb5977dd"
+        sourceApplicationId: "null"
+        creditRiskModel: "0f2f1ce6-7bed-4df4-8b04-aff593dd4d23"
+    createLeadRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        source:
+          type: string
+        sourceKey:
+          type: string
+        sourceApplicationId:
+          type: string
+        creditRiskModel:
+          type: string
+      example:
+        email: "no-reply@lendkey.com"
+        firstName: "John"
+        lastName: "Doe"
+        source: "unqork"
+        sourceKey: "8f8898ae-dda1-4bde-a627-44d6fb5977dd"
+        sourceApplicationId: "null"
+        creditRiskModel: "0f2f1ce6-7bed-4df4-8b04-aff593dd4d23"
+    scoringRequest:
+      type: object
+      properties:
+        attributes:
+          type: object
+          description: "The scoring attributes to use"
+          properties:
+            modelId:
+              type: string
+              description: "The scoring model UUID to use to score the given arguments against."
+              example: "3f77a5a0-9662-4cd9-93e8-881ba87a204f"
+            arguments:
+              type: object
+              additionalProperties:
+                type: string
+              description: "The attributes to provide to the scoring model"
+              example:
+                bor_score_max: 720
+                cob_score_max: 820
+                bor_trlines_mortg_delinq_ls24m_count: 0
+                cob_trlines_mortg_delinq_ls24m_count: 0
+                bor_pbrecrds_judgements_ls60m_count: 0
+                cob_pbrecrds_judgements_ls60m_count: 0
+                bor_pbrecrds_repossessions_ls60m_count: 0
+                cob_pbrecrds_repossessions_ls60m_count: 0
+                bor_pbrecrds_chargeoffs_ls60m_count: 0
+                cob_pbrecrds_chargeoffs_ls60m_count: 0
+                bor_pbrecrds_collections_cumulative: 0
+                cob_pbrecrds_collections_cumulative: 0
+                bor_trlines_foreclosures_count: 0
+                cob_trlines_foreclosures_count: 0
+                bor_person_bankruptcies_count: 0
+                cob_person_bankruptcies_count: 0
+                bor_yearly_income_gross: 72000.00
+                cob_yearly_income_gross: 120000.00
+                cosigner: true
+                prescreen: true
+                requested_amount: 24000.00
+                stated_housing_expenses: 1200,
+                bor_reported_housing_expenses: 1245.00
+                cob_reported_housing_expenses: 814.00
+                bor_monthly_debt_excluding_housing_and_education: 1782.23
+                cob_monthly_debt_excluding_housing_and_education: 1689.51
+                bor_monthly_education_debt: 0
+                cob_monthly_education_debt: 256.32
+                bcob_joint_monthly_debt: 764.90
+                longest_qualified_term: 180
+                rate_for_longest_qualified_term: 5.24
+    scoringResponsePass:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "A reference UUID to retrieve this score result later if needed."
+          example: "3fec06c7-2a21-4f83-b100-5425fc5e035e"
+        type:
+          type: string
+          description: "The type of score that was evaluated"
+          example: "insight"
+        attributes:
+          type: object
+          description: "The scoring attributes to use"
+          properties:
+            created:
+              type: string
+              description: "Timestamp of when the scoring model was created."
+              example: "2022-03-07T14:39:57Z"
+            arguments:
+              type: object
+              additionalProperties:
+                type: string
+              description: "The attributes to provide to the scoring model"
+              example:
+                bor_score_max: 720
+                cob_score_max: 820
+                bor_trlines_mortg_delinq_ls24m_count: 0
+                cob_trlines_mortg_delinq_ls24m_count: 0
+                bor_pbrecrds_judgements_ls60m_count: 0
+                cob_pbrecrds_judgements_ls60m_count: 0
+                bor_pbrecrds_repossessions_ls60m_count: 0
+                cob_pbrecrds_repossessions_ls60m_count: 0
+                bor_pbrecrds_chargeoffs_ls60m_count: 0
+                cob_pbrecrds_chargeoffs_ls60m_count: 0
+                bor_pbrecrds_collections_cumulative: 0
+                cob_pbrecrds_collections_cumulative: 0
+                bor_trlines_foreclosures_count: 0
+                cob_trlines_foreclosures_count: 0
+                bor_person_bankruptcies_count: 0
+                cob_person_bankruptcies_count: 0
+                bor_yearly_income_gross: 72000.00
+                cob_yearly_income_gross: 120000.00
+                cosigner: true
+                prescreen: true
+                requested_amount: 24000.00
+                stated_housing_expenses: 1200,
+                bor_reported_housing_expenses: 1245.00
+                cob_reported_housing_expenses: 814.00
+                bor_monthly_debt_excluding_housing_and_education: 1782.23
+                cob_monthly_debt_excluding_housing_and_education: 1689.51
+                bor_monthly_education_debt: 0
+                cob_monthly_education_debt: 256.32
+                bcob_joint_monthly_debt: 764.90
+                longest_qualified_term: 180
+                rate_for_longest_qualified_term: 5.24
+            results:
+              type: object
+              additionalProperties:
+                type: string
+              description: "This is a dynamic KVM that contains the results of the scoring model."
+              example:
+                Reason Code 09: null
+                Reason Code 12: null
+                Reason Code 13: null
+                Reason Code 14: null
+                joint_dti_percentage: "39.24929967889547"
+                Reason Code 15: null
+                Reason Code 16: null
+                Reason Code 17: null
+                Reason Code 18: null
+                Reason Code 19: null
+                Reason Code 30: null
+                Reason Code 31: null
+                Reason Code 10: null
+                Reason Code 32: null
+                Reason Code 11: null
+                Reason Code 33: null
+                insightResult: "pass"
+                overallScore: "0.0"
+                Decision: "pass"
+                Reason Code 01: null
+                Reason Code 23: null
+                Reason Code 02: null
+                Reason Code 24: null
+                Reason Code 03: null
+                Reason Code 25: null
+                Reason Code 04: null
+                Reason Code 26: null
+                Reason Code 05: null
+                Reason Code 27: null
+                Reason Code 06: null
+                Reason Code 28: null
+                Reason Code 07: null
+                Reason Code 29: null
+                Reason Code 08: null
+                Reason Code 20: null
+                Reason Code 21: null
+                Reason Code 22: null
+    scoringResponseFail:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "A reference UUID to retrieve this score result later if needed."
+          example: "3fec06c7-2a21-4f83-b100-5425fc5e035e"
+        type:
+          type: string
+          description: "The type of score that was evaluated"
+          example: "insight"
+        attributes:
+          type: object
+          description: "The scoring attributes to use"
+          properties:
+            modelId:
+              type: string
+              description: "The scoring model UUID to use to score the given arguments against."
+              example: "da3965d9-8d89-4415-84b4-e34c869dfb96"
+            arguments:
+              type: object
+              additionalProperties:
+                type: string
+              description: "The attributes to provide to the scoring model"
+              example:
+                bor_dti: "0.1486"
+                bor_mnthlyincome_gros": "5666.666666666667"
+                bor_person_bkrupt_ls60m_count: "0"
+                bor_score_max: "649"
+                bor_trlines_ageold: "67"
+                bor_trlines_crunion_default_count: "0"
+                bor_trlines_delinq_ls24m_count: "0"
+                bor_trlines_frclose_ls60m_count: "0"
+                bor_trlines_negatives_ls24m_agg: "0.0"
+                bor_trlines_nodeferstu_open_count: "6"
+                bor_trlines_opendue": "0"
+                bor_trlines_stu_default_count: "0"
+                cob_dti: "0.0154"
+                cob_mnthlyincome_gross: "13182.666666666666"
+                cob_person_bkrupt_ls60m_count: "0"
+                cob_score_max: "707"
+                cob_trlines_ageold: "213"
+                cob_trlines_crunion_default_count: "0"
+                cob_trlines_delinq_ls24m_count: "0"
+                cob_trlines_frclose_ls60m_count: "0"
+                cob_trlines_negatives_ls24m_agg: "0.0"
+                cob_trlines_nodeferstu_open_count: "1"
+                cob_trlines_opendue: "0"
+                cob_trlines_stu_default_count: "0"
+                cosigner: "true"
+                prescreen: "false"
+            results:
+              type: object
+              additionalProperties:
+                type: string
+              description: "This is a dynamic KVM that contains the results of the scoring model."
+              example:
+                Decision: "fail"
+                insightResult: "fail"
+                overallScore: "2.0"
+                Reason Code 01: "bor_credit_score"
+                Reason Code 02: "cob_count_of_open_trades_except_deferred_student_loans"
+                Reason Code 03: null
+                Reason Code 04: null
+                Reason Code 05: null
+                Reason Code 06: null
+                Reason Code 07: null
+                Reason Code 08: null
+                Reason Code 09: null
+                Reason Code 10: null
+                Reason Code 11: null
+                Reason Code 12: null
+                Reason Code 13: null
+                Reason Code 14: null
+                Reason Code 15: null
+                Reason Code 16: null
+                Reason Code 17: null
+                Reason Code 18: null
+                Reason Code 19: null
+                Reason Code 20: null
+                Reason Code 21: null
+                Reason Code 22: null
+                Reason Code 23: null
+                Reason Code 24: null
+                Reason Code 25: null
+                Reason Code 26: null
+                Reason Code 27: null
+                Reason Code 28: null
+                Reason Code 29: null
+                Reason Code 30: null
+                Reason Code 31: null
+                Reason Code 32: null
+                Reason Code 33: null
+    combinedMonthlyDebtRequest:
+      type: object
+      properties:
+        creditProfileA:
+          type: integer
+          description: "The credit profile ID for the first credit profile to include in the calculation."
+          example: 32423
+        creditProfileB:
+          description: "The credit profile ID for the second credit profile to include in the calculation."
+          example: 92343
+    combinedMonthlyDebtResponse:
+      type: object
+      properties:
+        amount:
+          type: integer
+          description: "The combined total monthly debt for the two given credit profiles."
+          example: 2423
+    resolveCreditAttributesRequest:
+      type: object
+      properties:
+        creditProfileId:
+          type: integer
+          description: "The credit profile ID for the credit profile to resolve the attributes for."
+        creditAttributes:
+          type: array
+          items:
+            type: string
+            description: "The properties to resolve the values for."
+      example:
+        creditProfileId: 32423
+        creditAttributes:
+          - attribute_one_tbd
+          - attribute_two_tbd
+          - attribute_three_tbd
+          - attribute_four_tbd
+          - attribute_five_tbd
+          - attribute_six_tbd
+    resolvedAttributesResponse:
+      type: object
+      additionalProperties:
+        anyOf:
+          - type: string
+          - type: boolean
+          - type: integer
+          - type: number
+          - type: array
+      example:
+        attribute_one_tbd: "some string value"
+        attribute_two_tbd: true
+        attribute_three_tbd: 132
+        attribute_four_tbd: 32000.12
+        attribute_five_tbd: 00.00249
+        attribute_six_tbd: [ "could be array of strings or numbers" ]
+    boardApplicationRequest:
+      type: object
+      required:
+        - submissionUuid
+        - applicants
+        - project
+        - consentOfDisclosures
+        - contractorId
+        - requestedLoanAmount
+        - selectedOffer
+      properties:
+        submissionUuid:
+          type: string
+          format: uuid
+          description: "A unique identifying UUID that will be used to correlate this application to the loan it is transforming into."
+          example: "40121260-4082-4c22-b70c-b5be137bf2a0"
+        applicants:
+          type: array
+          items:
+            anyOf:
+              - $ref: "#/components/schemas/applicant"
+        project:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/project"
+        authorizedUser:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/authorizedUser"
+        consentOfDisclosures:
+          type: boolean
+          example: true
+        contractorNetworkId:
+          type: string
+        contractorId:
+          type: integer
+        requestedLoanAmount:
+          type: number
+        selectedOffer:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/selectedOffer"
+        merchantUseOnly:
+          type: string
+          example: ""
+        promoCode:
+          type: string
+          example: null
+        applicationType:
+          type: string
+          example: null
+        preferredLanguage:
+          type: string
+          example: "english"
+        referenceNumber:
+          type: string
+          example: ""
+    applicant:
+      type: object
+      required:
+        - role
+        - firstName
+        - lastName
+        - dob
+        - ssn
+        - email
+        - totalAnnualIncome
+        - monthlyHousingExpense
+        - eligibility
+        - employer
+      properties:
+        returningApplicantId:
+          type: integer
+          description: "Optional - provide when an applicant is being onboarded with their 2nd+ offer to avoid locking them out."
+        role:
+          type: string
+          description: The role of the applicant.  Valid values are primaryApplicant, coborrower
+          example: "primaryApplicant"
+        name:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/name"
+        dob:
+          type: string
+          example: "11-22-1990"
+        ssn:
+          type: string
+          example: "123456789"
+        driversLicense:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/driversLicense"
+        isMarried:
+          type: boolean
+          example: true
+        militaryStatus:
+          type: string
+          example: "Active Duty"
+        email:
+          type: string
+          example: "test@email.com"
+        employer:
+          type: string
+          example: "Company A"
+        employerPhone:
+          type: string
+          example: "360-901-9917"
+        phoneNumbers:
+          type: array
+          items:
+            $ref: "#/components/schemas/phoneNumber"
+        preferredPhone:
+          type: string
+          description: The preferred phone number.  The only valid values are Home, Cell, and Work.
+          example: "Cell"
+        smsAllowed:
+          type: boolean
+          example: true
+        consentToContact:
+          type: boolean
+          example: true
+        address:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/address"
+        totalAnnualIncome:
+          type: number
+          example: 130000
+        otherIncome:
+          type: number
+          example: 5000
+        monthlyHousingExpense:
+          type: number
+          example: 2100
+        eligibility:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/eligibility"
+        relationship:
+          type: string
+          description: Required for coApplicant.  Valid values are Parent, Spouse, Relative, Friend, Other
+          example: "Relative"
+    address:
+      type: object
+      required:
+        - addressLineOne
+        - city
+        - state
+        - zipCode
+      properties:
+        addressLineOne:
+          type: string
+        addressLineTwo:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        country:
+          type: string
+        township:
+          type: string
+      example:
+        addressLineOne: "500 Main Street"
+        addressLineTwo: ""
+        city: "PORTLAND"
+        state: "OR"
+        zipCode: "97209"
+        country: null
+        township: null
+    authorizedUser:
+      type: object
+      required:
+        - name
+        - email
+        - relationship
+      properties:
+        name:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/name"
+        phoneNumber:
+          type: string
+          example: "8005882300"
+        email:
+          type: string
+          example: "j.doe@gmail.com"
+        relationship:
+          type: string
+          example: "Father"
+    project:
+      type: object
+      required:
+        - projectCost
+        - projectAddress
+        - addressLineOne
+        - city
+        - state
+        - zipCode
+      properties:
+        projectCost:
+          type: number
+        projectAddress:
+          type: string
+        addressLineOne:
+          type: string
+        addressLineTwo:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        isSameAsPrimaryResidence:
+          type: boolean
+        yearOfHomePurchase:
+          type: string
+        housingStatus:
+          type: string
+        applicantsOnDeedOrTitle:
+          type: boolean
+        currentHomeValue:
+          type: number
+        mortgageBalance:
+          type: number
+        monthlyHousingPayments:
+          type: number
+        projectType:
+          type: string
+        projectDescription:
+          type: string
+        projectExpectedDuration:
+          type: string
+        projectStatus:
+          type: string
+        termsRequested:
+          type: string
+      example:
+        projectCost: 500000
+        projectAddress: "500 Main Street, PORTLAND, OR 97209"
+        addressLineOne: "500 Main Street"
+        addressLineTwo: null
+        city: "PORTLAND"
+        state: "OR"
+        zipCode: "97209"
+        isSameAsPrimaryResidence: null
+        yearOfHomePurchase: null
+        housingStatus: null
+        applicantsOnDeedOrTitle: null
+        currentHomeValue: null
+        mortgageBalance: null
+        monthlyHousingPayments: null
+        projectType: null
+        projectDescription: null
+        projectExpectedDuration: null
+        projectStatus: null
+        termsRequested: null
+    phoneNumber:
+      type: object
+      required:
+        - type
+        - phoneNumber
+      properties:
+        type:
+          type: string
+          description: The type of phone number.  Only valid values are Cell, Home, Work
+        phoneNumber:
+          type: string
+      example:
+        type: "Cell"
+        phoneNumber: "8005882300"
+    eligibility:
+      type: object
+      required:
+        - primaryResidence
+        - propertyOwnership
+        - citizenship
+      properties:
+        primaryResidence:
+          type: boolean
+        propertyOwnership:
+          type: boolean
+        citizenship:
+          type: string
+          description: One of US, permanentResident, non-US
+      example:
+        primaryResidence: true
+        propertyOwnership: true
+        citizenship: "US"
+    name:
+      type: object
+      properties:
+        firstName:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        suffix:
+          type: string
+          description: Valid values are Jr. Sr. II III IV V
+      example:
+        firstName: "John"
+        middleName: "M"
+        lastName: "Doe"
+        suffix: "Jr."
+    driversLicense:
+        type: object
+        required:
+          - number
+          - state
+          - expirationDate
+        properties:
+          number:
+            type: string
+          state:
+            type: string
+          expirationDate:
+            type: string
+        example:
+          number: "TA923290"
+          state: "OH"
+          expirationDate: "11-22-2023"
+    selectedOffer:
+      type: object
+      required:
+        - programId
+        - termInMonths
+        - loanRate
+        - rateIndex
+        - maximumLoanAmount
+      properties:
+        programId:
+          type: integer
+        fomQueryId:
+          type: integer
+        termInMonths:
+          type: integer
+        loanRate:
+          type: number
+        rateIndex:
+          type: string
+        maximumLoanAmount:
+          type: number
+      example:
+        program_id: 1473
+        fom_query_id: 4146689
+        loanRate: 1.5
+        rateIndex: "prime"
+        termInMonths: 120
+        maximumLoanAmount: 85000
+    boardApplicationResponse:
+      type: object
+      required:
+        - loanId
+        - loanKey
+        - url
+        - applicants
+      properties:
+        applicantId:
+          type: integer
+        coApplicantId:
+          type: integer
+        loanId:
+          type: integer
+        loanKey:
+          type: string
+        url:
+          type: string
+      example:
+        loanId: 9323
+        loanKey: "HIL-615486020"
+        url: "http://homeImprovement-apply.lvh.me/access/HIL-615486020/by_token?auth=a7127e56d48a6cd5cc4054451c26530b67813c3a0f754d4f502037db96a199b71b26a1c404c30bc2834451a7c1b2be9a2c5c4bbd61567f1d91b71e89b0"
+        "applicants": [
+          {
+            "role": "primaryApplicant",
+            "returningApplicantId": 593093
+          },
+          {
+            "role": "coborrower",
+            "returningApplicantId": 593094
+          }
+        ]
+    error:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        timestamp:
+          type: string
+        message:
+          type: string
+        debugMessage:
+          type: string
+        subErrors:
+          type: array
+          items:
+            $ref: "#/components/schemas/suberror"
+      example:
+        id:
+        status: "BAD_REQUEST"
+        timestamp: "2019-10-21 14:07:59"
+        message: "Validation error"
+        debugMessage: null
+        subErrors:
+          - object: "Resource"
+            field: "name"
+            rejectedValue: null
+            message: "must not be null"
+    suberror:
+      type: object
+      properties:
+        object:
+          type: string
+        field:
+          type: string
+        rejectedValue:
+          type: string
+        message:
+          type: string
+      example:
+        object: "Resource"
+        field: "name"
+        rejectedValue: null
+        message: "must not be null"
+    successMsg:
+      type: object
+      properties:
+        successMessage:
+          type: string
+    link:
+      type: object
+      properties:
+        href:
+          type: string
+    page:
+      type: object
+      properties:
+        size:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+        number:
+          type: integer
+    emailRecordRequestPayload:
+      type: object
+      required:
+        - provider
+        - paylaod
+      properties:
+        provider:
+          type: string
+          description: "The email service provider to use when sending this email."
+          example: "SENDGRID"
+        payload:
+          type: object
+          anyOf:
+            - $ref: "#/components/schemas/emailRecordDto"
+    emailRecordDto:
+      type: object
+      required:
+        - fromName
+        - contentType
+      properties:
+        emailTemplate:
+          type: string
+          description: "Optional. Specifies which email template should be used - uses a default template with no handlebar tags if one is not provided."
+          example: "HIL_Application_Invitation"
+        fromAddress:
+          type: string
+          description: "Required. Specifies who the recipient will see the email is from."
+          example: "john.doe@test.com"
+        fromName:
+          type: string
+          description: "Required. Specifies the name the recipient will see the email is from."
+          example: "John Doe"
+        to:
+          type: array
+          items:
+            anyOf:
+              - $ref: "#/components/schemas/recipient"
+          description: "Optional, if at least one bcc recipient is provided - otherwise at least one required. The Recipient(s) of the email."
+        bcc:
+          type: array
+          items:
+            anyOf:
+              - $ref: "#/components/schemas/recipient"
+          description: "Optional, if at least one to recipient is provided - otherwise at least one required. The BCC Recipient(s) of the email."
+        subject:
+          type: string
+          description: "Optional - however certain templates may not support overriding the subject contents."
+          example: "Your Attention Required!"
+        body:
+          type: string
+          description: "Optional - however certain templates may not support overriding the body contents."
+          example: "We need more information from you before we can proceed with your application. Please call us!"
+        contentType:
+          type: string
+          description: "Required if body is provided. The content type of the email."
+          example: "text/plain"
+        personalizations:
+          type: object
+          description: "Optional. Required only if a template is specified that contains handlebar tags."
+          additionalProperties:
+            type: object
+            properties:
+              personalizationTagKeyName:
+                type: string
+                description: "The handlebar tag name, as specified in the email template, which is to be overridden with the corresponding value."
+              personalizaitonTagValue:
+                type: string
+                description: "The value to be inserted for the given handlebar tag in the specified email template."
+          example:
+            dealName: "Example"
+            clientName: "Some Credit Union"
+            subject: "Boarding File Success"
+            firstName: "John"
+            lastName: "Doe"
+            body: "We've received your document."
+    recipient:
+      type: object
+      required:
+        - recipientAddress
+        - recipientName
+      properties:
+        recipientAddress:
+          type: string
+        recipientName:
+          type: string
+      example:
+        recipientName: "John Doe"
+        recipientAddress: "doe.john@gmali.com"
+    emailRecord:
+      type: object
+      properties:
+        emailTemplate:
+          type: string
+          description: "Optional. Specifies which email template should be used - uses a default template with no handlebar tags if one is not provided."
+          example: "DEFAULT"
+        fromAddress:
+          type: string
+          description: "Required. Specifies who the recipient will see the 'from' email address is."
+        fromName:
+          type: string
+          description: "Required. Specifies who the recipient will see the email is from."
+        to:
+          type: array
+          items:
+            anyOf:
+              - $ref: "#/components/schemas/recipient"
+          description: "Optional, if at least one bcc recipient is provided - otherwise at least one required. The Recipient(s) of the email."
+        bcc:
+          type: array
+          items:
+            anyOf:
+              - $ref: "#/components/schemas/recipient"
+          description: "Optional, if at least one to recipient is provided - otherwise at least one required. The BCC Recipient(s) of the email."
+        subject:
+          type: string
+          description: "Required - however certain templates may not support overriding the subject contents."
+        body:
+          type: string
+          description: "Optional. The content body of the email, if present."
+        contentType:
+          type: string
+          description: "Required if body is provided. The content type of the email."
+        sentAt:
+          type: string
+          format: date-time
+          description: "When the email was sent."
+        responseReceivedAt:
+          type: string
+          format: date-time
+          description: "Tracks when this emails response was received."
+        responseStatusCode:
+          type: integer
+          description: "Tracks the response code to this email."
+        responseBody:
+          type: string
+          description: "Tracks the response body of this email."
+        clientApplication:
+          type: string
+          description: "Specifies which client application requested this email be sent."
+        clientApplicationUser:
+          type: string
+          description: "Specifies the user of the client application that requested the email be sent, or the system user."
+        personalizations:
+          type: object
+          description: "Optional. Required only if a template is specified that contains handlebar tags."
+          additionalProperties:
+            type: object
+            properties:
+              personalizationTagKeyName:
+                type: string
+                description: "The handlebar tag name, as specified in the email template, which is to be overridden with the corresponding value."
+              personalizaitonTagValue:
+                type: string
+                description: "The value to be inserted for the given handlebar tag in the specified email template."
+          example:
+            dealName: "Example"
+            clientName: "Some Credit Union"
+            subject: "Boarding File Success"
+            firstName: "John"
+            lastName: "Doe"
+            body: "We've received your document."
+      example:
+        emailTemplate: "xx-sasdgkji2h3sdsfs"
+        fromName: "LendKey"
+        fromAddress: "something@lendkey.com"
+        to:
+          - recipientName: "John Doe"
+            recipientAddress: "doe.john@gmali.com"
+        bcc:
+          - recipientName: "Jane Doe"
+            recipientAddress: "doe.jane@gmali.com"
+        subject: "Test"
+        body: "Test"
+        contentType: "text/plain"
+        sentAt: "2021-08-1310:39:59"
+        responseReceivedAt: "2021-08-1310:40:03"
+        responseStatusCode: "202"
+        responseBody: "Example body"
+        clientApplication: "DSP"
+        clientApplicationUser: "john.doe@lendkey.com"
+        personalizations:
+          dealName: "Example"
+          clientName: "Some Credit Union"
+          subject: "Boarding File Success"
+          firstName: "John"
+          lastName: "Doe"
+          body: "We've received your document."
+    emailSubstitution:
+      type: object
+      properties:
+        id:
+          type: integer
+        tag:
+          type: string
+      example:
+        id: 2
+        tag: "clientName"
+    emailTemplate:
+      type: object
+      properties:
+        keyName:
+          type: string
+        externalTemplateProvider:
+          type: string
+        externalTemplateId:
+          type: string
+        emailSubstitutions:
+          type: array
+          items:
+            $ref: "#/components/schemas/emailSubstitution"
+      example:
+        keyName: "HIL_Application_Invitation"
+        externalTemplateProvider: "SendGrid"
+        externalTemplateId: ""
+        emailSubstitutions:
+          - $ref: "#/components/schemas/emailSubstitution"
+    emailTemplateList:
+      type: object
+      properties:
+        _embedded:
+          type: object
+          properties:
+            emailTemplates:
+              type: array
+              items:
+                $ref: "#/components/schemas/emailTemplate"
+        _links:
+          type: object
+          properties:
+            self:
+              $ref: "#/components/schemas/link"
+        page:
+          $ref: "#/components/schemas/page"
+      example:
+        _embedded:
+          emailTemplates:
+            - keyName: "HIL_Application_Invitation"
+              externalTemplateProvider: "SendGrid"
+              externalTemplateId: ""
+              emailSubstitutions:
+                - id: 2
+                  tag: "clientName"
+                - id: 1
+                  tag: "dealName"
+        _links:
+          self:
+            href: "http://localhost:8080/v1/emailTemplates?page=0&size=20"
+          first:
+            href: "http://localhost:8080/v1/emailTemplates?page=0&size=20"
+          next:
+            href: "http://localhost:8080/v1/emailTemplates?page=1&size=20"
+          last:
+            href: "http://localhost:8080/v1/emailTemplates?page=1&size=20"
+        page:
+          size: 20
+          totalElements: 1
+          totalPages: 1
+          number: 0
+    emailRecordList:
+      type: object
+      properties:
+        _embedded:
+          type: object
+          properties:
+            emailRecords:
+              type: array
+              items:
+                $ref: "#/components/schemas/emailRecord"
+        _links:
+          type: object
+          properties:
+            self:
+              $ref: "#/components/schemas/link"
+        page:
+          $ref: "#/components/schemas/page"
+      example:
+        _embedded:
+          emailRecords:
+            - emailTemplate: "xx-sasdgkji2h3sdsfs"
+              fromName: "LendKey"
+              fromAddress: "something@lendkey.com"
+              to:
+                - recipientName: "John Doe"
+                  recipientAddress: "doe.john@gmali.com"
+              bcc:
+                - recipientName: "Jane Doe"
+                  recipientAddress: "doe.jane@gmali.com"
+              subject: "Test"
+              body: "Test"
+              contentType: "text/plain"
+              sentAt: "2021-08-1310:39:59"
+              responseReceivedAt: "2021-08-1310:40:03"
+              responseStatusCode: "202"
+              responseBody: "Example body"
+              clientApplication: "DSP"
+              clientApplicationUser: "john.doe@lendkey.com"
+              personalizations:
+                dealName: "Example"
+                clientName: "Some Credit Union"
+                subject: "Boarding File Success"
+                firstName: "John"
+                lastName: "Doe"
+                body: "We've received your document."
+        _links:
+          self:
+            href: "http://localhost:8080/v1/emails?page=0&size=20"
+          first:
+            href: "http://localhost:8080/v1/emails?page=0&size=20"
+          next:
+            href: "http://localhost:8080/v1/emails?page=1&size=20"
+          last:
+            href: "http://localhost:8080/v1/emails?page=1&size=20"
+        page:
+          size: 20
+          totalElements: 1
+          totalPages: 1
+          number: 0

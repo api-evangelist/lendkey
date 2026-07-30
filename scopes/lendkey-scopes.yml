@@ -1,0 +1,23 @@
+generated: '2026-07-19'
+method: derived
+source: openapi/lendkey-esign-openapi.yml, openapi/lendkey-partner-integration-internal-openapi.yml,
+  openapi/lendkey-treasury-management-openapi.yml
+schemes:
+- name: oauth2
+  source: openapi/lendkey-esign-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /oauth2/token
+  description: OAuth2 client credentials flow via Kong Gateway
+- name: oauth2
+  source: openapi/lendkey-partner-integration-internal-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.lendkey.com/lo_partnerintegrationinternalapi/oauth2/token
+- name: oauth2
+  source: openapi/lendkey-treasury-management-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /oauth2/token
+  description: OAuth2 client credentials flow via Kong Gateway
+scopes: []

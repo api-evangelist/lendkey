@@ -1,0 +1,49 @@
+generated: '2026-07-19'
+method: generated
+source: >-
+  Generated from the operations in openapi/*.yml plus conventions/, errors/ and
+  sandbox/. No LendKey-published agent skills or AGENTS.md were found on
+  developer.lendkey.com, lendkey.com or the LendKey GitHub organization.
+note: >-
+  Every step in these skills is grounded in an operation that exists verbatim in the
+  referenced spec. The Integration API declares no operationIds, so that skill
+  references its operations by method and path.
+skills:
+- file: lendkey-esign-contract-flow.md
+  name: LendKey E-Sign contract flow
+  api: openapi/lendkey-esign-openapi.yml
+  operations:
+  - getOAuth2Token
+  - assignLenderTemplate
+  - listTemplates
+  - getTemplateByLenderAndProgram
+  - getTemplateById
+  - createApplicationContract
+  - getApplicationContracts
+  - getApplicationStatuses
+  - generateEmbeddedSigningLink
+  - getSignerDetails
+- file: lendkey-treasury-loan-ledger.md
+  name: LendKey Treasury loan ledger operations
+  api: openapi/lendkey-treasury-management-openapi.yml
+  operations:
+  - getOAuth2Token
+  - createLoan
+  - createDisbursement
+  - cancelDisbursement
+  - createPayment
+  - updateExternalId
+- file: lendkey-origination-intake.md
+  name: LendKey origination intake — lead, credit, score, board
+  api: openapi/lendkey-integration-openapi.yml
+  operations:
+  - POST /v1/oauth2/token
+  - POST /v1/leads/create
+  - POST /v1/credit/soft_pull
+  - POST /v1/credit/combined_monthly_debt
+  - POST /v1/credit/resolve_attributes
+  - POST /v1/scoring/score
+  - POST /v1/onboarding/onboard
+  - POST /v1/application/status
+  - POST /v1/notifications/emails
+  - GET /v1/notifications/emails/templates

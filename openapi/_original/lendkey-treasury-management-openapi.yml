@@ -1,0 +1,900 @@
+openapi: 3.0.3
+info:
+  title: Treasury Management API (via Kong Gateway)
+  version: v1
+  description: |
+    # Treasury Management API - Kong Gateway Documentation
+
+    ## Overview
+
+    The Treasury Management API provides endpoints for managing loan inventory, disbursements, payments, and treasury operations.
+    This API is accessed through Kong Gateway, which handles authentication via OAuth2.
+
+    ## Authentication
+
+    All requests to this API require OAuth2 authentication through Kong Gateway.
+
+    ### Step 1: Get OAuth2 Token
+
+    Before calling any endpoint, you must obtain an access token:
+
+    **QA Environment:**
+    ```bash
+    curl -X POST https://api.lkeyqa.com/TreasuryMgmtQa/oauth2/token \
+      -d "grant_type=client_credentials" \
+      -d "client_id=YOUR_CLIENT_ID" \
+      -d "client_secret=YOUR_CLIENT_SECRET"
+    ```
+
+    **DEV Environment:**
+    ```bash
+    curl -X POST https://api.lkeyqa.com/TreasuryMgmtDev/oauth2/token \
+      -d "grant_type=client_credentials" \
+      -d "client_id=YOUR_CLIENT_ID" \
+      -d "client_secret=YOUR_CLIENT_SECRET"
+    ```
+
+    **Staging Environment:**
+    ```bash
+    curl -X POST https://api.lkeystaging.com/TreasuryMgmt/oauth2/token \
+      -d "grant_type=client_credentials" \
+      -d "client_id=YOUR_CLIENT_ID" \
+      -d "client_secret=YOUR_CLIENT_SECRET"
+    ```
+
+    **Production Environment:**
+    ```bash
+    curl -X POST https://api.lendkey.com/TreasuryMgmt/oauth2/token \
+      -d "grant_type=client_credentials" \
+      -d "client_id=YOUR_CLIENT_ID" \
+      -d "client_secret=YOUR_CLIENT_SECRET"
+    ```
+
+    **Response:**
+    ```json
+    {
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "token_type": "bearer",
+      "expires_in": 7200
+    }
+    ```
+
+    ### Step 2: Use Token in API Calls
+
+    Include the access token in the `Authorization` header:
+    ```
+    Authorization: Bearer YOUR_ACCESS_TOKEN
+    ```
+
+    **Token Lifetime:** 2 hours (7200 seconds)
+
+    ## Base URLs (Kong Gateway)
+
+    | Environment | Kong Base URL | Backend OutSystems URL |
+    |------------|---------------|------------------------|
+    | **DEV** | `https://api.lkeyqa.com/TreasuryMgmtDev` | `https://lendkey-dev.outsystemsenterprise.com` |
+    | **QA** | `https://api.lkeyqa.com/TreasuryMgmtQa` | `https://os.lkeyqa.com` |
+    | **Staging** | `https://api.lkeystaging.com/TreasuryMgmt` | `https://os.lkeystaging.com` |
+    | **Production** | `https://api.lendkey.com/TreasuryMgmt` | `https://os.lendkey.com` |
+
+    **Note:** Route names are case-insensitive (`/TreasuryMgmt`, `/treasurymgmt`, `/TREASURYMGMT` all work)
+
+    ## How Kong Routes Requests
+
+    When you call Kong:
+    ```
+    https://api.lkeyqa.com/TreasuryMgmtQa/v1/createLoan
+    ```
+
+    Kong:
+    1. Validates your OAuth2 token
+    2. Strips the `/TreasuryMgmtQa` prefix
+    3. Adds OutSystems authentication headers (X-Auth-Key, X-Auth-AppId)
+    4. Forwards to: `https://os.lkeyqa.com/TreasuryManagement_API/rest/v1/createLoan`
+
+    You never need to manage OutSystems credentials directly!
+
+    ## Getting Started
+
+    1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal
+    2. **Get Token:** Use the OAuth2 token endpoint for your environment
+    3. **Call API:** Use the token in the Authorization header
+    4. **Refresh:** Get a new token every 2 hours
+
+  contact:
+    name: LendKey Platform Team
+    url: https://lendkey.com
+
+servers:
+  - url: https://api.lendkey.com/TreasuryMgmt
+    description: Production Environment
+
+security:
+  - oauth2: []
+
+paths:
+  /oauth2/token:
+    post:
+      summary: Get OAuth2 Access Token
+      description: |
+        Obtain an OAuth2 access token for authenticating API requests.
+        This endpoint is provided by Kong Gateway.
+
+        **Token expires after 2 hours** - you'll need to request a new token when it expires.
+      tags:
+        - Authentication
+      operationId: getOAuth2Token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - grant_type
+                - client_id
+                - client_secret
+              properties:
+                grant_type:
+                  type: string
+                  enum: [client_credentials]
+                  description: OAuth2 grant type (always "client_credentials")
+                client_id:
+                  type: string
+                  description: Your client ID from Kong Developer Portal
+                  example: "abc123def456"
+                client_secret:
+                  type: string
+                  format: password
+                  description: Your client secret from Kong Developer Portal
+                  example: "xyz789secret123"
+      responses:
+        '200':
+          description: Access token successfully generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: JWT access token to use in Authorization header
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  token_type:
+                    type: string
+                    enum: [bearer]
+                    description: Token type (always "bearer")
+                  expires_in:
+                    type: integer
+                    description: Token lifetime in seconds (7200 = 2 hours)
+                    example: 7200
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /v1/createLoan:
+    post:
+      summary: Create Loan
+      description: |
+        Creates loan inventory and treasury management entries.
+
+        This endpoint creates complete loan records including:
+        - Loan details (principal, term, product)
+        - Associated persons and parties
+        - Initial disbursements
+
+        **Kong Route:** `/v1/createLoan`
+        **Backend:** `/TreasuryManagement_API/rest/v1/createLoan`
+      tags:
+        - Loans
+      operationId: createLoan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateLoanRequest'
+            examples:
+              basicLoan:
+                summary: Basic loan creation
+                value:
+                  - name: "Personal Loan 2025"
+                    externalID: "LOAN-12345"
+                    applicationID: "APP-67890"
+                    maxPrincipal: 50000.00
+                    productName: "Standard Personal Loan"
+                    term: 60
+                    startDate: "2025-01-15"
+                    disbursement:
+                      - amount: 50000.00
+                        externalID: "DISB-12345"
+                        startDate: "2025-01-15"
+                    loanPerson:
+                      - personId: "PER-001"
+                        role: "Borrower"
+                    loanParty:
+                      - partyId: "PARTY-001"
+                        role: "Lender"
+      responses:
+        '200':
+          description: Loan successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateLoanResponse'
+        '207':
+          description: Multi-status (partial success)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateLoanResponse'
+        '400':
+          description: Bad request (validation errors)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized (invalid or expired token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /v1/createDisbursement:
+    post:
+      summary: Create Disbursement
+      description: |
+        Processes disbursement transactions for existing loans.
+
+        Use this endpoint to record fund disbursements to borrowers after loan creation.
+
+        **Kong Route:** `/v1/createDisbursement`
+        **Backend:** `/TreasuryManagement_API/rest/v1/createDisbursement`
+      tags:
+        - Disbursements
+      operationId: createDisbursement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDisbursementRequest'
+            examples:
+              standardDisbursement:
+                summary: Standard disbursement
+                value:
+                  loanUUID: "550e8400-e29b-41d4-a716-446655440000"
+                  amount: 25000.50
+                  externalID: "DISB-2025-001"
+                  startDate: "2025-01-15"
+      responses:
+        '200':
+          description: Disbursement successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateDisbursementResponse'
+        '207':
+          description: Multi-status (partial success)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateDisbursementResponse'
+        '400':
+          description: Bad request (validation errors)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized (invalid or expired token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /v1/cancelDisbursement:
+    post:
+      summary: Cancel Disbursement
+      description: |
+        Reverses a previously recorded disbursement.
+
+        Use this endpoint to cancel/reverse a disbursement transaction.
+
+        **Kong Route:** `/v1/cancelDisbursement`
+        **Backend:** `/TreasuryManagement_API/rest/v1/cancelDisbursement`
+      tags:
+        - Disbursements
+      operationId: cancelDisbursement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelDisbursementRequest'
+            examples:
+              cancelDisbursement:
+                summary: Cancel a disbursement
+                value:
+                  subledger_Category: "Disbursement Cancellation"
+                  external_id: "DISB-2025-001"
+                  account_id: "ACC-12345"
+                  entity_type: "Borrower"
+                  amount: 25000.50
+                  disbursement_uuid: "550e8400-e29b-41d4-a716-446655440000"
+                  created_by: "system_admin"
+      responses:
+        '200':
+          description: Disbursement successfully cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelDisbursementResponse'
+        '207':
+          description: Multi-status (partial success)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelDisbursementResponse'
+        '400':
+          description: Bad request (validation errors)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized (invalid or expired token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /v1/createPayment:
+    post:
+      summary: Create Payment
+      description: |
+        Inserts payment/remittance data for loan obligations.
+
+        Use this endpoint to record payments made against loans, including:
+        - Interest payments
+        - Principal payments
+        - Late fees
+        - Other charges
+
+        **Kong Route:** `/v1/createPayment`
+        **Backend:** `/TreasuryManagement_API/rest/v1/createPayment`
+      tags:
+        - Payments
+      operationId: createPayment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentRequest'
+            examples:
+              principalPayment:
+                summary: Principal payment
+                value:
+                  subledgerCategory: "Payment"
+                  isSubledgerReversal: false
+                  subledgerItemCode: "PRINCIPAL"
+                  paymentId: "PMT-2025-001"
+                  payorEntityType: "Borrower"
+                  amount: 1000.00
+                  loanExternalId: "LOAN-12345"
+                  purpose: "Monthly principal payment"
+              interestPayment:
+                summary: Interest payment
+                value:
+                  subledgerCategory: "Payment"
+                  isSubledgerReversal: false
+                  subledgerItemCode: "INTEREST"
+                  paymentId: "PMT-2025-002"
+                  payorEntityType: "Borrower"
+                  amount: 150.00
+                  loanExternalId: "LOAN-12345"
+                  purpose: "Monthly interest payment"
+              lateFeePayment:
+                summary: Late fee payment
+                value:
+                  subledgerCategory: "Payment"
+                  isSubledgerReversal: false
+                  subledgerItemCode: "Late Fee"
+                  paymentId: "PMT-2025-003"
+                  payorEntityType: "Borrower"
+                  amount: 25.00
+                  loanExternalId: "LOAN-12345"
+                  purpose: "Late payment fee"
+      responses:
+        '200':
+          description: Payment successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePaymentResponse'
+        '207':
+          description: Multi-status (partial success)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePaymentResponse'
+        '400':
+          description: Bad request (validation errors)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized (invalid or expired token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /v1/updateExternalId:
+    patch:
+      summary: Update External ID
+      description: |
+        Updates external IDs in the Capital Ledger Target table.
+
+        Use this endpoint to update the external identifier for a capital ledger record.
+
+        **Kong Route:** `/v1/updateExternalId`
+        **Backend:** `/TreasuryManagement_API/rest/v1/updateExternalId`
+      tags:
+        - Ledger Management
+      operationId: updateExternalId
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateExternalIdRequest'
+            examples:
+              updateId:
+                summary: Update external ID
+                value:
+                  capitalLedgerTargetId: 12345
+                  externalId: "NEW-EXT-ID-2025"
+      responses:
+        '200':
+          description: External ID successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateExternalIdResponse'
+        '400':
+          description: Bad request (validation errors)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized (invalid or expired token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: OAuth2 client credentials flow via Kong Gateway
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/token
+          scopes: {}
+
+  schemas:
+    CreateLoanRequest:
+      type: object
+      required:
+        - name
+        - externalID
+        - applicationID
+        - maxPrincipal
+        - productName
+        - term
+      properties:
+        name:
+          type: string
+          description: Loan name/description
+          example: "Personal Loan 2025"
+        externalID:
+          type: string
+          description: External loan identifier
+          example: "LOAN-12345"
+        applicationID:
+          type: string
+          description: Associated application ID
+          example: "APP-67890"
+        maxPrincipal:
+          type: number
+          format: double
+          description: Maximum principal amount
+          example: 50000.00
+        productName:
+          type: string
+          description: Loan product name
+          example: "Standard Personal Loan"
+        term:
+          type: integer
+          description: Loan term in months
+          example: 60
+        startDate:
+          type: string
+          format: date
+          description: Loan start date (YYYY-MM-DD)
+          example: "2025-01-15"
+        endDate:
+          type: string
+          format: date
+          description: Loan end date (YYYY-MM-DD)
+          example: "2030-01-15"
+        disbursement:
+          type: array
+          description: Initial disbursements for the loan
+          items:
+            type: object
+            properties:
+              amount:
+                type: number
+                format: double
+                example: 50000.00
+              externalID:
+                type: string
+                example: "DISB-12345"
+              startDate:
+                type: string
+                format: date
+                example: "2025-01-15"
+        loanPerson:
+          type: array
+          description: Persons associated with the loan
+          items:
+            type: object
+            properties:
+              personId:
+                type: string
+                example: "PER-001"
+              role:
+                type: string
+                example: "Borrower"
+        loanParty:
+          type: array
+          description: Parties associated with the loan
+          items:
+            type: object
+            properties:
+              partyId:
+                type: string
+                example: "PARTY-001"
+              role:
+                type: string
+                example: "Lender"
+
+    CreateLoanResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Overall success indicator
+          example: true
+        statusCode:
+          type: integer
+          description: HTTP status code (200, 207, 400, 500)
+          example: 200
+        responseDetails:
+          type: array
+          items:
+            type: object
+            properties:
+              uuid:
+                type: string
+                format: uuid
+                description: Generated loan UUID
+                example: "550e8400-e29b-41d4-a716-446655440000"
+              externalId:
+                type: string
+                description: External loan identifier
+                example: "LOAN-12345"
+              errors:
+                type: array
+                description: Array of error messages (if any)
+                items:
+                  type: string
+
+    CreateDisbursementRequest:
+      type: object
+      required:
+        - loanUUID
+        - amount
+        - externalID
+      properties:
+        loanUUID:
+          type: string
+          format: uuid
+          description: UUID of the loan to disburse
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        amount:
+          type: number
+          format: double
+          description: Disbursement amount
+          example: 25000.50
+        externalID:
+          type: string
+          description: External disbursement identifier
+          example: "DISB-2025-001"
+        startDate:
+          type: string
+          format: date
+          description: Disbursement date (YYYY-MM-DD)
+          example: "2025-01-15"
+
+    CreateDisbursementResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Overall success indicator
+          example: true
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 200
+        responseDetails:
+          type: array
+          items:
+            type: object
+            properties:
+              uuid:
+                type: string
+                format: uuid
+                description: Generated disbursement UUID
+                example: "660e8400-e29b-41d4-a716-446655440000"
+              errors:
+                type: array
+                description: Array of error messages (if any)
+                items:
+                  type: string
+
+    CancelDisbursementRequest:
+      type: object
+      required:
+        - subledger_Category
+        - external_id
+        - account_id
+        - entity_type
+        - amount
+        - disbursement_uuid
+        - created_by
+      properties:
+        subledger_Category:
+          type: string
+          enum: ["Disbursement Cancellation"]
+          description: Category (must be "Disbursement Cancellation")
+          example: "Disbursement Cancellation"
+        external_id:
+          type: string
+          description: External disbursement identifier
+          example: "DISB-2025-001"
+        account_id:
+          type: string
+          description: Account identifier
+          example: "ACC-12345"
+        entity_type:
+          type: string
+          description: Entity type (e.g., Borrower, Lender)
+          example: "Borrower"
+        amount:
+          type: number
+          format: double
+          description: Disbursement amount to cancel
+          example: 25000.50
+        disbursement_uuid:
+          type: string
+          format: uuid
+          description: UUID of the disbursement to cancel
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        created_by:
+          type: string
+          description: User or system initiating the cancellation
+          example: "system_admin"
+
+    CancelDisbursementResponse:
+      type: object
+      properties:
+        IsSuccess:
+          type: boolean
+          description: Success indicator
+          example: true
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 200
+        errors:
+          type: array
+          description: Array of error messages (if any)
+          items:
+            type: string
+
+    CreatePaymentRequest:
+      type: object
+      required:
+        - subledgerCategory
+        - isSubledgerReversal
+        - subledgerItemCode
+        - paymentId
+        - payorEntityType
+        - amount
+        - loanExternalId
+      properties:
+        subledgerCategory:
+          type: string
+          enum: ["Payment"]
+          description: Subledger category (must be "Payment")
+          example: "Payment"
+        isSubledgerReversal:
+          type: boolean
+          description: Whether this is a reversal transaction
+          example: false
+        subledgerItemCode:
+          type: string
+          enum: ["INTEREST", "PRINCIPAL", "Late Fee", "NSF Fee", "Other"]
+          description: Type of payment
+          example: "PRINCIPAL"
+        paymentId:
+          type: string
+          description: Unique payment identifier
+          example: "PMT-2025-001"
+        payorEntityType:
+          type: string
+          description: Type of entity making payment (e.g., Borrower)
+          example: "Borrower"
+        amount:
+          type: number
+          format: double
+          description: Payment amount
+          example: 1000.00
+        loanExternalId:
+          type: string
+          description: External loan identifier
+          example: "LOAN-12345"
+        purpose:
+          type: string
+          description: Optional payment purpose/description
+          example: "Monthly principal payment"
+
+    CreatePaymentResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Overall success indicator
+          example: true
+        statusCode:
+          type: integer
+          description: HTTP status code (200, 207, 400, 500)
+          example: 200
+        responseDetails:
+          type: array
+          items:
+            type: object
+            properties:
+              paymentId:
+                type: string
+                description: Payment identifier
+                example: "PMT-2025-001"
+              errors:
+                type: array
+                description: Array of error messages (if any)
+                items:
+                  type: string
+
+    UpdateExternalIdRequest:
+      type: object
+      required:
+        - capitalLedgerTargetId
+        - externalId
+      properties:
+        capitalLedgerTargetId:
+          type: integer
+          format: int64
+          description: Capital Ledger Target record ID
+          example: 12345
+        externalId:
+          type: string
+          description: New external identifier
+          example: "NEW-EXT-ID-2025"
+
+    UpdateExternalIdResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Success indicator
+          example: true
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 200
+        errors:
+          type: array
+          description: Array of error messages (if any)
+          items:
+            type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Success indicator (always false for errors)
+          example: false
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        error:
+          type: string
+          description: Error message
+          example: "Invalid request"
+        errors:
+          type: array
+          description: Detailed error messages
+          items:
+            type: string
+          example:
+            - "Field 'loanUUID' is required"
+            - "Field 'amount' must be greater than 0"
+
+tags:
+  - name: Authentication
+    description: OAuth2 authentication endpoints
+  - name: Loans
+    description: Loan creation and management
+  - name: Disbursements
+    description: Disbursement processing and cancellation
+  - name: Payments
+    description: Payment and remittance processing
+  - name: Ledger Management
+    description: Capital ledger operations

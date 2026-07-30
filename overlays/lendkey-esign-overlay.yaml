@@ -1,0 +1,27 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for LendKey E-Sign API (via Kong Gateway)
+  version: 1.0.0
+extends: openapi/lendkey-esign-openapi.yml
+x-generated: '2026-07-19'
+x-method: generated
+x-note: Captures API Evangelist enrichment as an overlay. The harvested spec in openapi/ is never mutated.
+actions:
+- target: $.info
+  update:
+    x-apievangelist-slug: lendkey
+    x-apievangelist-api-key: esign
+    x-apievangelist-harvested: '2026-07-19'
+    x-apievangelist-source: https://developer.lendkey.com/default/documentation
+    x-apievangelist-artifacts:
+      authentication: authentication/lendkey-authentication.yml
+      conventions: conventions/lendkey-conventions.yml
+      errors: errors/lendkey-problem-types.yml
+      lifecycle: lifecycle/lendkey-lifecycle.yml
+      sandbox: sandbox/lendkey-sandbox.yml
+      data_model: data-model/lendkey-data-model.yml
+      conformance: conformance/lendkey-conformance.yml
+- target: $.info
+  update:
+    x-apievangelist-note: Webhook surface is an INBOUND DocuSign Connect receiver, not a consumer-subscribable
+      event surface.

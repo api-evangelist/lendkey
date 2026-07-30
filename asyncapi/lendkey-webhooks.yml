@@ -1,0 +1,61 @@
+generated: '2026-07-19'
+method: searched
+source: https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+type: Webhooks
+spec_type: null
+summary: >-
+  LendKey publishes NO AsyncAPI document and NO consumer-subscribable event surface.
+  The only webhook interface in the four published specs is an INBOUND receiver:
+  the E-Sign API exposes POST /webhooks/docusign so DocuSign Connect can notify
+  LendKey of envelope events, plus a health check DocuSign Connect uses to verify
+  reachability. Integrators cannot register a callback URL with LendKey and receive
+  events; they must poll (getApplicationStatuses for envelope progress, POST
+  /v1/application/status for loan/application status).
+event_surface_for_consumers: false
+asyncapi_published: false
+webhook_endpoints:
+- direction: inbound
+  api: esign
+  operation: handleDocuSignWebhook
+  method: POST
+  path: /webhooks/docusign
+  base_url: https://api.lendkey.com/esign
+  producer: DocuSign Connect
+  consumer: LendKey E-Sign service
+  security: "none — the operation declares `security: []` and is unauthenticated at the gateway"
+  signature_header:
+    name: X-DocuSign-Signature-1
+    required: false
+    description: HMAC signature for verification (optional)
+  events_handled:
+  - Envelope is sent
+  - Envelope is delivered to recipients
+  - Envelope is signed/completed
+  - Envelope is declined
+  - Envelope is voided
+  - Recipient events
+  behavior: >-
+    Validates the envelope exists in the system, stores the status update, and
+    extracts/stores signer data when the envelope is completed.
+  payload: DocuSign webhook payload (untyped object, additionalProperties true)
+  responses: [200, 400, 404, 500]
+- direction: inbound
+  api: esign
+  operation: webhookHealthCheck
+  method: GET
+  path: /webhooks/docusign/health
+  purpose: Reachability check for DocuSign Connect verification.
+  security: none
+  response: '{ "status": "ok", "service": "docusign-webhook" }'
+polling_alternatives:
+- operation: openapi/lendkey-esign-openapi.yml#getApplicationStatuses
+  description: Status history of an e-signature envelope, by application_uuid.
+- operation: "openapi/lendkey-integration-openapi.yml#POST /v1/application/status"
+  description: >-
+    Current status of one or more applications/loans by reference key, including a
+    blockages[] array describing what is preventing the application from advancing.
+rating_note: >-
+  No Webhooks or AsyncAPI pointer is wired in apis.yml. The webhooks_advertised and
+  asyncapi_events checks are about a provider advertising events that consumers can
+  subscribe to; LendKey advertises none. Recording the inbound receiver here rather
+  than claiming an event surface it does not have.

@@ -1,0 +1,216 @@
+openapi: 3.0.3
+info:
+  title: Partner Integration Internal API - Production
+  version: "1"
+  description: |
+    # Partner Integration Internal API
+
+    ## Overview
+
+    The Partner Integration Internal API provides endpoints for logging API requests and responses
+    for monitoring and debugging purposes. This is an internal API used by the loan origination service
+    and other internal services.
+
+    ## Authentication
+
+    All requests to this API require OAuth2 authentication.
+
+    ### Step 1: Get OAuth2 Token
+
+    Before calling any endpoint, you must obtain an access token:
+
+    **Production Environment:**
+    ```bash
+    curl -X POST https://api.lendkey.com/lo_partnerintegrationinternalapi/oauth2/token \
+      -d "grant_type=client_credentials" \
+      -d "client_id=YOUR_CLIENT_ID" \
+      -d "client_secret=YOUR_CLIENT_SECRET"
+    ```
+
+    **Response:**
+    ```json
+    {
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "token_type": "bearer",
+      "expires_in": 7200
+    }
+    ```
+
+    ### Step 2: Use Token in API Calls
+
+    Include the access token in the `Authorization` header:
+    ```
+    Authorization: Bearer YOUR_ACCESS_TOKEN
+    ```
+
+    ## Base URLs
+
+    - **API URL**: `https://api.lendkey.com/lo_partnerintegrationinternalapi`
+
+servers:
+  - url: https://api.lendkey.com/lo_partnerintegrationinternalapi
+    description: Production Environment
+
+paths:
+  /requestLog:
+    post:
+      tags:
+        - internal
+      summary: Create Request Log
+      description: |
+        Creates a new request log entry for tracking API requests.
+        Returns a requestLogId that should be used in the PUT endpoint to update the log with response details.
+      operationId: Common_CreateRequestLog
+      parameters:
+        - name: X-Organization-Id
+          in: header
+          required: false
+          schema:
+            type: string
+            default: ""
+          description: Contains the UUID of the organization on behalf of which this request was created.
+        - name: requestSource
+          in: header
+          required: false
+          schema:
+            type: string
+            default: ""
+          description: |
+            - Contains the name of the source on behalf of which the request was made.
+            - Request sources can be added and updated using the program rollover tool.
+            - Naming Convention: "sourcetype_productname_sourcename"
+                - sourcetype : Could be either "INT" for internal sources and "EXT" for the external sources.
+                - productname : Name of the product. Example: "HIL", "PSL", "ALIRO" etc.
+                - sourcename : Name of the source. Example: "MERCHANT_PORTAL", "GREENHOUSE", "LYON" etc.
+            - Examples:
+                - INT_HIL_MERCHANT_PORTAL
+                - INT_HIL_GREENHOUSE
+                - EXT_HIL_LYON
+        - name: requestedBy
+          in: header
+          required: false
+          schema:
+            type: string
+            default: ""
+          description: Contains the email address of the user sending the request.
+      requestBody:
+        description: |
+          - requestBody: Should contain the stringified JSON of the request body.
+          - requestUrl: Contains the endpoint URL to which the request was made.
+          - requestCallType: Contains the call type of the endpoint which was called. Refer to the Partner Integration API documentation for valid call types.
+          - searchableValues: Contains all the searchable text separated with '###'. This string is used by the search feature on the 'Partner API Dashboard'.
+
+          EXAMPLE: Suppose your request has 'applicationUuid' and 'customerName', you can create a string in the following way: "abcd-1234-abcd-1234###John Doe"
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestLog'
+      responses:
+        '200':
+          description: |
+            SUCCESS (Status Code: 200):
+            Will return the 'requestLogId' which should be used as an input to the PUT endpoint.
+
+            FAILURE (Status Code: 400, 403, 404, 500, 503):
+            Will return the error message.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogRequestResponse'
+
+    put:
+      tags:
+        - internal
+      summary: Update Request Log
+      description: Updates an existing request log entry with response details and success status.
+      operationId: Common_UpdateRequestLog
+      requestBody:
+        description: |
+          - requestLogId (Long Integer): The identifier of the request log record to be updated.
+          - responseBody (Text): Should contain the stringified JSON of the response body.
+          - wasRequestSuccessful (Boolean): Contains whether the API request successful.
+          - searchableValues (Text): Contains all the searchable text separated with '###'. This string is used by the search feature on the 'Partner API Dashboard'.
+
+          EXAMPLE: Suppose your request has 'applicationUuid' and 'customerName', you can create a string in the following way: "abcd-1234-abcd-1234###John Doe"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResponseLog'
+      responses:
+        '200':
+          description: |
+            SUCCESS (Status Code: 200):
+            Will return the 'requestLogId' which should be used as an input to the PUT endpoint.
+
+            FAILURE (Status Code: 400, 403, 404, 500, 503):
+            Will return the error message.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogRequestResponse'
+
+components:
+  schemas:
+    LogRequestResponse:
+      description: Response containing the request log ID and optional error message
+      type: object
+      properties:
+        requestLogId:
+          type: integer
+          format: int64
+          example: 1234567891234567
+        error:
+          type: string
+          default: ""
+
+    RequestLog:
+      description: Request log details to be created
+      type: object
+      properties:
+        requestBody:
+          type: string
+          default: ""
+        requestUrl:
+          type: string
+          default: ""
+        requestCallType:
+          type: string
+          default: ""
+        searchableValues:
+          type: string
+          default: ""
+
+    ResponseLog:
+      description: Response log details to update an existing request log
+      type: object
+      properties:
+        requestLogId:
+          type: integer
+          format: int64
+          example: 1234567891234567
+        responseBody:
+          type: string
+          default: ""
+        wasRequestSuccessful:
+          type: boolean
+          example: false
+        searchableValues:
+          type: string
+          default: ""
+
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.lendkey.com/lo_partnerintegrationinternalapi/oauth2/token
+          scopes: {}
+
+security:
+  - oauth2: []
+
+tags:
+  - name: internal
+    description: Internal API operations for request logging

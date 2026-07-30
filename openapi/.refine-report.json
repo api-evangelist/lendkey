@@ -1,0 +1,42 @@
+{
+  "provider": "lendkey",
+  "sources": [
+    "lendkey-application-contracts-api-openapi.yml",
+    "lendkey-applications-api-openapi.yml",
+    "lendkey-auth-api-openapi.yml",
+    "lendkey-authentication-api-openapi.yml",
+    "lendkey-credit-risk-api-openapi.yml",
+    "lendkey-disbursements-api-openapi.yml",
+    "lendkey-email-api-openapi.yml",
+    "lendkey-internal-api-openapi.yml",
+    "lendkey-leads-api-openapi.yml",
+    "lendkey-ledger-management-api-openapi.yml",
+    "lendkey-lender-templates-api-openapi.yml",
+    "lendkey-loans-api-openapi.yml",
+    "lendkey-onboarding-api-openapi.yml",
+    "lendkey-payments-api-openapi.yml",
+    "lendkey-webhooks-api-openapi.yml"
+  ],
+  "outputs": [
+    "lendkey-application-contracts-api-openapi.yml",
+    "lendkey-applications-api-openapi.yml",
+    "lendkey-auth-api-openapi.yml",
+    "lendkey-authentication-api-openapi.yml",
+    "lendkey-credit-risk-api-openapi.yml",
+    "lendkey-disbursements-api-openapi.yml",
+    "lendkey-email-api-openapi.yml",
+    "lendkey-internal-api-openapi.yml",
+    "lendkey-leads-api-openapi.yml",
+    "lendkey-ledger-management-api-openapi.yml",
+    "lendkey-lender-templates-api-openapi.yml",
+    "lendkey-loans-api-openapi.yml",
+    "lendkey-onboarding-api-openapi.yml",
+    "lendkey-payments-api-openapi.yml",
+    "lendkey-webhooks-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

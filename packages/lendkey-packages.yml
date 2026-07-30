@@ -1,0 +1,36 @@
+generated: '2026-07-19'
+method: searched
+source: registry searches (npm, PyPI, RubyGems, Packagist, NuGet) + LendKey developer portal
+summary: >-
+  LendKey publishes no first-party client libraries. Integrators call the REST APIs
+  directly with an OAuth2 client-credentials token. Recorded as a negative result so
+  re-runs do not repeat the search. No SDKs pointer is wired in apis.yml because no
+  official SDK exists.
+packages: []
+registries_checked:
+- registry: npm
+  query: lendkey
+  result: no LendKey-published packages
+- registry: pypi
+  query: lendkey, lendkey-api
+  result: 404 — no packages
+- registry: rubygems
+  query: lendkey
+  result: empty
+- registry: packagist
+  query: lendkey
+  result: 0 results
+- registry: nuget
+  query: lendkey
+  result: 0 hits
+- registry: github
+  query: lendkey
+  result: >-
+    github.com/lendkey exists as the "LendKey Technologies, Inc." organization but
+    publishes no public client-library repositories. Public repositories matching
+    "lendkey" belong to unrelated personal accounts.
+docs_checked:
+- url: https://developer.lendkey.com/default/
+  result: >-
+    The Kong Developer Portal lists API specifications and a credential-registration
+    flow only — no SDK, CLI or code-sample downloads.

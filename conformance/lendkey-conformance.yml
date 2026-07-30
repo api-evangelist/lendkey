@@ -1,0 +1,113 @@
+generated: '2026-07-19'
+method: derived
+source: >-
+  openapi/lendkey-integration-openapi.yml, openapi/lendkey-treasury-management-openapi.yml,
+  openapi/lendkey-esign-openapi.yml, openapi/lendkey-partner-integration-internal-openapi.yml
+note: >-
+  Derived from the four published OpenAPI documents plus the Kong Developer Portal
+  docs. LendKey publishes no certification or compliance program page that could be
+  verified (no trust centre, no SOC 2 / ISO 27001 / PCI claim found on lendkey.com
+  or developer.lendkey.com), so no Compliance pointer is wired in apis.yml.
+standards:
+- id: openapi-3.0
+  conforms: true
+  evidence: >-
+    Four documents published at OpenAPI 3.0.2 (Integration API) and 3.0.3
+    (Treasury Management, E-Sign, Partner Integration Internal).
+- id: oauth2
+  conforms: true
+  evidence: >-
+    components.securitySchemes declares type oauth2 with the clientCredentials flow
+    on Treasury Management, E-Sign and Partner Integration Internal; the Integration
+    API implements the same grant as an explicit POST /v1/oauth2/token operation.
+- id: rfc6749-client-credentials
+  conforms: true
+  evidence: >-
+    grant_type=client_credentials with client_id/client_secret (or HTTP Basic on the
+    Integration API), returning access_token / token_type=bearer / expires_in.
+- id: rfc6750-bearer-token
+  conforms: true
+  evidence: "Authorization: Bearer <access_token> on all protected operations."
+- id: oidc
+  conforms: false
+  evidence: >-
+    No openIdConnect security scheme and no /.well-known/openid-configuration
+    document on any host.
+- id: rfc8414-oauth-authorization-server-metadata
+  conforms: false
+  evidence: /.well-known/oauth-authorization-server returns 404 on api.lendkey.com.
+- id: oauth2-scopes
+  conforms: false
+  evidence: >-
+    Every clientCredentials flow declares an empty scopes map; authorization is
+    coarse-grained per credential, not scoped per operation.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    No operation returns application/problem+json. Two proprietary envelopes are
+    used instead (application/hal+json Spring error object, and a flat
+    isSuccess/statusCode/errors JSON object).
+- id: hal
+  conforms: true
+  evidence: >-
+    The Integration API serves application/hal+json and defines HAL link and page
+    components (href; number/size/totalElements/totalPages).
+- id: json-api
+  conforms: false
+  evidence: No application/vnd.api+json media type or JSON:API document structure.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: /.well-known/security.txt returns 404 on www.lendkey.com and api.lendkey.com.
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: No Sunset or Deprecation header support documented; no deprecation policy.
+- id: idempotency
+  conforms: false
+  evidence: >-
+    No Idempotency-Key header or documented idempotent-retry contract. E-Sign
+    createApplicationContract returns 409 on a duplicate envelope, which is a
+    conflict guard rather than an idempotency contract.
+- id: pagination
+  conforms: partial
+  evidence: >-
+    HAL page metadata is defined in the Integration API component set; the
+    Kong-fronted APIs return unpaginated arrays and document no paging parameters.
+- id: rate-limiting-headers
+  conforms: false
+  evidence: No RateLimit / X-RateLimit / Retry-After headers documented.
+- id: webhooks
+  conforms: partial
+  evidence: >-
+    The E-Sign API exposes an inbound DocuSign Connect receiver
+    (POST /webhooks/docusign) plus a health check. This is LendKey consuming a third
+    party's events, not an outbound event surface consumers can subscribe to.
+- id: asyncapi
+  conforms: false
+  evidence: No AsyncAPI document and no consumer-facing event or streaming surface.
+- id: mcp
+  conforms: false
+  evidence: No published Model Context Protocol server.
+- id: fdx
+  conforms: false
+  evidence: >-
+    No Financial Data Exchange (FDX) API surface; LendKey's APIs are
+    origination/servicing integration APIs rather than data-sharing APIs.
+- id: fapi
+  conforms: false
+  evidence: >-
+    No FAPI security profile: no mTLS, no PAR, no proof-of-possession or
+    sender-constrained tokens; plain client_credentials bearer tokens only.
+- id: mutual-tls
+  conforms: false
+  evidence: No mutualTLS security scheme declared.
+domain_context:
+  sector: consumer and education lending (lending-as-a-service for credit unions and banks)
+  regulatory_surface_referenced_in_specs:
+  - FICO score fields (fico_score, fico_score_percentile, fico_score_date) on E-Sign borrowers
+  - Truth-in-Lending style disclosure fields on E-Sign contracts (apr, finance_charge,
+    amount_financed, total_of_payments)
+  - Soft credit pull, credit attribute resolution and scoring operations on the Integration API
+  - SSN and driver's licence data elements in applicant payloads
+  note: >-
+    These are data elements handled by the APIs, not compliance claims by LendKey.
+    No certification, audit report, or regulatory attestation is published.

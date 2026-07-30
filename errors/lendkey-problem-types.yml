@@ -1,0 +1,241 @@
+generated: '2026-07-19'
+method: derived
+source: >-
+  openapi/lendkey-integration-openapi.yml, openapi/lendkey-treasury-management-openapi.yml,
+  openapi/lendkey-esign-openapi.yml, openapi/lendkey-partner-integration-internal-openapi.yml
+format: proprietary
+format_note: >-
+  LendKey does not use RFC 9457 (application/problem+json). Two proprietary error
+  envelopes are published. The Integration API returns application/hal+json with a
+  Spring-style error object; the Kong-fronted APIs return application/json with a
+  flat isSuccess/statusCode/errors envelope. No stable error-type URIs, no error
+  codes, and no machine-readable reason strings are published — only HTTP status
+  plus a human-readable message — so agents must branch on HTTP status and, for
+  Treasury Management, on the per-item responseDetails[].errors array.
+
+envelopes:
+- name: hal-error
+  media_type: application/hal+json
+  used_by: [integration]
+  schema: openapi/lendkey-integration-openapi.yml#/components/schemas/error
+  fields:
+    id: UUID identifying this error occurrence (the only correlator LendKey publishes)
+    status: string status token, e.g. BAD_REQUEST, NOT_FOUND, "403"
+    message: human-readable description of what was invalid
+    debugMessage: nullable diagnostic string
+    timestamp: string timestamp of the failure
+    subErrors: array of field-level violations
+  suberror_fields:
+    object: the resource the violation applies to
+    field: the offending field name
+    rejectedValue: the value that was rejected
+    message: the validation message
+  example:
+    id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+    status: BAD_REQUEST
+    message: Describes what was invalid about the request, if possible.
+    debugMessage: null
+    timestamp: '2019-10-21 14:07:59'
+- name: kong-error
+  media_type: application/json
+  used_by: [treasury-management, esign, partner-integration-internal]
+  schema: openapi/lendkey-treasury-management-openapi.yml#/components/schemas/ErrorResponse
+  fields:
+    isSuccess: boolean, always false on error
+    statusCode: integer mirroring the HTTP status
+    error: single error message string
+    errors: array of detailed error message strings
+  example:
+    isSuccess: false
+    statusCode: 400
+    error: Invalid request
+    errors:
+    - "Field 'loanUUID' is required"
+    - "Field 'amount' must be greater than 0"
+
+partial_success:
+  status: 207
+  applies_to: [createLoan, createDisbursement, cancelDisbursement, createPayment]
+  description: >-
+    Treasury Management write operations accept batches and can return HTTP 207
+    Multi-Status. The top-level call succeeded but individual items may have failed;
+    per-item failures appear in responseDetails[].errors. Treat 207 as a partial
+    failure and reconcile item by item — never as a clean success.
+  remediation: >-
+    Inspect isSuccess and every responseDetails[] entry. Retry only the items whose
+    errors[] array is non-empty, and reuse the same caller-supplied externalID /
+    paymentId so the retry maps to the same record (LendKey documents no
+    idempotency key, so duplicate submission is a real risk).
+
+problems:
+- status: 400
+  title: Invalid request, unable to process the request with the information provided.
+  envelope: hal-error
+  media_type: application/hal+json
+  remediation: >-
+    Read subErrors[] for the offending object/field/rejectedValue and correct the
+    payload. Capture the error id UUID before contacting LendKey support.
+  source_operations:
+  - openapi/lendkey-integration-openapi.yml#POST /v1/oauth2/token
+  - openapi/lendkey-integration-openapi.yml#POST /v1/application/status
+  - openapi/lendkey-integration-openapi.yml#POST /v1/credit/soft_pull
+  - openapi/lendkey-integration-openapi.yml#POST /v1/credit/combined_monthly_debt
+  - openapi/lendkey-integration-openapi.yml#POST /v1/credit/resolve_attributes
+  - openapi/lendkey-integration-openapi.yml#POST /v1/scoring/score
+  - openapi/lendkey-integration-openapi.yml#POST /v1/leads/create
+  - openapi/lendkey-integration-openapi.yml#POST /v1/notifications/emails
+  - openapi/lendkey-integration-openapi.yml#GET /v1/notifications/emails/templates
+  - openapi/lendkey-integration-openapi.yml#POST /v1/onboarding/onboard
+- status: 500
+  title: An unexpected server error occurred.
+  envelope: hal-error
+  media_type: application/hal+json
+  remediation: >-
+    Retry with backoff. Non-idempotent writes (leads/create, onboarding/onboard,
+    credit/soft_pull) must be reconciled before retrying — a soft credit pull may
+    have been performed even when the response failed.
+  source_operations:
+  - openapi/lendkey-integration-openapi.yml#POST /v1/oauth2/token
+  - openapi/lendkey-integration-openapi.yml#POST /v1/application/status
+  - openapi/lendkey-integration-openapi.yml#POST /v1/credit/soft_pull
+  - openapi/lendkey-integration-openapi.yml#POST /v1/scoring/score
+  - openapi/lendkey-integration-openapi.yml#POST /v1/leads/create
+  - openapi/lendkey-integration-openapi.yml#POST /v1/onboarding/onboard
+- status: 400
+  title: Bad request (validation errors)
+  envelope: kong-error
+  media_type: application/json
+  remediation: >-
+    errors[] lists the failing fields verbatim. Correct and resubmit; required
+    fields are declared in the request schemas.
+  source_operations:
+  - openapi/lendkey-treasury-management-openapi.yml#createLoan
+  - openapi/lendkey-treasury-management-openapi.yml#createDisbursement
+  - openapi/lendkey-treasury-management-openapi.yml#cancelDisbursement
+  - openapi/lendkey-treasury-management-openapi.yml#createPayment
+  - openapi/lendkey-treasury-management-openapi.yml#updateExternalId
+  - openapi/lendkey-esign-openapi.yml#createApplicationContract
+  - openapi/lendkey-esign-openapi.yml#assignLenderTemplate
+- status: 400
+  title: Bad request (invalid payload)
+  envelope: kong-error
+  media_type: application/json
+  remediation: >-
+    The inbound DocuSign Connect payload could not be parsed. Verify the DocuSign
+    Connect configuration and the optional X-DocuSign-Signature-1 HMAC header.
+  source_operations:
+  - openapi/lendkey-esign-openapi.yml#handleDocuSignWebhook
+- status: 401
+  title: Invalid credentials
+  envelope: kong-error
+  media_type: application/json
+  remediation: >-
+    The client_id / client_secret pair issued by the Kong Developer Portal was
+    rejected at the token endpoint. Re-issue credentials in the portal.
+  source_operations:
+  - openapi/lendkey-treasury-management-openapi.yml#getOAuth2Token
+  - openapi/lendkey-esign-openapi.yml#getOAuth2Token
+- status: 401
+  title: Unauthorized (invalid or expired token)
+  envelope: kong-error
+  media_type: application/json
+  remediation: >-
+    Bearer tokens expire after 7200 seconds (2 hours). Mint a fresh token at the
+    route's /oauth2/token endpoint and replay the request. Refresh proactively
+    rather than on 401 — no refresh_token grant is offered.
+  source_operations:
+  - openapi/lendkey-treasury-management-openapi.yml#createLoan
+  - openapi/lendkey-treasury-management-openapi.yml#createDisbursement
+  - openapi/lendkey-treasury-management-openapi.yml#cancelDisbursement
+  - openapi/lendkey-treasury-management-openapi.yml#createPayment
+  - openapi/lendkey-treasury-management-openapi.yml#updateExternalId
+  - openapi/lendkey-esign-openapi.yml#getApplicationContracts
+  - openapi/lendkey-esign-openapi.yml#createApplicationContract
+  - openapi/lendkey-esign-openapi.yml#getApplicationStatuses
+  - openapi/lendkey-esign-openapi.yml#getSignerDetails
+  - openapi/lendkey-esign-openapi.yml#generateEmbeddedSigningLink
+  - openapi/lendkey-esign-openapi.yml#listTemplates
+  - openapi/lendkey-esign-openapi.yml#assignLenderTemplate
+  - openapi/lendkey-esign-openapi.yml#getTemplateById
+  - openapi/lendkey-esign-openapi.yml#getTemplateByLenderAndProgram
+- status: 404
+  title: Not found
+  envelope: kong-error
+  remediation: Verify the lender_uuid and program_id query parameters.
+  source_operations:
+  - openapi/lendkey-esign-openapi.yml#getApplicationContracts
+- status: 404
+  title: Not found (template or application not found)
+  envelope: kong-error
+  remediation: >-
+    A lender template must be assigned via assignLenderTemplate before an
+    application contract can be created for that lender and program.
+  source_operations:
+  - openapi/lendkey-esign-openapi.yml#createApplicationContract
+- status: 404
+  title: Application not found
+  envelope: kong-error
+  remediation: Confirm the application_uuid exists in the E-Sign system.
+  source_operations:
+  - openapi/lendkey-esign-openapi.yml#getApplicationStatuses
+- status: 404
+  title: Signer not found
+  envelope: kong-error
+  remediation: >-
+    Signer details are only available once the envelope is completed. Poll
+    getApplicationStatuses until the envelope reaches a completed status.
+  source_operations:
+  - openapi/lendkey-esign-openapi.yml#getSignerDetails
+- status: 404
+  title: Template not found
+  envelope: kong-error
+  remediation: List templates with listTemplates to obtain a valid template id.
+  source_operations:
+  - openapi/lendkey-esign-openapi.yml#getTemplateById
+- status: 404
+  title: Envelope not found in system
+  envelope: kong-error
+  remediation: >-
+    The DocuSign envelope referenced by the inbound webhook has no matching record.
+    Confirm the envelope was created through createApplicationContract.
+  source_operations:
+  - openapi/lendkey-esign-openapi.yml#handleDocuSignWebhook
+- status: 409
+  title: Conflict (envelope already exists)
+  envelope: kong-error
+  remediation: >-
+    An e-signature envelope already exists for this application_uuid. Treat 409 as
+    the de-facto duplicate-submission guard for contract creation — it is the
+    closest thing LendKey publishes to idempotent create semantics.
+  source_operations:
+  - openapi/lendkey-esign-openapi.yml#createApplicationContract
+- status: 500
+  title: Internal server error
+  envelope: kong-error
+  remediation: >-
+    Retry with backoff. For Treasury Management writes, reconcile with the
+    caller-supplied externalID / paymentId before retrying to avoid a duplicate
+    ledger entry.
+  source_operations:
+  - openapi/lendkey-treasury-management-openapi.yml#createLoan
+  - openapi/lendkey-treasury-management-openapi.yml#createDisbursement
+  - openapi/lendkey-treasury-management-openapi.yml#cancelDisbursement
+  - openapi/lendkey-treasury-management-openapi.yml#createPayment
+  - openapi/lendkey-treasury-management-openapi.yml#updateExternalId
+  - openapi/lendkey-esign-openapi.yml#getApplicationContracts
+  - openapi/lendkey-esign-openapi.yml#createApplicationContract
+  - openapi/lendkey-esign-openapi.yml#getApplicationStatuses
+  - openapi/lendkey-esign-openapi.yml#getSignerDetails
+  - openapi/lendkey-esign-openapi.yml#generateEmbeddedSigningLink
+  - openapi/lendkey-esign-openapi.yml#listTemplates
+  - openapi/lendkey-esign-openapi.yml#assignLenderTemplate
+  - openapi/lendkey-esign-openapi.yml#getTemplateById
+  - openapi/lendkey-esign-openapi.yml#getTemplateByLenderAndProgram
+  - openapi/lendkey-esign-openapi.yml#handleDocuSignWebhook
+
+gaps:
+- The Partner Integration Internal API declares only a 200 response; its 400/403/404/500
+  failure modes are described in prose in the response description but are not modelled.
+- No error codes or stable type URIs are published on any API.
+- The Integration API declares Forbidden (403) and NotFound (404) response components
+  that no operation references.

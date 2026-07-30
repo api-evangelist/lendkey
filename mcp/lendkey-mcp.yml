@@ -1,0 +1,199 @@
+generated: '2026-07-19'
+method: derived
+status: candidate
+source: openapi/*.yml (derived); no LendKey MCP server is published
+note: No official or community MCP server for LendKey was found in the MCP registry, npm, the Kong Developer
+  Portal, or LendKey documentation. The tools below are a CANDIDATE surface derived one-to-one from the
+  operations in the four published OpenAPI documents. They are not implemented or endorsed by LendKey.
+  Note that the Integration API declares no operationIds, so those tool names are derived from method
+  and path.
+server:
+  name: lendkey
+  transport: http
+  url: null
+  published: false
+authentication:
+  type: oauth2
+  flow: clientCredentials
+  note: Per-API token endpoint; bearer token valid 7200s (60 min on the Integration API).
+tools:
+- name: integration_v1_oauth2_token
+  description: Obtain an authorization token
+  api: integration
+  method: POST
+  path: /v1/oauth2/token
+  source_operation: openapi/lendkey-integration-openapi.yml#POST /v1/oauth2/token
+- name: integration_v1_application_status
+  description: Retrieve the current status of one or more applications
+  api: integration
+  method: POST
+  path: /v1/application/status
+  source_operation: openapi/lendkey-integration-openapi.yml#POST /v1/application/status
+- name: integration_v1_credit_soft_pull
+  description: Performs a soft credit pull
+  api: integration
+  method: POST
+  path: /v1/credit/soft_pull
+  source_operation: openapi/lendkey-integration-openapi.yml#POST /v1/credit/soft_pull
+- name: integration_v1_credit_combined_monthly_debt
+  description: Calculates the combined monthly debt between two credit profiles
+  api: integration
+  method: POST
+  path: /v1/credit/combined_monthly_debt
+  source_operation: openapi/lendkey-integration-openapi.yml#POST /v1/credit/combined_monthly_debt
+- name: integration_v1_credit_resolve_attributes
+  description: Resolves the values for all credit attributes passed.
+  api: integration
+  method: POST
+  path: /v1/credit/resolve_attributes
+  source_operation: openapi/lendkey-integration-openapi.yml#POST /v1/credit/resolve_attributes
+- name: integration_v1_scoring_score
+  description: Score a given set of attributes against a PMML model
+  api: integration
+  method: POST
+  path: /v1/scoring/score
+  source_operation: openapi/lendkey-integration-openapi.yml#POST /v1/scoring/score
+- name: integration_v1_leads_create
+  description: Creates a new lead to represent a potential customer
+  api: integration
+  method: POST
+  path: /v1/leads/create
+  source_operation: openapi/lendkey-integration-openapi.yml#POST /v1/leads/create
+- name: integration_v1_notifications_emails
+  description: Send An Email Notification
+  api: integration
+  method: POST
+  path: /v1/notifications/emails
+  source_operation: openapi/lendkey-integration-openapi.yml#POST /v1/notifications/emails
+- name: integration_v1_notifications_emails_templates
+  description: Returns a list of ALL email templates available for use via notifier-api.
+  api: integration
+  method: GET
+  path: /v1/notifications/emails/templates
+  source_operation: openapi/lendkey-integration-openapi.yml#GET /v1/notifications/emails/templates
+- name: integration_v1_onboarding_onboard
+  description: Submits an application LendKey for boarding.
+  api: integration
+  method: POST
+  path: /v1/onboarding/onboard
+  source_operation: openapi/lendkey-integration-openapi.yml#POST /v1/onboarding/onboard
+- name: get_o_auth2_token
+  description: Get OAuth2 Access Token
+  api: treasury-management
+  method: POST
+  path: /oauth2/token
+  source_operation: openapi/lendkey-treasury-management-openapi.yml#getOAuth2Token
+- name: create_loan
+  description: Create Loan
+  api: treasury-management
+  method: POST
+  path: /v1/createLoan
+  source_operation: openapi/lendkey-treasury-management-openapi.yml#createLoan
+- name: create_disbursement
+  description: Create Disbursement
+  api: treasury-management
+  method: POST
+  path: /v1/createDisbursement
+  source_operation: openapi/lendkey-treasury-management-openapi.yml#createDisbursement
+- name: cancel_disbursement
+  description: Cancel Disbursement
+  api: treasury-management
+  method: POST
+  path: /v1/cancelDisbursement
+  source_operation: openapi/lendkey-treasury-management-openapi.yml#cancelDisbursement
+- name: create_payment
+  description: Create Payment
+  api: treasury-management
+  method: POST
+  path: /v1/createPayment
+  source_operation: openapi/lendkey-treasury-management-openapi.yml#createPayment
+- name: update_external_id
+  description: Update External ID
+  api: treasury-management
+  method: PATCH
+  path: /v1/updateExternalId
+  source_operation: openapi/lendkey-treasury-management-openapi.yml#updateExternalId
+- name: get_o_auth2_token
+  description: Get OAuth2 Access Token
+  api: esign
+  method: POST
+  path: /oauth2/token
+  source_operation: openapi/lendkey-esign-openapi.yml#getOAuth2Token
+- name: get_application_contracts
+  description: Get Application Contracts
+  api: esign
+  method: GET
+  path: /applications
+  source_operation: openapi/lendkey-esign-openapi.yml#getApplicationContracts
+- name: create_application_contract
+  description: Create New Application Contract
+  api: esign
+  method: POST
+  path: /applications
+  source_operation: openapi/lendkey-esign-openapi.yml#createApplicationContract
+- name: get_application_statuses
+  description: Get Application Statuses
+  api: esign
+  method: GET
+  path: /applications/{application_uuid}/statuses
+  source_operation: openapi/lendkey-esign-openapi.yml#getApplicationStatuses
+- name: get_signer_details
+  description: Get Signer Details
+  api: esign
+  method: GET
+  path: /applications/{application_uuid}/signers/{customer_uuid}
+  source_operation: openapi/lendkey-esign-openapi.yml#getSignerDetails
+- name: generate_embedded_signing_link
+  description: Generate Embedded Signing Link
+  api: esign
+  method: GET
+  path: /applications/{application_uuid}/signers/{customer_uuid}/embedded-link
+  source_operation: openapi/lendkey-esign-openapi.yml#generateEmbeddedSigningLink
+- name: list_templates
+  description: Search/List Templates
+  api: esign
+  method: GET
+  path: /templates
+  source_operation: openapi/lendkey-esign-openapi.yml#listTemplates
+- name: assign_lender_template
+  description: Assign Template to Lender
+  api: esign
+  method: POST
+  path: /templates
+  source_operation: openapi/lendkey-esign-openapi.yml#assignLenderTemplate
+- name: get_template_by_id
+  description: Get Template by ID
+  api: esign
+  method: GET
+  path: /templates/{id}
+  source_operation: openapi/lendkey-esign-openapi.yml#getTemplateById
+- name: get_template_by_lender_and_program
+  description: Get Templates by Lender and Program
+  api: esign
+  method: GET
+  path: /templates/{lender_uuid}/program/{program_id}
+  source_operation: openapi/lendkey-esign-openapi.yml#getTemplateByLenderAndProgram
+- name: handle_docu_sign_webhook
+  description: Handle DocuSign Webhook
+  api: esign
+  method: POST
+  path: /webhooks/docusign
+  source_operation: openapi/lendkey-esign-openapi.yml#handleDocuSignWebhook
+- name: webhook_health_check
+  description: Webhook Health Check
+  api: esign
+  method: GET
+  path: /webhooks/docusign/health
+  source_operation: openapi/lendkey-esign-openapi.yml#webhookHealthCheck
+- name: common_create_request_log
+  description: Create Request Log
+  api: partner-integration-internal
+  method: POST
+  path: /requestLog
+  source_operation: openapi/lendkey-partner-integration-internal-openapi.yml#Common_CreateRequestLog
+- name: common_update_request_log
+  description: Update Request Log
+  api: partner-integration-internal
+  method: PUT
+  path: /requestLog
+  source_operation: openapi/lendkey-partner-integration-internal-openapi.yml#Common_UpdateRequestLog

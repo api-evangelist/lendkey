@@ -1,0 +1,79 @@
+generated: '2026-07-19'
+method: derived
+source: >-
+  openapi/*.yml plus live probes of developer.lendkey.com and status.lendkey.com
+versioning:
+  scheme: uri-path
+  current: v1
+  detail: >-
+    Integration API (info.version 1.0.0), Treasury Management (info.version v1) and
+    Partner Integration Internal (info.version "1") namespace operations under /v1/.
+    The E-Sign API is unversioned in-path and carries info.version 0.1, indicating a
+    pre-1.0 surface. No version header, date-pinning, or version negotiation is
+    documented.
+  docs: https://developer.lendkey.com/default/documentation
+environments:
+  detail: >-
+    Environment is selected by host plus Kong route prefix rather than by version.
+    See sandbox/lendkey-sandbox.yml for the full environment matrix.
+  production_hosts:
+  - https://api.lendkey.com
+  - https://proxy.kong.lkeyprod.com
+  non_production_hosts:
+  - https://api.lkeyqa.com
+  - https://api.lkeystaging.com
+  - https://proxy.kong.lkeystaging.com
+  - https://proxy.kong.eks-1.use-1.lkeyqa.com
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  note: >-
+    No deprecation or sunset policy is published, and no RFC 8594 Sunset /
+    Deprecation header support is documented. No apis.yml Deprecation pointer is
+    wired because no policy exists.
+deprecated_operations: []
+deprecated_operations_note: >-
+  Zero operations across the four published OpenAPI documents carry deprecated: true.
+sla:
+  url: null
+  uptime_target: null
+  note: No published SLA or uptime commitment for the developer APIs.
+status_page:
+  url: https://status.lendkey.com/
+  provider: Site24x7 StatusIQ
+  publicly_viewable: false
+  probed_status: 200
+  probed_body: >-
+    "Sorry! This page is unavailable. This page is currently inactive. To view this
+    status page, please contact the admin of this StatusIQ account."
+  note: >-
+    A StatusIQ status page is provisioned at status.lendkey.com but is currently
+    inactive/private, so there is no publicly consumable status surface. No apis.yml
+    StatusPage pointer is wired for this reason — re-check on the next run.
+changelog:
+  published: false
+  note: >-
+    No dated API changelog or release-notes page was found on developer.lendkey.com
+    or lendkey.com. The Kong Developer Portal exposes specs but no version history.
+support:
+  developer_portal: https://developer.lendkey.com/default/
+  registration: https://developer.lendkey.com/default/register
+  contact_page: https://www.lendkey.com/contact-us/
+  api_contacts:
+  - email: HIL_product_team@lendkey.com
+    name: LendKey Product Operations Team
+    source: openapi/lendkey-integration-openapi.yml info.contact
+  - name: LendKey Platform Team
+    url: https://lendkey.com
+    source: >-
+      openapi/lendkey-treasury-management-openapi.yml,
+      openapi/lendkey-esign-openapi.yml info.contact
+access_model:
+  detail: >-
+    Access is partner-gated, not self-serve. Credentials are issued through the Kong
+    Developer Portal after account approval, and the Integration API description
+    states it is "for dev/qa use only" for third-party dependencies/integrations.
+  terms_of_service: https://www.lendkey.com/terms-of-use/
+  spec_declared_tos: http://www.lendkey.com

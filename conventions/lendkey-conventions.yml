@@ -1,0 +1,176 @@
+generated: '2026-07-19'
+method: searched
+source: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+sources:
+- https://developer.lendkey.com/default/documentation/integration-api
+- https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+- https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+- https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
+- openapi/lendkey-integration-openapi.yml
+- openapi/lendkey-treasury-management-openapi.yml
+- openapi/lendkey-esign-openapi.yml
+- openapi/lendkey-partner-integration-internal-openapi.yml
+
+summary: >-
+  LendKey fronts its APIs with a Kong Gateway. Every documented API uses the OAuth2
+  client-credentials grant to mint a bearer token at a per-route /oauth2/token
+  endpoint, then expects Authorization: Bearer on each call. Kong strips the route
+  prefix and injects backend credentials, so consumers never handle the OutSystems
+  or Kubernetes service credentials directly. Two distinct response envelopes are in
+  use: the Spring Boot Integration API returns HAL (application/hal+json) with a
+  timestamp/status/message/subErrors error object, while the Kong-fronted Treasury
+  Management, E-Sign and Partner Integration APIs return a flat JSON envelope keyed
+  on isSuccess / statusCode / errors.
+
+gateway:
+  product: Kong Gateway
+  behavior:
+  - Validates the OAuth2 access token before routing.
+  - Strips the environment route prefix (e.g. /TreasuryMgmtQa) from the path.
+  - Injects backend authentication headers (X-Auth-Key, X-Auth-AppId) for the
+    OutSystems-backed Treasury Management service.
+  - Route names are case-insensitive (/TreasuryMgmt, /treasurymgmt, /TREASURYMGMT).
+  source: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+
+authentication:
+  style: oauth2-client-credentials
+  token_endpoint_pattern: "<base>/oauth2/token"
+  grant_type: client_credentials
+  credential_source: Kong Developer Portal (client_id / client_secret)
+  request_header: "Authorization: Bearer <access_token>"
+  token_lifetime_seconds: 7200
+  token_lifetime_note: >-
+    Treasury Management, E-Sign and Partner Integration document a 2-hour (7200s)
+    token. The Integration API documents a 60-minute token and takes HTTP Basic
+    (base64 clientId:clientSecret) on the Authorization header of the token call
+    rather than form-encoded client_id/client_secret.
+  integration_api_token_note: >-
+    POST /v1/oauth2/token with Authorization: "Basic <base64(clientId:clientSecret)>"
+    and a form-encoded grant_type=client_credentials body.
+  artifact: authentication/lendkey-authentication.yml
+
+idempotency:
+  supported: false
+  evidence: >-
+    No Idempotency-Key header, idempotency parameter, or retry-safety guidance
+    appears in any of the four published OpenAPI documents or the portal docs.
+    Write operations do carry caller-supplied external identifiers (externalID,
+    paymentId, externalId, application_uuid) which act as natural keys but are not
+    documented as idempotency keys.
+  caller_supplied_keys:
+  - field: externalID
+    operation: createLoan
+    api: treasury-management
+  - field: externalID
+    operation: createDisbursement
+    api: treasury-management
+  - field: paymentId
+    operation: createPayment
+    api: treasury-management
+  - field: application_uuid
+    operation: createApplicationContract
+    api: esign
+
+pagination:
+  style: hal
+  supported_on: Integration API (application/hal+json responses only)
+  response_fields:
+    envelope: page
+    fields:
+    - number
+    - size
+    - totalElements
+    - totalPages
+    links: _links (link objects with an href)
+  note: >-
+    A HAL page/link component pair is defined in the Integration API schema set.
+    The Kong-fronted Treasury Management, E-Sign and Partner Integration APIs return
+    unpaginated arrays or single objects and document no paging parameters.
+
+versioning:
+  scheme: uri-path
+  current: v1
+  detail: >-
+    Integration API, Treasury Management and Partner Integration operations are
+    namespaced under /v1/. The E-Sign API is unversioned in-path and carries
+    info.version 0.1. Environments are selected by host and Kong route prefix, not
+    by a version header.
+  artifact: lifecycle/lendkey-lifecycle.yml
+
+error_envelopes:
+- name: kong-json
+  used_by: [treasury-management, esign, partner-integration-internal]
+  media_type: application/json
+  shape:
+    isSuccess: boolean (false on error)
+    statusCode: integer (mirrors the HTTP status)
+    error: string
+    errors: array of strings
+  partial_success: >-
+    Treasury Management write operations can return HTTP 207 Multi-Status with a
+    responseDetails[] array carrying per-item errors[], so a 2xx does not guarantee
+    every item in the batch succeeded — always inspect isSuccess and
+    responseDetails[].errors.
+- name: hal-problem
+  used_by: [integration]
+  media_type: application/hal+json
+  shape:
+    id: uuid correlating the error occurrence
+    status: string (e.g. BAD_REQUEST, NOT_FOUND, "403")
+    message: string
+    debugMessage: string (nullable)
+    timestamp: string
+    subErrors: array of {object, field, rejectedValue, message}
+  artifact: errors/lendkey-problem-types.yml
+
+request_tracing:
+  request_id_header: null
+  correlation: >-
+    No request-id or correlation header is documented. The Integration API error
+    body carries an `id` UUID per error occurrence, which is the only correlator
+    published. The Partner Integration Internal API exists specifically to log
+    request/response pairs and accepts X-Organization-Id, requestSource and
+    requestedBy headers for attribution.
+  attribution_headers:
+  - name: X-Organization-Id
+    api: partner-integration-internal
+    description: UUID of the organization on whose behalf the request was created.
+  - name: requestSource
+    api: partner-integration-internal
+    description: >-
+      Source name in the convention sourcetype_productname_sourcename, where
+      sourcetype is INT (internal) or EXT (external), e.g. INT_HIL_MERCHANT_PORTAL.
+  - name: requestedBy
+    api: partner-integration-internal
+    description: Email address of the user sending the request.
+
+rate_limiting:
+  documented: false
+  signaling_headers: []
+  note: >-
+    No rate-limit headers, quotas or Retry-After guidance are published. Kong
+    Gateway is capable of rate limiting but LendKey documents no consumer-facing
+    limits.
+
+media_types:
+- application/json
+- application/hal+json
+- application/x-www-form-urlencoded
+
+field_expansion:
+  supported: false
+sparse_fieldsets:
+  supported: false
+metadata:
+  supported: false
+  note: >-
+    No generic metadata bag. Extensibility is via caller-supplied external
+    identifiers and the searchableValues '###'-delimited string on request logs.
+
+cross_links:
+  authentication: authentication/lendkey-authentication.yml
+  scopes: scopes/lendkey-scopes.yml
+  errors: errors/lendkey-problem-types.yml
+  lifecycle: lifecycle/lendkey-lifecycle.yml
+  sandbox: sandbox/lendkey-sandbox.yml
+  conformance: conformance/lendkey-conformance.yml
