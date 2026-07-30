@@ -1,27 +1,394 @@
 aid: lendkey
 name: LendKey
-description: 'LendKey is a company surfaced as a portfolio company of threshold-ventures and added to
-  the API Evangelist network as a stub for enrichment. Sector: fintech. This profile is a lead awaiting
-  the enrichment pipeline.'
+description: >-
+  LendKey Technologies is a New York based digital lending platform that lets credit
+  unions and community banks originate, fund and service consumer loans without
+  building the technology themselves. Its network-lending model covers private
+  student loans, student loan refinancing, home improvement lending and auto lending,
+  and its ALIRO platform runs loan participations and post-origination liquidity
+  between institutions. LendKey has surpassed $8 billion in loan originations. For
+  integrators it operates a Kong Gateway fronted API estate published through a Kong
+  Developer Portal at developer.lendkey.com, covering origination intake (leads, soft
+  credit pull, credit attributes, scoring and application boarding), treasury
+  management (loan inventory, disbursements, payments and capital ledger), and
+  DocuSign backed e-signature contracts. Access is partner gated, with OAuth2
+  client-credentials credentials issued through the developer portal.
 url: https://raw.githubusercontent.com/api-evangelist/lendkey/refs/heads/main/apis.yml
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://www.lendkey.com/wp-content/uploads/2018/08/cropped-LK512.png
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - threshold-ventures
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: enriched
+x-tier-reason: four-published-openapi-specs
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-19'
 tags:
 - Company
 - Fintech
-apis: []
+- Lending
+- Loans
+- Student Loans
+- Credit Unions
+- Banking
+- Loan Origination
+- Financial Services
+- Payments
+- E-Signature
+- Treasury
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- aid: lendkey:lendkey-application-contracts-api
+  name: LendKey Application Contracts API
+  description: Endpoints for creating and managing loan application contracts
+  humanURL: https://developer.lendkey.com/default/documentation/integration-api
+  baseURL: https://proxy.kong.lkeyprod.com/integration/
+  tags:
+  - Application Contracts
+  properties:
+  - type: OpenAPI
+    url: openapi/lendkey-application-contracts-api-openapi.yml
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/integration-api
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+  - type: Documentation
+    url: >-
+      https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
+- aid: lendkey:lendkey-applications-api
+  name: LendKey applications API
+  description: The applications API from LendKey — 1 operation(s) for applications.
+  humanURL: https://developer.lendkey.com/default/documentation/integration-api
+  baseURL: https://proxy.kong.lkeyprod.com/integration/
+  tags:
+  - applications
+  properties:
+  - type: OpenAPI
+    url: openapi/lendkey-applications-api-openapi.yml
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/integration-api
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+  - type: Documentation
+    url: >-
+      https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
+- aid: lendkey:lendkey-auth-api
+  name: LendKey auth API
+  description: The auth API from LendKey — 1 operation(s) for auth.
+  humanURL: https://developer.lendkey.com/default/documentation/integration-api
+  baseURL: https://proxy.kong.lkeyprod.com/integration/
+  tags:
+  - auth
+  properties:
+  - type: OpenAPI
+    url: openapi/lendkey-auth-api-openapi.yml
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/integration-api
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+  - type: Documentation
+    url: >-
+      https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
+- aid: lendkey:lendkey-authentication-api
+  name: LendKey Authentication API
+  description: OAuth2 authentication endpoints
+  humanURL: https://developer.lendkey.com/default/documentation/integration-api
+  baseURL: https://proxy.kong.lkeyprod.com/integration/
+  tags:
+  - Authentication
+  properties:
+  - type: OpenAPI
+    url: openapi/lendkey-authentication-api-openapi.yml
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/integration-api
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+  - type: Documentation
+    url: >-
+      https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
+- aid: lendkey:lendkey-credit-risk-api
+  name: LendKey Credit Risk API
+  description: The Credit Risk API from LendKey — 4 operation(s) for credit risk.
+  humanURL: https://developer.lendkey.com/default/documentation/integration-api
+  baseURL: https://proxy.kong.lkeyprod.com/integration/
+  tags:
+  - Credit Risk
+  properties:
+  - type: OpenAPI
+    url: openapi/lendkey-credit-risk-api-openapi.yml
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/integration-api
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+  - type: Documentation
+    url: >-
+      https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
+- aid: lendkey:lendkey-disbursements-api
+  name: LendKey Disbursements API
+  description: Disbursement processing and cancellation
+  humanURL: https://developer.lendkey.com/default/documentation/integration-api
+  baseURL: https://proxy.kong.lkeyprod.com/integration/
+  tags:
+  - Disbursements
+  properties:
+  - type: OpenAPI
+    url: openapi/lendkey-disbursements-api-openapi.yml
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/integration-api
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+  - type: Documentation
+    url: >-
+      https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
+- aid: lendkey:lendkey-email-api
+  name: LendKey email API
+  description: The email API from LendKey — 2 operation(s) for email.
+  humanURL: https://developer.lendkey.com/default/documentation/integration-api
+  baseURL: https://proxy.kong.lkeyprod.com/integration/
+  tags:
+  - email
+  properties:
+  - type: OpenAPI
+    url: openapi/lendkey-email-api-openapi.yml
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/integration-api
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+  - type: Documentation
+    url: >-
+      https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
+- aid: lendkey:lendkey-internal-api
+  name: LendKey internal API
+  description: Internal API operations for request logging
+  humanURL: https://developer.lendkey.com/default/documentation/integration-api
+  baseURL: https://proxy.kong.lkeyprod.com/integration/
+  tags:
+  - internal
+  properties:
+  - type: OpenAPI
+    url: openapi/lendkey-internal-api-openapi.yml
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/integration-api
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+  - type: Documentation
+    url: >-
+      https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
+- aid: lendkey:lendkey-leads-api
+  name: LendKey leads API
+  description: The leads API from LendKey — 1 operation(s) for leads.
+  humanURL: https://developer.lendkey.com/default/documentation/integration-api
+  baseURL: https://proxy.kong.lkeyprod.com/integration/
+  tags:
+  - leads
+  properties:
+  - type: OpenAPI
+    url: openapi/lendkey-leads-api-openapi.yml
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/integration-api
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+  - type: Documentation
+    url: >-
+      https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
+- aid: lendkey:lendkey-ledger-management-api
+  name: LendKey Ledger Management API
+  description: Capital ledger operations
+  humanURL: https://developer.lendkey.com/default/documentation/integration-api
+  baseURL: https://proxy.kong.lkeyprod.com/integration/
+  tags:
+  - Ledger Management
+  properties:
+  - type: OpenAPI
+    url: openapi/lendkey-ledger-management-api-openapi.yml
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/integration-api
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+  - type: Documentation
+    url: >-
+      https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
+- aid: lendkey:lendkey-lender-templates-api
+  name: LendKey Lender Templates API
+  description: Manage DocuSign template assignments for lenders
+  humanURL: https://developer.lendkey.com/default/documentation/integration-api
+  baseURL: https://proxy.kong.lkeyprod.com/integration/
+  tags:
+  - Lender Templates
+  properties:
+  - type: OpenAPI
+    url: openapi/lendkey-lender-templates-api-openapi.yml
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/integration-api
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+  - type: Documentation
+    url: >-
+      https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
+- aid: lendkey:lendkey-loans-api
+  name: LendKey Loans API
+  description: Loan creation and management
+  humanURL: https://developer.lendkey.com/default/documentation/integration-api
+  baseURL: https://proxy.kong.lkeyprod.com/integration/
+  tags:
+  - Loans
+  properties:
+  - type: OpenAPI
+    url: openapi/lendkey-loans-api-openapi.yml
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/integration-api
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+  - type: Documentation
+    url: >-
+      https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
+- aid: lendkey:lendkey-onboarding-api
+  name: LendKey onboarding API
+  description: The onboarding API from LendKey — 1 operation(s) for onboarding.
+  humanURL: https://developer.lendkey.com/default/documentation/integration-api
+  baseURL: https://proxy.kong.lkeyprod.com/integration/
+  tags:
+  - onboarding
+  properties:
+  - type: OpenAPI
+    url: openapi/lendkey-onboarding-api-openapi.yml
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/integration-api
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+  - type: Documentation
+    url: >-
+      https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
+- aid: lendkey:lendkey-payments-api
+  name: LendKey Payments API
+  description: Payment and remittance processing
+  humanURL: https://developer.lendkey.com/default/documentation/integration-api
+  baseURL: https://proxy.kong.lkeyprod.com/integration/
+  tags:
+  - Payments
+  properties:
+  - type: OpenAPI
+    url: openapi/lendkey-payments-api-openapi.yml
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/integration-api
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+  - type: Documentation
+    url: >-
+      https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
+- aid: lendkey:lendkey-webhooks-api
+  name: LendKey Webhooks API
+  description: Endpoints for receiving DocuSign webhook notifications
+  humanURL: https://developer.lendkey.com/default/documentation/integration-api
+  baseURL: https://proxy.kong.lkeyprod.com/integration/
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/lendkey-webhooks-api-openapi.yml
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/integration-api
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/os-treasury-management-prod
+  - type: Documentation
+    url: https://developer.lendkey.com/default/documentation/esign-kotlin-prod
+  - type: Documentation
+    url: >-
+      https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
 common:
 - type: Website
   url: https://www.lendkey.com/
+- type: DeveloperPortal
+  url: https://developer.lendkey.com/default/
+- type: Documentation
+  url: https://developer.lendkey.com/default/documentation
+- type: APIReference
+  url: https://developer.lendkey.com/default/documentation/integration-api
+- type: SignUp
+  url: https://developer.lendkey.com/default/register
+- type: Login
+  url: https://developer.lendkey.com/default/login
+- type: Support
+  url: https://www.lendkey.com/contact-us/
+- type: Blog
+  url: https://www.lendkey.com/blog/
+- type: GitHubOrganization
+  url: https://github.com/lendkey
+- type: TermsOfService
+  url: https://www.lendkey.com/terms-of-use/
+- type: PrivacyPolicy
+  url: https://www.lendkey.com/privacy-policy/
+- type: Authentication
+  url: authentication/lendkey-authentication.yml
+- type: OAuthScopes
+  url: scopes/lendkey-scopes.yml
+- type: DomainSecurity
+  url: security/lendkey-domain-security.yml
+- type: Conventions
+  url: conventions/lendkey-conventions.yml
+- type: ErrorCatalog
+  url: errors/lendkey-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/lendkey-lifecycle.yml
+- type: Conformance
+  url: conformance/lendkey-conformance.yml
+- type: DataModel
+  url: data-model/lendkey-data-model.yml
+- type: Sandbox
+  url: sandbox/lendkey-sandbox.yml
+- type: MCPServer
+  url: mcp/lendkey-mcp.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/lendkey-llms.txt
+x-enrichment:
+  date: '2026-07-19'
+  status: backfilled
+  pass: local-v1
+  note: backfilled from .gitignore signal + verified work evidence
