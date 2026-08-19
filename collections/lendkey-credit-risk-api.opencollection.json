@@ -1,0 +1,89 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "LendKey E-Sign API (via Kong Gateway) Application Contracts Credit Risk API",
+    "version": "0.1"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "client_credentials",
+      "accessTokenUrl": "/oauth2/token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Credit Risk",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Performs a soft credit pull",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lendkey.com/esign/v1/credit/soft_pull",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Performs a soft credit pull for the given applicant, and returns their credit profile."
+        },
+        {
+          "info": {
+            "name": "Calculates the combined monthly debt between two credit profiles",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lendkey.com/esign/v1/credit/combined_monthly_debt",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Given two credit profile IDs, calculates the monthly debt between the two profiles."
+        },
+        {
+          "info": {
+            "name": "Resolves the values for all credit attributes passed.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lendkey.com/esign/v1/credit/resolve_attributes",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Given a credit profile ID, calculates/resolves all the values for the attributes requested."
+        },
+        {
+          "info": {
+            "name": "Score a given set of attributes against a PMML model",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lendkey.com/esign/v1/scoring/score",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Calls the scoring engine to evaluate the given set of attributes against the given PMML model UUID."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -197,3 +197,9 @@ tools:
   method: PUT
   path: /requestLog
   source_operation: openapi/lendkey-partner-integration-internal-openapi.yml#Common_UpdateRequestLog
+deployment:
+  mode: none
+  verified: derived
+  tools: 30
+  checked: '2026-08-12'
+  source: catalog MCP census

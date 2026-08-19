@@ -1,0 +1,354 @@
+{
+  "item": [
+    {
+      "id": "05faa325-c5f8-4a82-a6d1-91ab963d60c9",
+      "name": "Payments",
+      "description": {
+        "content": "Payment and remittance processing",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "65c3aa4b-7542-4fff-9091-58df4d97afb8",
+          "name": "Create Payment",
+          "request": {
+            "name": "Create Payment",
+            "description": {
+              "content": "Inserts payment/remittance data for loan obligations.\n\nUse this endpoint to record payments made against loans, including:\n- Interest payments\n- Principal payments\n- Late fees\n- Other charges\n\n**Kong Route:** `/v1/createPayment`\n**Backend:** `/TreasuryManagement_API/rest/v1/createPayment`\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "createPayment"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subledgerCategory\": \"<string>\",\n  \"isSubledgerReversal\": \"<boolean>\",\n  \"subledgerItemCode\": \"<string>\",\n  \"paymentId\": \"<string>\",\n  \"payorEntityType\": \"<string>\",\n  \"amount\": \"<double>\",\n  \"loanExternalId\": \"<string>\",\n  \"purpose\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "b79e1a91-c52c-437c-bcf6-05432e81ff1d",
+              "name": "Payment successfully created",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "createPayment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"subledgerCategory\": \"Payment\",\n  \"isSubledgerReversal\": false,\n  \"subledgerItemCode\": \"PRINCIPAL\",\n  \"paymentId\": \"PMT-2025-001\",\n  \"payorEntityType\": \"Borrower\",\n  \"amount\": 1000,\n  \"loanExternalId\": \"LOAN-12345\",\n  \"purpose\": \"Monthly principal payment\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": true,\n  \"statusCode\": 200,\n  \"responseDetails\": [\n    {\n      \"paymentId\": \"PMT-2025-001\",\n      \"errors\": [\n        \"string\",\n        \"string\"\n      ]\n    },\n    {\n      \"paymentId\": \"PMT-2025-001\",\n      \"errors\": [\n        \"string\",\n        \"string\"\n      ]\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b11370a2-8c90-4c51-b666-ceb9c5b4a244",
+              "name": "Multi-status (partial success)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "createPayment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"subledgerCategory\": \"Payment\",\n  \"isSubledgerReversal\": false,\n  \"subledgerItemCode\": \"PRINCIPAL\",\n  \"paymentId\": \"PMT-2025-001\",\n  \"payorEntityType\": \"Borrower\",\n  \"amount\": 1000,\n  \"loanExternalId\": \"LOAN-12345\",\n  \"purpose\": \"Monthly principal payment\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Multi-Status (WebDAV) (RFC 4918)",
+              "code": 207,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": true,\n  \"statusCode\": 200,\n  \"responseDetails\": [\n    {\n      \"paymentId\": \"PMT-2025-001\",\n      \"errors\": [\n        \"string\",\n        \"string\"\n      ]\n    },\n    {\n      \"paymentId\": \"PMT-2025-001\",\n      \"errors\": [\n        \"string\",\n        \"string\"\n      ]\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "75a2556b-9764-4d07-a8f8-be961b74b71c",
+              "name": "Bad request (validation errors)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "createPayment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"subledgerCategory\": \"Payment\",\n  \"isSubledgerReversal\": false,\n  \"subledgerItemCode\": \"PRINCIPAL\",\n  \"paymentId\": \"PMT-2025-001\",\n  \"payorEntityType\": \"Borrower\",\n  \"amount\": 1000,\n  \"loanExternalId\": \"LOAN-12345\",\n  \"purpose\": \"Monthly principal payment\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": false,\n  \"statusCode\": 400,\n  \"error\": \"Invalid request\",\n  \"errors\": [\n    \"Field 'loanUUID' is required\",\n    \"Field 'amount' must be greater than 0\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d5062e3e-cfe6-4bf1-991d-91f66ff9b338",
+              "name": "Unauthorized (invalid or expired token)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "createPayment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"subledgerCategory\": \"Payment\",\n  \"isSubledgerReversal\": false,\n  \"subledgerItemCode\": \"PRINCIPAL\",\n  \"paymentId\": \"PMT-2025-001\",\n  \"payorEntityType\": \"Borrower\",\n  \"amount\": 1000,\n  \"loanExternalId\": \"LOAN-12345\",\n  \"purpose\": \"Monthly principal payment\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": false,\n  \"statusCode\": 400,\n  \"error\": \"Invalid request\",\n  \"errors\": [\n    \"Field 'loanUUID' is required\",\n    \"Field 'amount' must be greater than 0\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "af0e4940-314a-4636-aa61-c383ebabc56b",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "createPayment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"subledgerCategory\": \"Payment\",\n  \"isSubledgerReversal\": false,\n  \"subledgerItemCode\": \"PRINCIPAL\",\n  \"paymentId\": \"PMT-2025-001\",\n  \"payorEntityType\": \"Borrower\",\n  \"amount\": 1000,\n  \"loanExternalId\": \"LOAN-12345\",\n  \"purpose\": \"Monthly principal payment\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": false,\n  \"statusCode\": 400,\n  \"error\": \"Invalid request\",\n  \"errors\": [\n    \"Field 'loanUUID' is required\",\n    \"Field 'amount' must be greater than 0\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lendkey.com/esign",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "/oauth2/token"
+      },
+      {
+        "key": "grant_type",
+        "value": "client_credentials"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "fbabac18-b4f4-4c58-b6f5-6aea916f5b1c",
+    "name": "LendKey E-Sign API (via Kong Gateway) Application Contracts Payments API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "# LendKey E-Sign API - Kong Gateway Documentation\n\n## Overview\n\nThe LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.\nThis API is accessed through Kong Gateway, which handles authentication via OAuth2.\n\n## Authentication\n\nAll requests to this API require OAuth2 authentication through Kong Gateway.\n\n### Step 1: Get OAuth2 Token\n\nBefore calling any endpoint, you must obtain an access token:\n\n**Production Environment:**\n```bash\ncurl -X POST https://api.lendkey.com/esign/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Response:**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 7200\n}\n```\n\n### Step 2: Use Token in API Calls\n\nInclude the access token in the `Authorization` header:\n```\nAuthorization: Bearer YOUR_ACCESS_TOKEN\n```\n\n**Token Lifetime:** 2 hours (7200 seconds)\n\n## Base URLs (Kong Gateway)\n\n| Environment | Kong Base URL | Backend Kubernetes Service |\n|------------|---------------|---------------------------|\n| **Production** | `https://api.lendkey.com/esign` | `main-esign-kotlin.ci.lkeyprod.com` |\n\n## How Kong Routes Requests\n\nWhen you call Kong:\n```\nhttps://api.lendkey.com/esign/applications\n```\n\nKong:\n1. Validates your OAuth2 token\n2. Strips the `/esign` prefix\n3. Forwards to: `http://main-esign-kotlin.ci.lkeyprod.com/applications`\n\nYou don't need to manage any backend authentication - Kong handles everything!\n\n## Getting Started\n\n1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal\n2. **Get Token:** Use the OAuth2 token endpoint for your environment\n3. **Call API:** Use the token in the Authorization header\n4. **Refresh:** Get a new token every 2 hours\n\n\nContact Support:\n Name: LendKey Platform Team",
+      "type": "text/plain"
+    }
+  }
+}

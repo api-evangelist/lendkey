@@ -1,0 +1,254 @@
+{
+  "item": [
+    {
+      "id": "f609305c-620b-412b-bbcc-9a28c1103ab8",
+      "name": "applications",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "3b46e155-de1c-4d26-a59e-a4aeec0e165e",
+          "name": "Retrieve the current status of one or more applications",
+          "request": {
+            "name": "Retrieve the current status of one or more applications",
+            "description": {
+              "content": "Provide your requester identification UUID and a set of application/loan reference keys to get an up-to-date status on them.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "application",
+                "status"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/hal+json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"referenceKeys\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"requester\": \"<object>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "489723e1-b105-44ea-a801-6ff117425e86",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "application",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/hal+json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"referenceKeys\": [\n    \"HIL-12345\",\n    \"HIL-98765\"\n  ],\n  \"requester\": {\n    \"uuid\": \"40121260-4082-4c22-b70c-b5be137bf2a0\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/hal+json"
+                }
+              ],
+              "body": "{\n  \"applications\": [\n    {\n      \"loanStatus\": \"string\",\n      \"loanKey\": \"HIL-12345\",\n      \"loanAmount\": 50000,\n      \"blockages\": [\n        \"Waiting for contractor to submit a disbursement request.\"\n      ]\n    },\n    {\n      \"loanStatus\": \"string\",\n      \"loanKey\": \"HIL-12345\",\n      \"loanAmount\": 50000,\n      \"blockages\": [\n        \"Waiting for contractor to submit a disbursement request.\"\n      ]\n    }\n  ],\n  \"errors\": [\n    \"String reference key of unretrievable application.\",\n    \"String reference key of unretrievable application.\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "71ba10f8-e0d7-4caa-98ea-34685f1ba873",
+              "name": "Invalid request, unable to process the request with the information provided.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "application",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/hal+json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"referenceKeys\": [\n    \"HIL-12345\",\n    \"HIL-98765\"\n  ],\n  \"requester\": {\n    \"uuid\": \"40121260-4082-4c22-b70c-b5be137bf2a0\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/hal+json"
+                }
+              ],
+              "body": "{\n  \"id\": \"b6c52a48-551a-42ef-b361-f642d25cfeb7\",\n  \"status\": \"BAD_REQUEST\",\n  \"timestamp\": \"2019-10-21 14:07:59\",\n  \"message\": \"Describes what was invalid about the request, if possible.\",\n  \"debugMessage\": null\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "283749fa-1f9b-450f-84fd-b154c73318a6",
+              "name": "An unexpected server error occurred.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "application",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/hal+json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"referenceKeys\": [\n    \"HIL-12345\",\n    \"HIL-98765\"\n  ],\n  \"requester\": {\n    \"uuid\": \"40121260-4082-4c22-b70c-b5be137bf2a0\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/hal+json"
+                }
+              ],
+              "body": "{\n  \"id\": \"b6c52a48-551a-42ef-b361-f642d25cfeb7\",\n  \"status\": \"INTERNAL_SERVER_ERROR\",\n  \"timestamp\": \"2019-10-21 14:07:59\",\n  \"message\": \"An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.\",\n  \"debugMessage\": null\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lendkey.com/esign",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "/oauth2/token"
+      },
+      {
+        "key": "grant_type",
+        "value": "client_credentials"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "02c5751f-aca4-43ac-a395-93d4fe7f0c6a",
+    "name": "LendKey E-Sign API (via Kong Gateway) Application Contracts applications API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "# LendKey E-Sign API - Kong Gateway Documentation\n\n## Overview\n\nThe LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.\nThis API is accessed through Kong Gateway, which handles authentication via OAuth2.\n\n## Authentication\n\nAll requests to this API require OAuth2 authentication through Kong Gateway.\n\n### Step 1: Get OAuth2 Token\n\nBefore calling any endpoint, you must obtain an access token:\n\n**Production Environment:**\n```bash\ncurl -X POST https://api.lendkey.com/esign/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Response:**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 7200\n}\n```\n\n### Step 2: Use Token in API Calls\n\nInclude the access token in the `Authorization` header:\n```\nAuthorization: Bearer YOUR_ACCESS_TOKEN\n```\n\n**Token Lifetime:** 2 hours (7200 seconds)\n\n## Base URLs (Kong Gateway)\n\n| Environment | Kong Base URL | Backend Kubernetes Service |\n|------------|---------------|---------------------------|\n| **Production** | `https://api.lendkey.com/esign` | `main-esign-kotlin.ci.lkeyprod.com` |\n\n## How Kong Routes Requests\n\nWhen you call Kong:\n```\nhttps://api.lendkey.com/esign/applications\n```\n\nKong:\n1. Validates your OAuth2 token\n2. Strips the `/esign` prefix\n3. Forwards to: `http://main-esign-kotlin.ci.lkeyprod.com/applications`\n\nYou don't need to manage any backend authentication - Kong handles everything!\n\n## Getting Started\n\n1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal\n2. **Get Token:** Use the OAuth2 token endpoint for your environment\n3. **Call API:** Use the token in the Authorization header\n4. **Refresh:** Get a new token every 2 hours\n\n\nContact Support:\n Name: LendKey Platform Team",
+      "type": "text/plain"
+    }
+  }
+}

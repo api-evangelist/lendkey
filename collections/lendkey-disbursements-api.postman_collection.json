@@ -1,0 +1,663 @@
+{
+  "item": [
+    {
+      "id": "76b9bdb8-f162-4593-b3d7-9aabac4bcdab",
+      "name": "Disbursements",
+      "description": {
+        "content": "Disbursement processing and cancellation",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "5e6615da-b1c4-49ce-81a0-d801f784f56a",
+          "name": "Create Disbursement",
+          "request": {
+            "name": "Create Disbursement",
+            "description": {
+              "content": "Processes disbursement transactions for existing loans.\n\nUse this endpoint to record fund disbursements to borrowers after loan creation.\n\n**Kong Route:** `/v1/createDisbursement`\n**Backend:** `/TreasuryManagement_API/rest/v1/createDisbursement`\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "createDisbursement"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loanUUID\": \"<uuid>\",\n  \"amount\": \"<double>\",\n  \"externalID\": \"<string>\",\n  \"startDate\": \"<date>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "6fcef987-fb0e-43c4-8f79-a6e22f4a9ea0",
+              "name": "Disbursement successfully created",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "createDisbursement"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"loanUUID\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"amount\": 25000.5,\n  \"externalID\": \"DISB-2025-001\",\n  \"startDate\": \"2025-01-15\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": true,\n  \"statusCode\": 200,\n  \"responseDetails\": [\n    {\n      \"uuid\": \"660e8400-e29b-41d4-a716-446655440000\",\n      \"errors\": [\n        \"string\",\n        \"string\"\n      ]\n    },\n    {\n      \"uuid\": \"660e8400-e29b-41d4-a716-446655440000\",\n      \"errors\": [\n        \"string\",\n        \"string\"\n      ]\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3eae0a01-629f-474f-9360-89cceb21b5fe",
+              "name": "Multi-status (partial success)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "createDisbursement"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"loanUUID\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"amount\": 25000.5,\n  \"externalID\": \"DISB-2025-001\",\n  \"startDate\": \"2025-01-15\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Multi-Status (WebDAV) (RFC 4918)",
+              "code": 207,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": true,\n  \"statusCode\": 200,\n  \"responseDetails\": [\n    {\n      \"uuid\": \"660e8400-e29b-41d4-a716-446655440000\",\n      \"errors\": [\n        \"string\",\n        \"string\"\n      ]\n    },\n    {\n      \"uuid\": \"660e8400-e29b-41d4-a716-446655440000\",\n      \"errors\": [\n        \"string\",\n        \"string\"\n      ]\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "959e94e2-8e33-4b1a-9508-0bd89b493f6c",
+              "name": "Bad request (validation errors)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "createDisbursement"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"loanUUID\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"amount\": 25000.5,\n  \"externalID\": \"DISB-2025-001\",\n  \"startDate\": \"2025-01-15\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": false,\n  \"statusCode\": 400,\n  \"error\": \"Invalid request\",\n  \"errors\": [\n    \"Field 'loanUUID' is required\",\n    \"Field 'amount' must be greater than 0\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ab6c337f-ec5a-46c8-9b61-14eaf42d16b5",
+              "name": "Unauthorized (invalid or expired token)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "createDisbursement"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"loanUUID\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"amount\": 25000.5,\n  \"externalID\": \"DISB-2025-001\",\n  \"startDate\": \"2025-01-15\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": false,\n  \"statusCode\": 400,\n  \"error\": \"Invalid request\",\n  \"errors\": [\n    \"Field 'loanUUID' is required\",\n    \"Field 'amount' must be greater than 0\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "be9def16-6a6e-4962-abc0-a0b912d5105e",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "createDisbursement"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"loanUUID\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"amount\": 25000.5,\n  \"externalID\": \"DISB-2025-001\",\n  \"startDate\": \"2025-01-15\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": false,\n  \"statusCode\": 400,\n  \"error\": \"Invalid request\",\n  \"errors\": [\n    \"Field 'loanUUID' is required\",\n    \"Field 'amount' must be greater than 0\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d5371e9b-c5ae-4676-b2a2-8b77f37d3558",
+          "name": "Cancel Disbursement",
+          "request": {
+            "name": "Cancel Disbursement",
+            "description": {
+              "content": "Reverses a previously recorded disbursement.\n\nUse this endpoint to cancel/reverse a disbursement transaction.\n\n**Kong Route:** `/v1/cancelDisbursement`\n**Backend:** `/TreasuryManagement_API/rest/v1/cancelDisbursement`\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "cancelDisbursement"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subledger_Category\": \"<string>\",\n  \"external_id\": \"<string>\",\n  \"account_id\": \"<string>\",\n  \"entity_type\": \"<string>\",\n  \"amount\": \"<double>\",\n  \"disbursement_uuid\": \"<uuid>\",\n  \"created_by\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "6031d779-03be-464c-9df1-1632d9f02111",
+              "name": "Disbursement successfully cancelled",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cancelDisbursement"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"subledger_Category\": \"Disbursement Cancellation\",\n  \"external_id\": \"DISB-2025-001\",\n  \"account_id\": \"ACC-12345\",\n  \"entity_type\": \"Borrower\",\n  \"amount\": 25000.5,\n  \"disbursement_uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"created_by\": \"system_admin\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"IsSuccess\": true,\n  \"statusCode\": 200,\n  \"errors\": [\n    \"string\",\n    \"string\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6ff3f6b3-b9c3-40ce-a151-d097eadc4e10",
+              "name": "Multi-status (partial success)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cancelDisbursement"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"subledger_Category\": \"Disbursement Cancellation\",\n  \"external_id\": \"DISB-2025-001\",\n  \"account_id\": \"ACC-12345\",\n  \"entity_type\": \"Borrower\",\n  \"amount\": 25000.5,\n  \"disbursement_uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"created_by\": \"system_admin\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Multi-Status (WebDAV) (RFC 4918)",
+              "code": 207,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"IsSuccess\": true,\n  \"statusCode\": 200,\n  \"errors\": [\n    \"string\",\n    \"string\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bbf765ce-0dd2-497c-a388-70735d9d0325",
+              "name": "Bad request (validation errors)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cancelDisbursement"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"subledger_Category\": \"Disbursement Cancellation\",\n  \"external_id\": \"DISB-2025-001\",\n  \"account_id\": \"ACC-12345\",\n  \"entity_type\": \"Borrower\",\n  \"amount\": 25000.5,\n  \"disbursement_uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"created_by\": \"system_admin\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": false,\n  \"statusCode\": 400,\n  \"error\": \"Invalid request\",\n  \"errors\": [\n    \"Field 'loanUUID' is required\",\n    \"Field 'amount' must be greater than 0\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0db4ea70-0046-4532-b487-2d8a89843e8d",
+              "name": "Unauthorized (invalid or expired token)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cancelDisbursement"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"subledger_Category\": \"Disbursement Cancellation\",\n  \"external_id\": \"DISB-2025-001\",\n  \"account_id\": \"ACC-12345\",\n  \"entity_type\": \"Borrower\",\n  \"amount\": 25000.5,\n  \"disbursement_uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"created_by\": \"system_admin\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": false,\n  \"statusCode\": 400,\n  \"error\": \"Invalid request\",\n  \"errors\": [\n    \"Field 'loanUUID' is required\",\n    \"Field 'amount' must be greater than 0\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a51b06a3-4791-4b77-8a5e-424d88f5d005",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cancelDisbursement"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"subledger_Category\": \"Disbursement Cancellation\",\n  \"external_id\": \"DISB-2025-001\",\n  \"account_id\": \"ACC-12345\",\n  \"entity_type\": \"Borrower\",\n  \"amount\": 25000.5,\n  \"disbursement_uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"created_by\": \"system_admin\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": false,\n  \"statusCode\": 400,\n  \"error\": \"Invalid request\",\n  \"errors\": [\n    \"Field 'loanUUID' is required\",\n    \"Field 'amount' must be greater than 0\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lendkey.com/esign",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "/oauth2/token"
+      },
+      {
+        "key": "grant_type",
+        "value": "client_credentials"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "8cfb2619-581c-437c-ae1e-81f076b4a064",
+    "name": "LendKey E-Sign API (via Kong Gateway) Application Contracts Disbursements API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "# LendKey E-Sign API - Kong Gateway Documentation\n\n## Overview\n\nThe LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.\nThis API is accessed through Kong Gateway, which handles authentication via OAuth2.\n\n## Authentication\n\nAll requests to this API require OAuth2 authentication through Kong Gateway.\n\n### Step 1: Get OAuth2 Token\n\nBefore calling any endpoint, you must obtain an access token:\n\n**Production Environment:**\n```bash\ncurl -X POST https://api.lendkey.com/esign/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Response:**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 7200\n}\n```\n\n### Step 2: Use Token in API Calls\n\nInclude the access token in the `Authorization` header:\n```\nAuthorization: Bearer YOUR_ACCESS_TOKEN\n```\n\n**Token Lifetime:** 2 hours (7200 seconds)\n\n## Base URLs (Kong Gateway)\n\n| Environment | Kong Base URL | Backend Kubernetes Service |\n|------------|---------------|---------------------------|\n| **Production** | `https://api.lendkey.com/esign` | `main-esign-kotlin.ci.lkeyprod.com` |\n\n## How Kong Routes Requests\n\nWhen you call Kong:\n```\nhttps://api.lendkey.com/esign/applications\n```\n\nKong:\n1. Validates your OAuth2 token\n2. Strips the `/esign` prefix\n3. Forwards to: `http://main-esign-kotlin.ci.lkeyprod.com/applications`\n\nYou don't need to manage any backend authentication - Kong handles everything!\n\n## Getting Started\n\n1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal\n2. **Get Token:** Use the OAuth2 token endpoint for your environment\n3. **Call API:** Use the token in the Authorization header\n4. **Refresh:** Get a new token every 2 hours\n\n\nContact Support:\n Name: LendKey Platform Team",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,279 @@
+{
+  "item": [
+    {
+      "id": "761470e4-e9cb-4c86-aa7b-5a8bda5876ee",
+      "name": "internal",
+      "description": {
+        "content": "Internal API operations for request logging",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "d8e62037-4ab4-48e5-90e8-166ac434e44b",
+          "name": "Create Request Log",
+          "request": {
+            "name": "Create Request Log",
+            "description": {
+              "content": "Creates a new request log entry for tracking API requests.\nReturns a requestLogId that should be used in the PUT endpoint to update the log with response details.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "requestLog"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "Contains the UUID of the organization on behalf of which this request was created.",
+                "key": "X-Organization-Id",
+                "value": ""
+              },
+              {
+                "disabled": false,
+                "description": "- Contains the name of the source on behalf of which the request was made.\n- Request sources can be added and updated using the program rollover tool.\n- Naming Convention: \"sourcetype_productname_sourcename\"\n    - sourcetype : Could be either \"INT\" for internal sources and \"EXT\" for the external sources.\n    - productname : Name of the product. Example: \"HIL\", \"PSL\", \"ALIRO\" etc.\n    - sourcename : Name of the source. Example: \"MERCHANT_PORTAL\", \"GREENHOUSE\", \"LYON\" etc.\n- Examples:\n    - INT_HIL_MERCHANT_PORTAL\n    - INT_HIL_GREENHOUSE\n    - EXT_HIL_LYON\n",
+                "key": "requestSource",
+                "value": ""
+              },
+              {
+                "disabled": false,
+                "description": "Contains the email address of the user sending the request.",
+                "key": "requestedBy",
+                "value": ""
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestBody\": \"\",\n  \"requestUrl\": \"\",\n  \"requestCallType\": \"\",\n  \"searchableValues\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "2e646fc6-8b46-431e-88a3-af3210981f67",
+              "name": "SUCCESS (Status Code: 200):\nWill return the 'requestLogId' which should be used as an input to the PUT endpoint.\n\nFAILURE (Status Code: 400, 403, 404, 500, 503):\nWill return the error message.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "requestLog"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Contains the UUID of the organization on behalf of which this request was created.",
+                    "key": "X-Organization-Id",
+                    "value": ""
+                  },
+                  {
+                    "disabled": false,
+                    "description": "- Contains the name of the source on behalf of which the request was made.\n- Request sources can be added and updated using the program rollover tool.\n- Naming Convention: \"sourcetype_productname_sourcename\"\n    - sourcetype : Could be either \"INT\" for internal sources and \"EXT\" for the external sources.\n    - productname : Name of the product. Example: \"HIL\", \"PSL\", \"ALIRO\" etc.\n    - sourcename : Name of the source. Example: \"MERCHANT_PORTAL\", \"GREENHOUSE\", \"LYON\" etc.\n- Examples:\n    - INT_HIL_MERCHANT_PORTAL\n    - INT_HIL_GREENHOUSE\n    - EXT_HIL_LYON\n",
+                    "key": "requestSource",
+                    "value": ""
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Contains the email address of the user sending the request.",
+                    "key": "requestedBy",
+                    "value": ""
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"requestBody\": \"\",\n  \"requestUrl\": \"\",\n  \"requestCallType\": \"\",\n  \"searchableValues\": \"\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"requestLogId\": 1234567891234567,\n  \"error\": \"\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a0af3d8f-d938-4824-90eb-1b803ba4ca88",
+          "name": "Update Request Log",
+          "request": {
+            "name": "Update Request Log",
+            "description": {
+              "content": "Updates an existing request log entry with response details and success status.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "requestLog"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PUT",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestLogId\": \"<long>\",\n  \"responseBody\": \"\",\n  \"wasRequestSuccessful\": \"<boolean>\",\n  \"searchableValues\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "7db72871-cffa-4fca-9552-f55cca08967a",
+              "name": "SUCCESS (Status Code: 200):\nWill return the 'requestLogId' which should be used as an input to the PUT endpoint.\n\nFAILURE (Status Code: 400, 403, 404, 500, 503):\nWill return the error message.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "requestLog"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"requestLogId\": 1234567891234567,\n  \"responseBody\": \"\",\n  \"wasRequestSuccessful\": false,\n  \"searchableValues\": \"\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"requestLogId\": 1234567891234567,\n  \"error\": \"\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lendkey.com/esign",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "/oauth2/token"
+      },
+      {
+        "key": "grant_type",
+        "value": "client_credentials"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "5f912b60-5ed0-44b1-9b6e-88ba8c5a2271",
+    "name": "LendKey E-Sign API (via Kong Gateway) Application Contracts internal API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "# LendKey E-Sign API - Kong Gateway Documentation\n\n## Overview\n\nThe LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.\nThis API is accessed through Kong Gateway, which handles authentication via OAuth2.\n\n## Authentication\n\nAll requests to this API require OAuth2 authentication through Kong Gateway.\n\n### Step 1: Get OAuth2 Token\n\nBefore calling any endpoint, you must obtain an access token:\n\n**Production Environment:**\n```bash\ncurl -X POST https://api.lendkey.com/esign/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Response:**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 7200\n}\n```\n\n### Step 2: Use Token in API Calls\n\nInclude the access token in the `Authorization` header:\n```\nAuthorization: Bearer YOUR_ACCESS_TOKEN\n```\n\n**Token Lifetime:** 2 hours (7200 seconds)\n\n## Base URLs (Kong Gateway)\n\n| Environment | Kong Base URL | Backend Kubernetes Service |\n|------------|---------------|---------------------------|\n| **Production** | `https://api.lendkey.com/esign` | `main-esign-kotlin.ci.lkeyprod.com` |\n\n## How Kong Routes Requests\n\nWhen you call Kong:\n```\nhttps://api.lendkey.com/esign/applications\n```\n\nKong:\n1. Validates your OAuth2 token\n2. Strips the `/esign` prefix\n3. Forwards to: `http://main-esign-kotlin.ci.lkeyprod.com/applications`\n\nYou don't need to manage any backend authentication - Kong handles everything!\n\n## Getting Started\n\n1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal\n2. **Get Token:** Use the OAuth2 token endpoint for your environment\n3. **Call API:** Use the token in the Authorization header\n4. **Refresh:** Get a new token every 2 hours\n\n\nContact Support:\n Name: LendKey Platform Team",
+      "type": "text/plain"
+    }
+  }
+}

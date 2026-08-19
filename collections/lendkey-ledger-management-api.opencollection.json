@@ -1,0 +1,44 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "LendKey E-Sign API (via Kong Gateway) Application Contracts Ledger Management API",
+    "version": "0.1"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "client_credentials",
+      "accessTokenUrl": "/oauth2/token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Ledger Management",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Update External ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.lendkey.com/esign/v1/updateExternalId",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates external IDs in the Capital Ledger Target table.\n\nUse this endpoint to update the external identifier for a capital ledger record.\n\n**Kong Route:** `/v1/updateExternalId`\n**Backend:** `/TreasuryManagement_API/rest/v1/updateExternalId`\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,44 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "LendKey E-Sign API (via Kong Gateway) Application Contracts Payments API",
+    "version": "0.1"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "client_credentials",
+      "accessTokenUrl": "/oauth2/token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Payments",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create Payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lendkey.com/esign/v1/createPayment",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Inserts payment/remittance data for loan obligations.\n\nUse this endpoint to record payments made against loans, including:\n- Interest payments\n- Principal payments\n- Late fees\n- Other charges\n\n**Kong Route:** `/v1/createPayment`\n**Backend:** `/TreasuryManagement_API/rest/v1/createPayment`\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

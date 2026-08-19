@@ -1,0 +1,354 @@
+{
+  "item": [
+    {
+      "id": "a293d4d1-646a-4e08-beb2-93fe26a4f7cd",
+      "name": "Loans",
+      "description": {
+        "content": "Loan creation and management",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "8b7abe98-b4d4-43c1-8305-5a17394f3f21",
+          "name": "Create Loan",
+          "request": {
+            "name": "Create Loan",
+            "description": {
+              "content": "Creates loan inventory and treasury management entries.\n\nThis endpoint creates complete loan records including:\n- Loan details (principal, term, product)\n- Associated persons and parties\n- Initial disbursements\n\n**Kong Route:** `/v1/createLoan`\n**Backend:** `/TreasuryManagement_API/rest/v1/createLoan`\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "createLoan"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"name\": \"<string>\",\n    \"externalID\": \"<string>\",\n    \"applicationID\": \"<string>\",\n    \"maxPrincipal\": \"<double>\",\n    \"productName\": \"<string>\",\n    \"term\": \"<integer>\",\n    \"startDate\": \"<date>\",\n    \"endDate\": \"<date>\",\n    \"disbursement\": [\n      {\n        \"amount\": \"<double>\",\n        \"externalID\": \"<string>\",\n        \"startDate\": \"<date>\"\n      },\n      {\n        \"amount\": \"<double>\",\n        \"externalID\": \"<string>\",\n        \"startDate\": \"<date>\"\n      }\n    ],\n    \"loanPerson\": [\n      {\n        \"personId\": \"<string>\",\n        \"role\": \"<string>\"\n      },\n      {\n        \"personId\": \"<string>\",\n        \"role\": \"<string>\"\n      }\n    ],\n    \"loanParty\": [\n      {\n        \"partyId\": \"<string>\",\n        \"role\": \"<string>\"\n      },\n      {\n        \"partyId\": \"<string>\",\n        \"role\": \"<string>\"\n      }\n    ]\n  },\n  {\n    \"name\": \"<string>\",\n    \"externalID\": \"<string>\",\n    \"applicationID\": \"<string>\",\n    \"maxPrincipal\": \"<double>\",\n    \"productName\": \"<string>\",\n    \"term\": \"<integer>\",\n    \"startDate\": \"<date>\",\n    \"endDate\": \"<date>\",\n    \"disbursement\": [\n      {\n        \"amount\": \"<double>\",\n        \"externalID\": \"<string>\",\n        \"startDate\": \"<date>\"\n      },\n      {\n        \"amount\": \"<double>\",\n        \"externalID\": \"<string>\",\n        \"startDate\": \"<date>\"\n      }\n    ],\n    \"loanPerson\": [\n      {\n        \"personId\": \"<string>\",\n        \"role\": \"<string>\"\n      },\n      {\n        \"personId\": \"<string>\",\n        \"role\": \"<string>\"\n      }\n    ],\n    \"loanParty\": [\n      {\n        \"partyId\": \"<string>\",\n        \"role\": \"<string>\"\n      },\n      {\n        \"partyId\": \"<string>\",\n        \"role\": \"<string>\"\n      }\n    ]\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "b039a248-a968-4972-95ee-59d844601297",
+              "name": "Loan successfully created",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "createLoan"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"name\": \"Personal Loan 2025\",\n    \"externalID\": \"LOAN-12345\",\n    \"applicationID\": \"APP-67890\",\n    \"maxPrincipal\": 50000,\n    \"productName\": \"Standard Personal Loan\",\n    \"term\": 60,\n    \"startDate\": \"2025-01-15\",\n    \"disbursement\": [\n      {\n        \"amount\": 50000,\n        \"externalID\": \"DISB-12345\",\n        \"startDate\": \"2025-01-15\"\n      }\n    ],\n    \"loanPerson\": [\n      {\n        \"personId\": \"PER-001\",\n        \"role\": \"Borrower\"\n      }\n    ],\n    \"loanParty\": [\n      {\n        \"partyId\": \"PARTY-001\",\n        \"role\": \"Lender\"\n      }\n    ]\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": true,\n  \"statusCode\": 200,\n  \"responseDetails\": [\n    {\n      \"uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n      \"externalId\": \"LOAN-12345\",\n      \"errors\": [\n        \"string\",\n        \"string\"\n      ]\n    },\n    {\n      \"uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n      \"externalId\": \"LOAN-12345\",\n      \"errors\": [\n        \"string\",\n        \"string\"\n      ]\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "58a6e445-38ec-4141-93df-48bd1a4ab88a",
+              "name": "Multi-status (partial success)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "createLoan"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"name\": \"Personal Loan 2025\",\n    \"externalID\": \"LOAN-12345\",\n    \"applicationID\": \"APP-67890\",\n    \"maxPrincipal\": 50000,\n    \"productName\": \"Standard Personal Loan\",\n    \"term\": 60,\n    \"startDate\": \"2025-01-15\",\n    \"disbursement\": [\n      {\n        \"amount\": 50000,\n        \"externalID\": \"DISB-12345\",\n        \"startDate\": \"2025-01-15\"\n      }\n    ],\n    \"loanPerson\": [\n      {\n        \"personId\": \"PER-001\",\n        \"role\": \"Borrower\"\n      }\n    ],\n    \"loanParty\": [\n      {\n        \"partyId\": \"PARTY-001\",\n        \"role\": \"Lender\"\n      }\n    ]\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Multi-Status (WebDAV) (RFC 4918)",
+              "code": 207,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": true,\n  \"statusCode\": 200,\n  \"responseDetails\": [\n    {\n      \"uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n      \"externalId\": \"LOAN-12345\",\n      \"errors\": [\n        \"string\",\n        \"string\"\n      ]\n    },\n    {\n      \"uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n      \"externalId\": \"LOAN-12345\",\n      \"errors\": [\n        \"string\",\n        \"string\"\n      ]\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3f4b8332-c2a5-4894-aacd-8f93a8cbbf2f",
+              "name": "Bad request (validation errors)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "createLoan"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"name\": \"Personal Loan 2025\",\n    \"externalID\": \"LOAN-12345\",\n    \"applicationID\": \"APP-67890\",\n    \"maxPrincipal\": 50000,\n    \"productName\": \"Standard Personal Loan\",\n    \"term\": 60,\n    \"startDate\": \"2025-01-15\",\n    \"disbursement\": [\n      {\n        \"amount\": 50000,\n        \"externalID\": \"DISB-12345\",\n        \"startDate\": \"2025-01-15\"\n      }\n    ],\n    \"loanPerson\": [\n      {\n        \"personId\": \"PER-001\",\n        \"role\": \"Borrower\"\n      }\n    ],\n    \"loanParty\": [\n      {\n        \"partyId\": \"PARTY-001\",\n        \"role\": \"Lender\"\n      }\n    ]\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": false,\n  \"statusCode\": 400,\n  \"error\": \"Invalid request\",\n  \"errors\": [\n    \"Field 'loanUUID' is required\",\n    \"Field 'amount' must be greater than 0\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ba525d28-66bc-49a0-9d83-19c28885d62e",
+              "name": "Unauthorized (invalid or expired token)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "createLoan"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"name\": \"Personal Loan 2025\",\n    \"externalID\": \"LOAN-12345\",\n    \"applicationID\": \"APP-67890\",\n    \"maxPrincipal\": 50000,\n    \"productName\": \"Standard Personal Loan\",\n    \"term\": 60,\n    \"startDate\": \"2025-01-15\",\n    \"disbursement\": [\n      {\n        \"amount\": 50000,\n        \"externalID\": \"DISB-12345\",\n        \"startDate\": \"2025-01-15\"\n      }\n    ],\n    \"loanPerson\": [\n      {\n        \"personId\": \"PER-001\",\n        \"role\": \"Borrower\"\n      }\n    ],\n    \"loanParty\": [\n      {\n        \"partyId\": \"PARTY-001\",\n        \"role\": \"Lender\"\n      }\n    ]\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": false,\n  \"statusCode\": 400,\n  \"error\": \"Invalid request\",\n  \"errors\": [\n    \"Field 'loanUUID' is required\",\n    \"Field 'amount' must be greater than 0\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "04119f85-f6ae-4ffb-9d01-6b228a1b34e4",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "createLoan"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"name\": \"Personal Loan 2025\",\n    \"externalID\": \"LOAN-12345\",\n    \"applicationID\": \"APP-67890\",\n    \"maxPrincipal\": 50000,\n    \"productName\": \"Standard Personal Loan\",\n    \"term\": 60,\n    \"startDate\": \"2025-01-15\",\n    \"disbursement\": [\n      {\n        \"amount\": 50000,\n        \"externalID\": \"DISB-12345\",\n        \"startDate\": \"2025-01-15\"\n      }\n    ],\n    \"loanPerson\": [\n      {\n        \"personId\": \"PER-001\",\n        \"role\": \"Borrower\"\n      }\n    ],\n    \"loanParty\": [\n      {\n        \"partyId\": \"PARTY-001\",\n        \"role\": \"Lender\"\n      }\n    ]\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"isSuccess\": false,\n  \"statusCode\": 400,\n  \"error\": \"Invalid request\",\n  \"errors\": [\n    \"Field 'loanUUID' is required\",\n    \"Field 'amount' must be greater than 0\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lendkey.com/esign",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "/oauth2/token"
+      },
+      {
+        "key": "grant_type",
+        "value": "client_credentials"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "063da0c0-e248-4f68-b264-9f2b76a28b1e",
+    "name": "LendKey E-Sign API (via Kong Gateway) Application Contracts Loans API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "# LendKey E-Sign API - Kong Gateway Documentation\n\n## Overview\n\nThe LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.\nThis API is accessed through Kong Gateway, which handles authentication via OAuth2.\n\n## Authentication\n\nAll requests to this API require OAuth2 authentication through Kong Gateway.\n\n### Step 1: Get OAuth2 Token\n\nBefore calling any endpoint, you must obtain an access token:\n\n**Production Environment:**\n```bash\ncurl -X POST https://api.lendkey.com/esign/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Response:**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 7200\n}\n```\n\n### Step 2: Use Token in API Calls\n\nInclude the access token in the `Authorization` header:\n```\nAuthorization: Bearer YOUR_ACCESS_TOKEN\n```\n\n**Token Lifetime:** 2 hours (7200 seconds)\n\n## Base URLs (Kong Gateway)\n\n| Environment | Kong Base URL | Backend Kubernetes Service |\n|------------|---------------|---------------------------|\n| **Production** | `https://api.lendkey.com/esign` | `main-esign-kotlin.ci.lkeyprod.com` |\n\n## How Kong Routes Requests\n\nWhen you call Kong:\n```\nhttps://api.lendkey.com/esign/applications\n```\n\nKong:\n1. Validates your OAuth2 token\n2. Strips the `/esign` prefix\n3. Forwards to: `http://main-esign-kotlin.ci.lkeyprod.com/applications`\n\nYou don't need to manage any backend authentication - Kong handles everything!\n\n## Getting Started\n\n1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal\n2. **Get Token:** Use the OAuth2 token endpoint for your environment\n3. **Call API:** Use the token in the Authorization header\n4. **Refresh:** Get a new token every 2 hours\n\n\nContact Support:\n Name: LendKey Platform Team",
+      "type": "text/plain"
+    }
+  }
+}

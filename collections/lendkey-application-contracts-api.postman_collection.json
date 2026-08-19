@@ -1,0 +1,1399 @@
+{
+  "item": [
+    {
+      "id": "d01fa328-ffed-4d18-b82b-b8188f104f39",
+      "name": "Application Contracts",
+      "description": {
+        "content": "Endpoints for creating and managing loan application contracts",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "9ecb9f15-f36e-406c-89c2-4dad6ff60a9e",
+          "name": "Get Application Contracts",
+          "request": {
+            "name": "Get Application Contracts",
+            "description": {
+              "content": "Retrieves application envelope summaries for a specific lender and program.\n\n**Kong Route:** `/applications`\n**Backend:** `/applications`\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "applications"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "lender_uuid",
+                  "value": "<uuid>",
+                  "description": "(Required) Lender UUID"
+                },
+                {
+                  "disabled": false,
+                  "key": "program_id",
+                  "value": "<string>",
+                  "description": "(Required) Program identifier"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b871f5da-122b-4983-9664-3935cdafe475",
+              "name": "List of application envelope summaries",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "lender_uuid",
+                      "value": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    {
+                      "key": "program_id",
+                      "value": "1234567890"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"applicationEnvelopeId\": 123,\n    \"applicationUuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"envelopeId\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n    \"roleUserIds\": {\n      \"key_0\": \"string\",\n      \"key_1\": \"string\",\n      \"key_2\": \"string\"\n    },\n    \"createdAt\": \"2025-01-15T10:30:00Z\"\n  },\n  {\n    \"applicationEnvelopeId\": 123,\n    \"applicationUuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"envelopeId\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n    \"roleUserIds\": {\n      \"key_0\": \"string\",\n      \"key_1\": \"string\"\n    },\n    \"createdAt\": \"2025-01-15T10:30:00Z\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bfb01b7a-e47b-443b-b51c-d3f7d52020ab",
+              "name": "Unauthorized (invalid or expired token)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "lender_uuid",
+                      "value": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    {
+                      "key": "program_id",
+                      "value": "1234567890"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "131a7833-3757-46c3-885f-a5287ebc1643",
+              "name": "Not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "lender_uuid",
+                      "value": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    {
+                      "key": "program_id",
+                      "value": "1234567890"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "b378b70f-46ff-43b7-a463-b76fb42651ac",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "lender_uuid",
+                      "value": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    {
+                      "key": "program_id",
+                      "value": "1234567890"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "00df16e6-59a9-49bc-93ba-93330a1e3e7c",
+          "name": "Create New Application Contract",
+          "request": {
+            "name": "Create New Application Contract",
+            "description": {
+              "content": "Creates a new e-signature contract envelope in DocuSign for a loan application.\nThe contract is created from a lender-specific template and includes all applicant\ninformation, property details, and loan terms.\n\n**Kong Route:** `/applications`\n**Backend:** `/applications`\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "applications"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"application_uuid\": \"<uuid>\",\n  \"organization_uuid\": \"<uuid>\",\n  \"program_id\": \"<string>\",\n  \"loan_consumation_date\": \"<date>\",\n  \"loan_maturity_date\": \"<date>\",\n  \"loan_identifier\": \"<string>\",\n  \"merchant_name\": \"<string>\",\n  \"borrower\": {\n    \"customer_uuid\": \"<uuid>\",\n    \"first_name\": \"<string>\",\n    \"last_name\": \"<string>\",\n    \"email\": \"<email>\",\n    \"address\": {\n      \"address_line_1\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\",\n      \"address_line_2\": \"<string>\",\n      \"address_line_3\": \"<string>\"\n    },\n    \"fico_score\": \"<integer>\",\n    \"fico_score_percentile\": \"<integer>\",\n    \"fico_score_date\": \"<date>\",\n    \"dob\": \"<date>\",\n    \"home_phone\": \"<string>\",\n    \"work_phone\": \"<string>\",\n    \"cell_phone\": \"<string>\",\n    \"preferred_phone\": \"<string>\",\n    \"ssn\": \"<string>\",\n    \"other_fields\": {\n      \"key_0\": true\n    }\n  },\n  \"apr\": \"<double>\",\n  \"finance_charge\": \"<double>\",\n  \"amount_financed\": \"<double>\",\n  \"total_of_payments\": \"<double>\",\n  \"variable_rate\": \"<boolean>\",\n  \"term_months\": \"<integer>\",\n  \"payment_amount\": \"<double>\",\n  \"interest_rate_percent\": \"<double>\",\n  \"loan_amount\": \"<double>\",\n  \"construction_period_days\": \"<integer>\",\n  \"staged_funding_percent_before_final_distribution\": \"<double>\",\n  \"staged_funding_percent_reserved_for_final_distribution\": \"<double>\",\n  \"coborrower\": {\n    \"customer_uuid\": \"<uuid>\",\n    \"first_name\": \"<string>\",\n    \"last_name\": \"<string>\",\n    \"email\": \"<email>\",\n    \"address\": {\n      \"address_line_1\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\",\n      \"address_line_2\": \"<string>\",\n      \"address_line_3\": \"<string>\"\n    },\n    \"fico_score\": \"<integer>\",\n    \"fico_score_percentile\": \"<integer>\",\n    \"fico_score_date\": \"<date>\",\n    \"other_fields\": {\n      \"key_0\": 1148.9221061227618,\n      \"key_1\": 1702.5837441783553\n    }\n  },\n  \"other_fields\": {\n    \"key_0\": 9806.398187892819,\n    \"key_1\": 1370.4019521715504,\n    \"key_2\": 9857.994957894218\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "99cc042b-2e6e-4fb8-81bd-d24968b5c1c7",
+              "name": "Contract envelope successfully created",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"application_uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"organization_uuid\": \"660e8400-e29b-41d4-a716-446655440000\",\n  \"program_id\": \"1234567890\",\n  \"loan_consumation_date\": \"2025-01-15\",\n  \"loan_maturity_date\": \"2030-01-15\",\n  \"loan_identifier\": \"LOAN-2025-001\",\n  \"apr\": 5.99,\n  \"finance_charge\": 5000,\n  \"amount_financed\": 50000,\n  \"total_of_payments\": 55000,\n  \"variable_rate\": false,\n  \"term_months\": 60,\n  \"payment_amount\": 966.67,\n  \"interest_rate_percent\": 5.99,\n  \"loan_amount\": 50000,\n  \"merchant_name\": \"ABC Home Improvements\",\n  \"borrower\": {\n    \"customer_uuid\": \"770e8400-e29b-41d4-a716-446655440000\",\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"address\": {\n      \"address_line_1\": \"123 Main St\",\n      \"city\": \"Springfield\",\n      \"state\": \"IL\",\n      \"zip\": \"62701\"\n    },\n    \"fico_score\": 720,\n    \"fico_score_percentile\": 75,\n    \"fico_score_date\": \"2025-01-01\",\n    \"dob\": \"1985-06-15\",\n    \"preferred_phone\": \"5551234567\",\n    \"ssn\": \"123456789\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "No Content",
+              "code": 204,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "e3f87ad6-28b7-4ad7-8572-d9c9de993a14",
+              "name": "Bad request (validation errors)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"application_uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"organization_uuid\": \"660e8400-e29b-41d4-a716-446655440000\",\n  \"program_id\": \"1234567890\",\n  \"loan_consumation_date\": \"2025-01-15\",\n  \"loan_maturity_date\": \"2030-01-15\",\n  \"loan_identifier\": \"LOAN-2025-001\",\n  \"apr\": 5.99,\n  \"finance_charge\": 5000,\n  \"amount_financed\": 50000,\n  \"total_of_payments\": 55000,\n  \"variable_rate\": false,\n  \"term_months\": 60,\n  \"payment_amount\": 966.67,\n  \"interest_rate_percent\": 5.99,\n  \"loan_amount\": 50000,\n  \"merchant_name\": \"ABC Home Improvements\",\n  \"borrower\": {\n    \"customer_uuid\": \"770e8400-e29b-41d4-a716-446655440000\",\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"address\": {\n      \"address_line_1\": \"123 Main St\",\n      \"city\": \"Springfield\",\n      \"state\": \"IL\",\n      \"zip\": \"62701\"\n    },\n    \"fico_score\": 720,\n    \"fico_score_percentile\": 75,\n    \"fico_score_date\": \"2025-01-01\",\n    \"dob\": \"1985-06-15\",\n    \"preferred_phone\": \"5551234567\",\n    \"ssn\": \"123456789\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "545e801f-55df-4e5f-8895-1c44b2e0b11f",
+              "name": "Unauthorized (invalid or expired token)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"application_uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"organization_uuid\": \"660e8400-e29b-41d4-a716-446655440000\",\n  \"program_id\": \"1234567890\",\n  \"loan_consumation_date\": \"2025-01-15\",\n  \"loan_maturity_date\": \"2030-01-15\",\n  \"loan_identifier\": \"LOAN-2025-001\",\n  \"apr\": 5.99,\n  \"finance_charge\": 5000,\n  \"amount_financed\": 50000,\n  \"total_of_payments\": 55000,\n  \"variable_rate\": false,\n  \"term_months\": 60,\n  \"payment_amount\": 966.67,\n  \"interest_rate_percent\": 5.99,\n  \"loan_amount\": 50000,\n  \"merchant_name\": \"ABC Home Improvements\",\n  \"borrower\": {\n    \"customer_uuid\": \"770e8400-e29b-41d4-a716-446655440000\",\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"address\": {\n      \"address_line_1\": \"123 Main St\",\n      \"city\": \"Springfield\",\n      \"state\": \"IL\",\n      \"zip\": \"62701\"\n    },\n    \"fico_score\": 720,\n    \"fico_score_percentile\": 75,\n    \"fico_score_date\": \"2025-01-01\",\n    \"dob\": \"1985-06-15\",\n    \"preferred_phone\": \"5551234567\",\n    \"ssn\": \"123456789\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "1374f9d0-d805-4c06-8245-ab0efbe6a0b3",
+              "name": "Not found (template or application not found)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"application_uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"organization_uuid\": \"660e8400-e29b-41d4-a716-446655440000\",\n  \"program_id\": \"1234567890\",\n  \"loan_consumation_date\": \"2025-01-15\",\n  \"loan_maturity_date\": \"2030-01-15\",\n  \"loan_identifier\": \"LOAN-2025-001\",\n  \"apr\": 5.99,\n  \"finance_charge\": 5000,\n  \"amount_financed\": 50000,\n  \"total_of_payments\": 55000,\n  \"variable_rate\": false,\n  \"term_months\": 60,\n  \"payment_amount\": 966.67,\n  \"interest_rate_percent\": 5.99,\n  \"loan_amount\": 50000,\n  \"merchant_name\": \"ABC Home Improvements\",\n  \"borrower\": {\n    \"customer_uuid\": \"770e8400-e29b-41d4-a716-446655440000\",\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"address\": {\n      \"address_line_1\": \"123 Main St\",\n      \"city\": \"Springfield\",\n      \"state\": \"IL\",\n      \"zip\": \"62701\"\n    },\n    \"fico_score\": 720,\n    \"fico_score_percentile\": 75,\n    \"fico_score_date\": \"2025-01-01\",\n    \"dob\": \"1985-06-15\",\n    \"preferred_phone\": \"5551234567\",\n    \"ssn\": \"123456789\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "b859ae68-1e4f-4280-8528-5f6371744106",
+              "name": "Conflict (envelope already exists)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"application_uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"organization_uuid\": \"660e8400-e29b-41d4-a716-446655440000\",\n  \"program_id\": \"1234567890\",\n  \"loan_consumation_date\": \"2025-01-15\",\n  \"loan_maturity_date\": \"2030-01-15\",\n  \"loan_identifier\": \"LOAN-2025-001\",\n  \"apr\": 5.99,\n  \"finance_charge\": 5000,\n  \"amount_financed\": 50000,\n  \"total_of_payments\": 55000,\n  \"variable_rate\": false,\n  \"term_months\": 60,\n  \"payment_amount\": 966.67,\n  \"interest_rate_percent\": 5.99,\n  \"loan_amount\": 50000,\n  \"merchant_name\": \"ABC Home Improvements\",\n  \"borrower\": {\n    \"customer_uuid\": \"770e8400-e29b-41d4-a716-446655440000\",\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"address\": {\n      \"address_line_1\": \"123 Main St\",\n      \"city\": \"Springfield\",\n      \"state\": \"IL\",\n      \"zip\": \"62701\"\n    },\n    \"fico_score\": 720,\n    \"fico_score_percentile\": 75,\n    \"fico_score_date\": \"2025-01-01\",\n    \"dob\": \"1985-06-15\",\n    \"preferred_phone\": \"5551234567\",\n    \"ssn\": \"123456789\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "21dea813-a409-42a5-a287-cb7991ca977b",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"application_uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"organization_uuid\": \"660e8400-e29b-41d4-a716-446655440000\",\n  \"program_id\": \"1234567890\",\n  \"loan_consumation_date\": \"2025-01-15\",\n  \"loan_maturity_date\": \"2030-01-15\",\n  \"loan_identifier\": \"LOAN-2025-001\",\n  \"apr\": 5.99,\n  \"finance_charge\": 5000,\n  \"amount_financed\": 50000,\n  \"total_of_payments\": 55000,\n  \"variable_rate\": false,\n  \"term_months\": 60,\n  \"payment_amount\": 966.67,\n  \"interest_rate_percent\": 5.99,\n  \"loan_amount\": 50000,\n  \"merchant_name\": \"ABC Home Improvements\",\n  \"borrower\": {\n    \"customer_uuid\": \"770e8400-e29b-41d4-a716-446655440000\",\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"address\": {\n      \"address_line_1\": \"123 Main St\",\n      \"city\": \"Springfield\",\n      \"state\": \"IL\",\n      \"zip\": \"62701\"\n    },\n    \"fico_score\": 720,\n    \"fico_score_percentile\": 75,\n    \"fico_score_date\": \"2025-01-01\",\n    \"dob\": \"1985-06-15\",\n    \"preferred_phone\": \"5551234567\",\n    \"ssn\": \"123456789\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "90c1a3dd-6bd4-4cf9-a70d-b6085e4d9d6f",
+          "name": "Get Application Statuses",
+          "request": {
+            "name": "Get Application Statuses",
+            "description": {
+              "content": "Retrieves the status history of a specific application envelope.\n\n**Kong Route:** `/applications/{application_uuid}/statuses`\n**Backend:** `/applications/{application_uuid}/statuses`\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "applications",
+                ":application_uuid",
+                "statuses"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "application_uuid",
+                  "description": "(Required) Application UUID"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "06be1797-90d8-4f58-9d45-efc55133a6b1",
+              "name": "List of envelope statuses",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications",
+                    ":application_uuid",
+                    "statuses"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "application_uuid",
+                      "description": "(Required) Application UUID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 123,\n    \"applicationEnvelopeId\": 456,\n    \"status\": \"sent\",\n    \"eventData\": {\n      \"key_0\": \"string\"\n    },\n    \"createdAt\": \"2025-01-15T10:30:00Z\"\n  },\n  {\n    \"id\": 123,\n    \"applicationEnvelopeId\": 456,\n    \"status\": \"sent\",\n    \"eventData\": {\n      \"key_0\": true,\n      \"key_1\": 1759\n    },\n    \"createdAt\": \"2025-01-15T10:30:00Z\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6fd435c6-1f98-4dcc-aa50-e0b9c6b04a0c",
+              "name": "Unauthorized (invalid or expired token)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications",
+                    ":application_uuid",
+                    "statuses"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "application_uuid",
+                      "description": "(Required) Application UUID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "bfc2f2bc-0b75-4a70-bfed-9c2a356f410e",
+              "name": "Application not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications",
+                    ":application_uuid",
+                    "statuses"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "application_uuid",
+                      "description": "(Required) Application UUID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "5d7faaa2-a073-4d8c-ba83-3f7ebec1ea10",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications",
+                    ":application_uuid",
+                    "statuses"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "application_uuid",
+                      "description": "(Required) Application UUID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "4af7abbe-afea-47ec-9b13-896274430489",
+          "name": "Get Signer Details",
+          "request": {
+            "name": "Get Signer Details",
+            "description": {
+              "content": "Retrieves the details of a specific signer for a completed application envelope.\nReturns signer information and form field data collected from the signer.\n\n**Note:** Only available after envelope is completed.\n\n**Kong Route:** `/applications/{application_uuid}/signers/{customer_uuid}`\n**Backend:** `/applications/{application_uuid}/signers/{customer_uuid}`\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "applications",
+                ":application_uuid",
+                "signers",
+                ":customer_uuid"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "application_uuid",
+                  "description": "(Required) Application UUID"
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "customer_uuid",
+                  "description": "(Required) Customer UUID"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "08fd0948-322f-4c0d-bea7-47d3989dabdf",
+              "name": "Signer details",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications",
+                    ":application_uuid",
+                    "signers",
+                    ":customer_uuid"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "application_uuid",
+                      "description": "(Required) Application UUID"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "customer_uuid",
+                      "description": "(Required) Customer UUID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"customerUuid\": \"770e8400-e29b-41d4-a716-446655440000\",\n  \"roleName\": \"Borrower\",\n  \"signerCreatedAt\": \"2025-01-15T10:30:00Z\",\n  \"signerData\": {\n    \"key_0\": 3243.8640108588756,\n    \"key_1\": 7700,\n    \"key_2\": 5993.691020430364\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e3a1695f-0945-4e7f-a839-f93307e0cd32",
+              "name": "Unauthorized (invalid or expired token)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications",
+                    ":application_uuid",
+                    "signers",
+                    ":customer_uuid"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "application_uuid",
+                      "description": "(Required) Application UUID"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "customer_uuid",
+                      "description": "(Required) Customer UUID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "51c364d9-d12d-4889-a4e3-1de664667bbc",
+              "name": "Signer not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications",
+                    ":application_uuid",
+                    "signers",
+                    ":customer_uuid"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "application_uuid",
+                      "description": "(Required) Application UUID"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "customer_uuid",
+                      "description": "(Required) Customer UUID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "52da3b27-cccb-4a11-905a-8f4e67896d79",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications",
+                    ":application_uuid",
+                    "signers",
+                    ":customer_uuid"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "application_uuid",
+                      "description": "(Required) Application UUID"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "customer_uuid",
+                      "description": "(Required) Customer UUID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d1d0a2a4-aa85-40da-bfa5-f7f1da1c5149",
+          "name": "Generate Embedded Signing Link",
+          "request": {
+            "name": "Generate Embedded Signing Link",
+            "description": {
+              "content": "Generates an embedded signing URL for a signer to sign documents directly within an iframe.\nThe signing URL is time-limited and should be used immediately after generation.\n\n**Kong Route:** `/applications/{application_uuid}/signers/{customer_uuid}/embedded-link`\n**Backend:** `/applications/{application_uuid}/signers/{customer_uuid}/embedded-link`\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "applications",
+                ":application_uuid",
+                "signers",
+                ":customer_uuid",
+                "embedded-link"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "return_url",
+                  "value": "<uri>",
+                  "description": "(Required) URL where signer will be redirected after completing or canceling signing"
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "application_uuid",
+                  "description": "(Required) Application UUID"
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "customer_uuid",
+                  "description": "(Required) Customer UUID"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "a9c9b3dd-537f-459a-94d6-af637ddf3d69",
+              "name": "Embedded signing link generated",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications",
+                    ":application_uuid",
+                    "signers",
+                    ":customer_uuid",
+                    "embedded-link"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "return_url",
+                      "value": "https://yourapp.com/signing-complete"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "application_uuid",
+                      "description": "(Required) Application UUID"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "customer_uuid",
+                      "description": "(Required) Customer UUID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"signing_url\": \"https://demo.docusign.net/Signing/MTRedeem/v1/abc123...\",\n  \"envelope_id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e792b0d1-5e26-4af6-90de-2c568c1c47be",
+              "name": "Unauthorized (invalid or expired token)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications",
+                    ":application_uuid",
+                    "signers",
+                    ":customer_uuid",
+                    "embedded-link"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "return_url",
+                      "value": "https://yourapp.com/signing-complete"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "application_uuid",
+                      "description": "(Required) Application UUID"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "customer_uuid",
+                      "description": "(Required) Customer UUID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "6f95eb9e-af86-4d08-a2bc-67f61d726865",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "applications",
+                    ":application_uuid",
+                    "signers",
+                    ":customer_uuid",
+                    "embedded-link"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "return_url",
+                      "value": "https://yourapp.com/signing-complete"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "application_uuid",
+                      "description": "(Required) Application UUID"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "customer_uuid",
+                      "description": "(Required) Customer UUID"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lendkey.com/esign",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "/oauth2/token"
+      },
+      {
+        "key": "grant_type",
+        "value": "client_credentials"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "c29c7367-8cac-450e-84b2-213e8102b464",
+    "name": "LendKey E-Sign API (via Kong Gateway) Application Contracts API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "# LendKey E-Sign API - Kong Gateway Documentation\n\n## Overview\n\nThe LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.\nThis API is accessed through Kong Gateway, which handles authentication via OAuth2.\n\n## Authentication\n\nAll requests to this API require OAuth2 authentication through Kong Gateway.\n\n### Step 1: Get OAuth2 Token\n\nBefore calling any endpoint, you must obtain an access token:\n\n**Production Environment:**\n```bash\ncurl -X POST https://api.lendkey.com/esign/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Response:**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 7200\n}\n```\n\n### Step 2: Use Token in API Calls\n\nInclude the access token in the `Authorization` header:\n```\nAuthorization: Bearer YOUR_ACCESS_TOKEN\n```\n\n**Token Lifetime:** 2 hours (7200 seconds)\n\n## Base URLs (Kong Gateway)\n\n| Environment | Kong Base URL | Backend Kubernetes Service |\n|------------|---------------|---------------------------|\n| **Production** | `https://api.lendkey.com/esign` | `main-esign-kotlin.ci.lkeyprod.com` |\n\n## How Kong Routes Requests\n\nWhen you call Kong:\n```\nhttps://api.lendkey.com/esign/applications\n```\n\nKong:\n1. Validates your OAuth2 token\n2. Strips the `/esign` prefix\n3. Forwards to: `http://main-esign-kotlin.ci.lkeyprod.com/applications`\n\nYou don't need to manage any backend authentication - Kong handles everything!\n\n## Getting Started\n\n1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal\n2. **Get Token:** Use the OAuth2 token endpoint for your environment\n3. **Call API:** Use the token in the Authorization header\n4. **Refresh:** Get a new token every 2 hours\n\n\nContact Support:\n Name: LendKey Platform Team",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,254 @@
+{
+  "item": [
+    {
+      "id": "f3ca780e-152e-4e59-ba5b-2e598ad033ea",
+      "name": "leads",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "2fb40f94-7629-4514-8f06-c91ab42c6569",
+          "name": "Creates a new lead to represent a potential customer",
+          "request": {
+            "name": "Creates a new lead to represent a potential customer",
+            "description": {
+              "content": "Creates a lead record in the Greenhouse LOS to capture information about potential customers and where their traffic was driven in from.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "leads",
+                "create"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/hal+json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"<string>\",\n  \"firstName\": \"<string>\",\n  \"lastName\": \"<string>\",\n  \"source\": \"<string>\",\n  \"sourceKey\": \"<string>\",\n  \"sourceApplicationId\": \"<string>\",\n  \"creditRiskModel\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "0c528860-203f-4d01-974d-f091903f1dc0",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "leads",
+                    "create"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/hal+json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"no-reply@lendkey.com\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"source\": \"unqork\",\n  \"sourceKey\": \"8f8898ae-dda1-4bde-a627-44d6fb5977dd\",\n  \"sourceApplicationId\": \"null\",\n  \"creditRiskModel\": \"0f2f1ce6-7bed-4df4-8b04-aff593dd4d23\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/hal+json"
+                }
+              ],
+              "body": "{\n  \"id\": 8944,\n  \"uuid\": \"0d498799-9a79-e60e-7619-e6b6644acccc\",\n  \"email\": \"string\",\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"createdAt\": \"1960-05-26\",\n  \"updatedAt\": \"2001-09-30\",\n  \"source\": \"string\",\n  \"sourceKey\": \"string\",\n  \"sourceApplicationId\": \"string\",\n  \"creditRiskModel\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "17075b2c-bdaa-4011-a523-c283ab5f4de1",
+              "name": "Invalid request, unable to process the request with the information provided.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "leads",
+                    "create"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/hal+json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"no-reply@lendkey.com\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"source\": \"unqork\",\n  \"sourceKey\": \"8f8898ae-dda1-4bde-a627-44d6fb5977dd\",\n  \"sourceApplicationId\": \"null\",\n  \"creditRiskModel\": \"0f2f1ce6-7bed-4df4-8b04-aff593dd4d23\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/hal+json"
+                }
+              ],
+              "body": "{\n  \"id\": \"b6c52a48-551a-42ef-b361-f642d25cfeb7\",\n  \"status\": \"BAD_REQUEST\",\n  \"timestamp\": \"2019-10-21 14:07:59\",\n  \"message\": \"Describes what was invalid about the request, if possible.\",\n  \"debugMessage\": null\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "48734d5c-d5d6-4780-83b2-d2719aa1819f",
+              "name": "An unexpected server error occurred.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "leads",
+                    "create"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/hal+json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"no-reply@lendkey.com\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"source\": \"unqork\",\n  \"sourceKey\": \"8f8898ae-dda1-4bde-a627-44d6fb5977dd\",\n  \"sourceApplicationId\": \"null\",\n  \"creditRiskModel\": \"0f2f1ce6-7bed-4df4-8b04-aff593dd4d23\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/hal+json"
+                }
+              ],
+              "body": "{\n  \"id\": \"b6c52a48-551a-42ef-b361-f642d25cfeb7\",\n  \"status\": \"INTERNAL_SERVER_ERROR\",\n  \"timestamp\": \"2019-10-21 14:07:59\",\n  \"message\": \"An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.\",\n  \"debugMessage\": null\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lendkey.com/esign",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "/oauth2/token"
+      },
+      {
+        "key": "grant_type",
+        "value": "client_credentials"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "80737aca-4850-43be-9805-f9f9f8d9a7a7",
+    "name": "LendKey E-Sign API (via Kong Gateway) Application Contracts leads API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "# LendKey E-Sign API - Kong Gateway Documentation\n\n## Overview\n\nThe LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.\nThis API is accessed through Kong Gateway, which handles authentication via OAuth2.\n\n## Authentication\n\nAll requests to this API require OAuth2 authentication through Kong Gateway.\n\n### Step 1: Get OAuth2 Token\n\nBefore calling any endpoint, you must obtain an access token:\n\n**Production Environment:**\n```bash\ncurl -X POST https://api.lendkey.com/esign/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Response:**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 7200\n}\n```\n\n### Step 2: Use Token in API Calls\n\nInclude the access token in the `Authorization` header:\n```\nAuthorization: Bearer YOUR_ACCESS_TOKEN\n```\n\n**Token Lifetime:** 2 hours (7200 seconds)\n\n## Base URLs (Kong Gateway)\n\n| Environment | Kong Base URL | Backend Kubernetes Service |\n|------------|---------------|---------------------------|\n| **Production** | `https://api.lendkey.com/esign` | `main-esign-kotlin.ci.lkeyprod.com` |\n\n## How Kong Routes Requests\n\nWhen you call Kong:\n```\nhttps://api.lendkey.com/esign/applications\n```\n\nKong:\n1. Validates your OAuth2 token\n2. Strips the `/esign` prefix\n3. Forwards to: `http://main-esign-kotlin.ci.lkeyprod.com/applications`\n\nYou don't need to manage any backend authentication - Kong handles everything!\n\n## Getting Started\n\n1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal\n2. **Get Token:** Use the OAuth2 token endpoint for your environment\n3. **Call API:** Use the token in the Authorization header\n4. **Refresh:** Get a new token every 2 hours\n\n\nContact Support:\n Name: LendKey Platform Team",
+      "type": "text/plain"
+    }
+  }
+}

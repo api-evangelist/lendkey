@@ -1,0 +1,254 @@
+{
+  "item": [
+    {
+      "id": "1c3ba85f-ec24-4e27-baa6-e63dfe8cac1e",
+      "name": "onboarding",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "9280ff6b-8494-422c-9b48-e5b9c51a0c0f",
+          "name": "Submits an application LendKey for boarding.",
+          "request": {
+            "name": "Submits an application LendKey for boarding.",
+            "description": {
+              "content": "Includes all application information as well as accepted loan offer information to board the application as a loan within LendKeys LOS.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "onboarding",
+                "onboard"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/hal+json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"submissionUuid\": \"<uuid>\",\n  \"applicants\": [\n    {\n      \"role\": \"<string>\",\n      \"dob\": \"<string>\",\n      \"ssn\": \"<string>\",\n      \"email\": \"<string>\",\n      \"totalAnnualIncome\": \"<number>\",\n      \"monthlyHousingExpense\": \"<number>\",\n      \"eligibility\": \"<object>\",\n      \"employer\": \"<string>\",\n      \"returningApplicantId\": \"<integer>\",\n      \"name\": \"<object>\",\n      \"driversLicense\": \"<object>\",\n      \"isMarried\": \"<boolean>\",\n      \"militaryStatus\": \"<string>\",\n      \"employerPhone\": \"<string>\",\n      \"phoneNumbers\": [\n        {\n          \"type\": \"<string>\",\n          \"phoneNumber\": \"<string>\"\n        },\n        {\n          \"type\": \"<string>\",\n          \"phoneNumber\": \"<string>\"\n        }\n      ],\n      \"preferredPhone\": \"<string>\",\n      \"smsAllowed\": \"<boolean>\",\n      \"consentToContact\": \"<boolean>\",\n      \"address\": \"<object>\",\n      \"otherIncome\": \"<number>\",\n      \"relationship\": \"<string>\"\n    },\n    {\n      \"role\": \"<string>\",\n      \"dob\": \"<string>\",\n      \"ssn\": \"<string>\",\n      \"email\": \"<string>\",\n      \"totalAnnualIncome\": \"<number>\",\n      \"monthlyHousingExpense\": \"<number>\",\n      \"eligibility\": \"<object>\",\n      \"employer\": \"<string>\",\n      \"returningApplicantId\": \"<integer>\",\n      \"name\": \"<object>\",\n      \"driversLicense\": \"<object>\",\n      \"isMarried\": \"<boolean>\",\n      \"militaryStatus\": \"<string>\",\n      \"employerPhone\": \"<string>\",\n      \"phoneNumbers\": [\n        {\n          \"type\": \"<string>\",\n          \"phoneNumber\": \"<string>\"\n        },\n        {\n          \"type\": \"<string>\",\n          \"phoneNumber\": \"<string>\"\n        }\n      ],\n      \"preferredPhone\": \"<string>\",\n      \"smsAllowed\": \"<boolean>\",\n      \"consentToContact\": \"<boolean>\",\n      \"address\": \"<object>\",\n      \"otherIncome\": \"<number>\",\n      \"relationship\": \"<string>\"\n    }\n  ],\n  \"project\": \"<object>\",\n  \"consentOfDisclosures\": \"<boolean>\",\n  \"contractorId\": \"<integer>\",\n  \"requestedLoanAmount\": \"<number>\",\n  \"selectedOffer\": \"<object>\",\n  \"authorizedUser\": \"<object>\",\n  \"contractorNetworkId\": \"<string>\",\n  \"merchantUseOnly\": \"<string>\",\n  \"promoCode\": \"<string>\",\n  \"applicationType\": \"<string>\",\n  \"preferredLanguage\": \"<string>\",\n  \"referenceNumber\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "f0c42527-68e1-4ed4-871a-bf964aaf689d",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "onboarding",
+                    "onboard"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/hal+json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"submissionUuid\": \"40121260-4082-4c22-b70c-b5be137bf2a0\",\n  \"applicants\": [\n    {\n      \"role\": \"primaryApplicant\",\n      \"dob\": \"11-22-1990\",\n      \"ssn\": \"123456789\",\n      \"email\": \"test@email.com\",\n      \"totalAnnualIncome\": 130000,\n      \"monthlyHousingExpense\": 2100,\n      \"eligibility\": {\n        \"primaryResidence\": true,\n        \"propertyOwnership\": true,\n        \"citizenship\": \"US\"\n      },\n      \"employer\": \"Company A\",\n      \"returningApplicantId\": \"<integer>\",\n      \"name\": {\n        \"firstName\": \"John\",\n        \"middleName\": \"M\",\n        \"lastName\": \"Doe\",\n        \"suffix\": \"Jr.\"\n      },\n      \"driversLicense\": {\n        \"number\": \"TA923290\",\n        \"state\": \"OH\",\n        \"expirationDate\": \"11-22-2023\"\n      },\n      \"isMarried\": true,\n      \"militaryStatus\": \"Active Duty\",\n      \"employerPhone\": \"360-901-9917\",\n      \"phoneNumbers\": [\n        {\n          \"type\": \"Cell\",\n          \"phoneNumber\": \"8005882300\"\n        },\n        {\n          \"type\": \"Cell\",\n          \"phoneNumber\": \"8005882300\"\n        }\n      ],\n      \"preferredPhone\": \"Cell\",\n      \"smsAllowed\": true,\n      \"consentToContact\": true,\n      \"address\": {\n        \"addressLineOne\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\",\n        \"zipCode\": \"<string>\",\n        \"addressLineTwo\": \"<string>\",\n        \"country\": \"<string>\",\n        \"township\": \"<string>\"\n      },\n      \"otherIncome\": 5000,\n      \"relationship\": \"Relative\"\n    },\n    {\n      \"role\": \"primaryApplicant\",\n      \"dob\": \"11-22-1990\",\n      \"ssn\": \"123456789\",\n      \"email\": \"test@email.com\",\n      \"totalAnnualIncome\": 130000,\n      \"monthlyHousingExpense\": 2100,\n      \"eligibility\": {\n        \"primaryResidence\": true,\n        \"propertyOwnership\": true,\n        \"citizenship\": \"US\"\n      },\n      \"employer\": \"Company A\",\n      \"returningApplicantId\": \"<integer>\",\n      \"name\": {\n        \"firstName\": \"John\",\n        \"middleName\": \"M\",\n        \"lastName\": \"Doe\",\n        \"suffix\": \"Jr.\"\n      },\n      \"driversLicense\": {\n        \"number\": \"TA923290\",\n        \"state\": \"OH\",\n        \"expirationDate\": \"11-22-2023\"\n      },\n      \"isMarried\": true,\n      \"militaryStatus\": \"Active Duty\",\n      \"employerPhone\": \"360-901-9917\",\n      \"phoneNumbers\": [\n        {\n          \"type\": \"Cell\",\n          \"phoneNumber\": \"8005882300\"\n        },\n        {\n          \"type\": \"Cell\",\n          \"phoneNumber\": \"8005882300\"\n        }\n      ],\n      \"preferredPhone\": \"Cell\",\n      \"smsAllowed\": true,\n      \"consentToContact\": true,\n      \"address\": {\n        \"addressLineOne\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\",\n        \"zipCode\": \"<string>\",\n        \"addressLineTwo\": \"<string>\",\n        \"country\": \"<string>\",\n        \"township\": \"<string>\"\n      },\n      \"otherIncome\": 5000,\n      \"relationship\": \"Relative\"\n    }\n  ],\n  \"project\": {\n    \"projectCost\": \"<number>\",\n    \"projectAddress\": \"<string>\",\n    \"addressLineOne\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\",\n    \"zipCode\": \"<string>\",\n    \"addressLineTwo\": \"<string>\",\n    \"isSameAsPrimaryResidence\": \"<boolean>\",\n    \"yearOfHomePurchase\": \"<string>\",\n    \"housingStatus\": \"<string>\",\n    \"applicantsOnDeedOrTitle\": \"<boolean>\",\n    \"currentHomeValue\": \"<number>\",\n    \"mortgageBalance\": \"<number>\",\n    \"monthlyHousingPayments\": \"<number>\",\n    \"projectType\": \"<string>\",\n    \"projectDescription\": \"<string>\",\n    \"projectExpectedDuration\": \"<string>\",\n    \"projectStatus\": \"<string>\",\n    \"termsRequested\": \"<string>\"\n  },\n  \"consentOfDisclosures\": true,\n  \"contractorId\": \"<integer>\",\n  \"requestedLoanAmount\": \"<number>\",\n  \"selectedOffer\": {\n    \"programId\": \"<integer>\",\n    \"termInMonths\": \"<integer>\",\n    \"loanRate\": \"<number>\",\n    \"rateIndex\": \"<string>\",\n    \"maximumLoanAmount\": \"<number>\",\n    \"fomQueryId\": \"<integer>\"\n  },\n  \"authorizedUser\": {\n    \"name\": {\n      \"firstName\": \"John\",\n      \"middleName\": \"M\",\n      \"lastName\": \"Doe\",\n      \"suffix\": \"Jr.\"\n    },\n    \"email\": \"j.doe@gmail.com\",\n    \"relationship\": \"Father\",\n    \"phoneNumber\": \"8005882300\"\n  },\n  \"contractorNetworkId\": \"<string>\",\n  \"merchantUseOnly\": \"\",\n  \"promoCode\": \"<string>\",\n  \"applicationType\": \"<string>\",\n  \"preferredLanguage\": \"english\",\n  \"referenceNumber\": \"\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/hal+json"
+                }
+              ],
+              "body": "{\n  \"loanId\": 9323,\n  \"loanKey\": \"HIL-615486020\",\n  \"url\": \"http://homeImprovement-apply.lvh.me/access/HIL-615486020/by_token?auth=a7127e56d48a6cd5cc4054451c26530b67813c3a0f754d4f502037db96a199b71b26a1c404c30bc2834451a7c1b2be9a2c5c4bbd61567f1d91b71e89b0\",\n  \"applicants\": [\n    {\n      \"role\": \"primaryApplicant\",\n      \"returningApplicantId\": 593093\n    },\n    {\n      \"role\": \"coborrower\",\n      \"returningApplicantId\": 593094\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a7fdf06a-51b0-4eb4-84bd-db42546edf89",
+              "name": "Invalid request, unable to process the request with the information provided.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "onboarding",
+                    "onboard"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/hal+json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"submissionUuid\": \"40121260-4082-4c22-b70c-b5be137bf2a0\",\n  \"applicants\": [\n    {\n      \"role\": \"primaryApplicant\",\n      \"dob\": \"11-22-1990\",\n      \"ssn\": \"123456789\",\n      \"email\": \"test@email.com\",\n      \"totalAnnualIncome\": 130000,\n      \"monthlyHousingExpense\": 2100,\n      \"eligibility\": {\n        \"primaryResidence\": true,\n        \"propertyOwnership\": true,\n        \"citizenship\": \"US\"\n      },\n      \"employer\": \"Company A\",\n      \"returningApplicantId\": \"<integer>\",\n      \"name\": {\n        \"firstName\": \"John\",\n        \"middleName\": \"M\",\n        \"lastName\": \"Doe\",\n        \"suffix\": \"Jr.\"\n      },\n      \"driversLicense\": {\n        \"number\": \"TA923290\",\n        \"state\": \"OH\",\n        \"expirationDate\": \"11-22-2023\"\n      },\n      \"isMarried\": true,\n      \"militaryStatus\": \"Active Duty\",\n      \"employerPhone\": \"360-901-9917\",\n      \"phoneNumbers\": [\n        {\n          \"type\": \"Cell\",\n          \"phoneNumber\": \"8005882300\"\n        },\n        {\n          \"type\": \"Cell\",\n          \"phoneNumber\": \"8005882300\"\n        }\n      ],\n      \"preferredPhone\": \"Cell\",\n      \"smsAllowed\": true,\n      \"consentToContact\": true,\n      \"address\": {\n        \"addressLineOne\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\",\n        \"zipCode\": \"<string>\",\n        \"addressLineTwo\": \"<string>\",\n        \"country\": \"<string>\",\n        \"township\": \"<string>\"\n      },\n      \"otherIncome\": 5000,\n      \"relationship\": \"Relative\"\n    },\n    {\n      \"role\": \"primaryApplicant\",\n      \"dob\": \"11-22-1990\",\n      \"ssn\": \"123456789\",\n      \"email\": \"test@email.com\",\n      \"totalAnnualIncome\": 130000,\n      \"monthlyHousingExpense\": 2100,\n      \"eligibility\": {\n        \"primaryResidence\": true,\n        \"propertyOwnership\": true,\n        \"citizenship\": \"US\"\n      },\n      \"employer\": \"Company A\",\n      \"returningApplicantId\": \"<integer>\",\n      \"name\": {\n        \"firstName\": \"John\",\n        \"middleName\": \"M\",\n        \"lastName\": \"Doe\",\n        \"suffix\": \"Jr.\"\n      },\n      \"driversLicense\": {\n        \"number\": \"TA923290\",\n        \"state\": \"OH\",\n        \"expirationDate\": \"11-22-2023\"\n      },\n      \"isMarried\": true,\n      \"militaryStatus\": \"Active Duty\",\n      \"employerPhone\": \"360-901-9917\",\n      \"phoneNumbers\": [\n        {\n          \"type\": \"Cell\",\n          \"phoneNumber\": \"8005882300\"\n        },\n        {\n          \"type\": \"Cell\",\n          \"phoneNumber\": \"8005882300\"\n        }\n      ],\n      \"preferredPhone\": \"Cell\",\n      \"smsAllowed\": true,\n      \"consentToContact\": true,\n      \"address\": {\n        \"addressLineOne\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\",\n        \"zipCode\": \"<string>\",\n        \"addressLineTwo\": \"<string>\",\n        \"country\": \"<string>\",\n        \"township\": \"<string>\"\n      },\n      \"otherIncome\": 5000,\n      \"relationship\": \"Relative\"\n    }\n  ],\n  \"project\": {\n    \"projectCost\": \"<number>\",\n    \"projectAddress\": \"<string>\",\n    \"addressLineOne\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\",\n    \"zipCode\": \"<string>\",\n    \"addressLineTwo\": \"<string>\",\n    \"isSameAsPrimaryResidence\": \"<boolean>\",\n    \"yearOfHomePurchase\": \"<string>\",\n    \"housingStatus\": \"<string>\",\n    \"applicantsOnDeedOrTitle\": \"<boolean>\",\n    \"currentHomeValue\": \"<number>\",\n    \"mortgageBalance\": \"<number>\",\n    \"monthlyHousingPayments\": \"<number>\",\n    \"projectType\": \"<string>\",\n    \"projectDescription\": \"<string>\",\n    \"projectExpectedDuration\": \"<string>\",\n    \"projectStatus\": \"<string>\",\n    \"termsRequested\": \"<string>\"\n  },\n  \"consentOfDisclosures\": true,\n  \"contractorId\": \"<integer>\",\n  \"requestedLoanAmount\": \"<number>\",\n  \"selectedOffer\": {\n    \"programId\": \"<integer>\",\n    \"termInMonths\": \"<integer>\",\n    \"loanRate\": \"<number>\",\n    \"rateIndex\": \"<string>\",\n    \"maximumLoanAmount\": \"<number>\",\n    \"fomQueryId\": \"<integer>\"\n  },\n  \"authorizedUser\": {\n    \"name\": {\n      \"firstName\": \"John\",\n      \"middleName\": \"M\",\n      \"lastName\": \"Doe\",\n      \"suffix\": \"Jr.\"\n    },\n    \"email\": \"j.doe@gmail.com\",\n    \"relationship\": \"Father\",\n    \"phoneNumber\": \"8005882300\"\n  },\n  \"contractorNetworkId\": \"<string>\",\n  \"merchantUseOnly\": \"\",\n  \"promoCode\": \"<string>\",\n  \"applicationType\": \"<string>\",\n  \"preferredLanguage\": \"english\",\n  \"referenceNumber\": \"\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/hal+json"
+                }
+              ],
+              "body": "{\n  \"id\": \"b6c52a48-551a-42ef-b361-f642d25cfeb7\",\n  \"status\": \"BAD_REQUEST\",\n  \"timestamp\": \"2019-10-21 14:07:59\",\n  \"message\": \"Describes what was invalid about the request, if possible.\",\n  \"debugMessage\": null\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3a7d2ce7-bbc1-462d-8a50-061147682bc6",
+              "name": "An unexpected server error occurred.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "onboarding",
+                    "onboard"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: oauth2",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/hal+json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"submissionUuid\": \"40121260-4082-4c22-b70c-b5be137bf2a0\",\n  \"applicants\": [\n    {\n      \"role\": \"primaryApplicant\",\n      \"dob\": \"11-22-1990\",\n      \"ssn\": \"123456789\",\n      \"email\": \"test@email.com\",\n      \"totalAnnualIncome\": 130000,\n      \"monthlyHousingExpense\": 2100,\n      \"eligibility\": {\n        \"primaryResidence\": true,\n        \"propertyOwnership\": true,\n        \"citizenship\": \"US\"\n      },\n      \"employer\": \"Company A\",\n      \"returningApplicantId\": \"<integer>\",\n      \"name\": {\n        \"firstName\": \"John\",\n        \"middleName\": \"M\",\n        \"lastName\": \"Doe\",\n        \"suffix\": \"Jr.\"\n      },\n      \"driversLicense\": {\n        \"number\": \"TA923290\",\n        \"state\": \"OH\",\n        \"expirationDate\": \"11-22-2023\"\n      },\n      \"isMarried\": true,\n      \"militaryStatus\": \"Active Duty\",\n      \"employerPhone\": \"360-901-9917\",\n      \"phoneNumbers\": [\n        {\n          \"type\": \"Cell\",\n          \"phoneNumber\": \"8005882300\"\n        },\n        {\n          \"type\": \"Cell\",\n          \"phoneNumber\": \"8005882300\"\n        }\n      ],\n      \"preferredPhone\": \"Cell\",\n      \"smsAllowed\": true,\n      \"consentToContact\": true,\n      \"address\": {\n        \"addressLineOne\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\",\n        \"zipCode\": \"<string>\",\n        \"addressLineTwo\": \"<string>\",\n        \"country\": \"<string>\",\n        \"township\": \"<string>\"\n      },\n      \"otherIncome\": 5000,\n      \"relationship\": \"Relative\"\n    },\n    {\n      \"role\": \"primaryApplicant\",\n      \"dob\": \"11-22-1990\",\n      \"ssn\": \"123456789\",\n      \"email\": \"test@email.com\",\n      \"totalAnnualIncome\": 130000,\n      \"monthlyHousingExpense\": 2100,\n      \"eligibility\": {\n        \"primaryResidence\": true,\n        \"propertyOwnership\": true,\n        \"citizenship\": \"US\"\n      },\n      \"employer\": \"Company A\",\n      \"returningApplicantId\": \"<integer>\",\n      \"name\": {\n        \"firstName\": \"John\",\n        \"middleName\": \"M\",\n        \"lastName\": \"Doe\",\n        \"suffix\": \"Jr.\"\n      },\n      \"driversLicense\": {\n        \"number\": \"TA923290\",\n        \"state\": \"OH\",\n        \"expirationDate\": \"11-22-2023\"\n      },\n      \"isMarried\": true,\n      \"militaryStatus\": \"Active Duty\",\n      \"employerPhone\": \"360-901-9917\",\n      \"phoneNumbers\": [\n        {\n          \"type\": \"Cell\",\n          \"phoneNumber\": \"8005882300\"\n        },\n        {\n          \"type\": \"Cell\",\n          \"phoneNumber\": \"8005882300\"\n        }\n      ],\n      \"preferredPhone\": \"Cell\",\n      \"smsAllowed\": true,\n      \"consentToContact\": true,\n      \"address\": {\n        \"addressLineOne\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\",\n        \"zipCode\": \"<string>\",\n        \"addressLineTwo\": \"<string>\",\n        \"country\": \"<string>\",\n        \"township\": \"<string>\"\n      },\n      \"otherIncome\": 5000,\n      \"relationship\": \"Relative\"\n    }\n  ],\n  \"project\": {\n    \"projectCost\": \"<number>\",\n    \"projectAddress\": \"<string>\",\n    \"addressLineOne\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\",\n    \"zipCode\": \"<string>\",\n    \"addressLineTwo\": \"<string>\",\n    \"isSameAsPrimaryResidence\": \"<boolean>\",\n    \"yearOfHomePurchase\": \"<string>\",\n    \"housingStatus\": \"<string>\",\n    \"applicantsOnDeedOrTitle\": \"<boolean>\",\n    \"currentHomeValue\": \"<number>\",\n    \"mortgageBalance\": \"<number>\",\n    \"monthlyHousingPayments\": \"<number>\",\n    \"projectType\": \"<string>\",\n    \"projectDescription\": \"<string>\",\n    \"projectExpectedDuration\": \"<string>\",\n    \"projectStatus\": \"<string>\",\n    \"termsRequested\": \"<string>\"\n  },\n  \"consentOfDisclosures\": true,\n  \"contractorId\": \"<integer>\",\n  \"requestedLoanAmount\": \"<number>\",\n  \"selectedOffer\": {\n    \"programId\": \"<integer>\",\n    \"termInMonths\": \"<integer>\",\n    \"loanRate\": \"<number>\",\n    \"rateIndex\": \"<string>\",\n    \"maximumLoanAmount\": \"<number>\",\n    \"fomQueryId\": \"<integer>\"\n  },\n  \"authorizedUser\": {\n    \"name\": {\n      \"firstName\": \"John\",\n      \"middleName\": \"M\",\n      \"lastName\": \"Doe\",\n      \"suffix\": \"Jr.\"\n    },\n    \"email\": \"j.doe@gmail.com\",\n    \"relationship\": \"Father\",\n    \"phoneNumber\": \"8005882300\"\n  },\n  \"contractorNetworkId\": \"<string>\",\n  \"merchantUseOnly\": \"\",\n  \"promoCode\": \"<string>\",\n  \"applicationType\": \"<string>\",\n  \"preferredLanguage\": \"english\",\n  \"referenceNumber\": \"\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/hal+json"
+                }
+              ],
+              "body": "{\n  \"id\": \"b6c52a48-551a-42ef-b361-f642d25cfeb7\",\n  \"status\": \"INTERNAL_SERVER_ERROR\",\n  \"timestamp\": \"2019-10-21 14:07:59\",\n  \"message\": \"An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.\",\n  \"debugMessage\": null\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lendkey.com/esign",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "accessTokenUrl",
+        "value": "/oauth2/token"
+      },
+      {
+        "key": "grant_type",
+        "value": "client_credentials"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "f8959578-4aa2-4716-b338-5af3d4bca7c4",
+    "name": "LendKey E-Sign API (via Kong Gateway) Application Contracts onboarding API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "# LendKey E-Sign API - Kong Gateway Documentation\n\n## Overview\n\nThe LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.\nThis API is accessed through Kong Gateway, which handles authentication via OAuth2.\n\n## Authentication\n\nAll requests to this API require OAuth2 authentication through Kong Gateway.\n\n### Step 1: Get OAuth2 Token\n\nBefore calling any endpoint, you must obtain an access token:\n\n**Production Environment:**\n```bash\ncurl -X POST https://api.lendkey.com/esign/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Response:**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 7200\n}\n```\n\n### Step 2: Use Token in API Calls\n\nInclude the access token in the `Authorization` header:\n```\nAuthorization: Bearer YOUR_ACCESS_TOKEN\n```\n\n**Token Lifetime:** 2 hours (7200 seconds)\n\n## Base URLs (Kong Gateway)\n\n| Environment | Kong Base URL | Backend Kubernetes Service |\n|------------|---------------|---------------------------|\n| **Production** | `https://api.lendkey.com/esign` | `main-esign-kotlin.ci.lkeyprod.com` |\n\n## How Kong Routes Requests\n\nWhen you call Kong:\n```\nhttps://api.lendkey.com/esign/applications\n```\n\nKong:\n1. Validates your OAuth2 token\n2. Strips the `/esign` prefix\n3. Forwards to: `http://main-esign-kotlin.ci.lkeyprod.com/applications`\n\nYou don't need to manage any backend authentication - Kong handles everything!\n\n## Getting Started\n\n1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal\n2. **Get Token:** Use the OAuth2 token endpoint for your environment\n3. **Call API:** Use the token in the Authorization header\n4. **Refresh:** Get a new token every 2 hours\n\n\nContact Support:\n Name: LendKey Platform Team",
+      "type": "text/plain"
+    }
+  }
+}

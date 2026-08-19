@@ -1,0 +1,44 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "LendKey E-Sign API (via Kong Gateway) Application Contracts Loans API",
+    "version": "0.1"
+  },
+  "request": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "client_credentials",
+      "accessTokenUrl": "/oauth2/token",
+      "credentials": {
+        "clientId": "{{clientId}}",
+        "clientSecret": "{{clientSecret}}"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Loans",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create Loan",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lendkey.com/esign/v1/createLoan",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates loan inventory and treasury management entries.\n\nThis endpoint creates complete loan records including:\n- Loan details (principal, term, product)\n- Associated persons and parties\n- Initial disbursements\n\n**Kong Route:** `/v1/createLoan`\n**Backend:** `/TreasuryManagement_API/rest/v1/createLoan`\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
