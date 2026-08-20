@@ -45,6 +45,19 @@ tags:
 - Credit Unions
 - Banking
 - Loan Origination
+- Financial-Services
+- Payments
+- E-Signature
+- Treasury
+tags_raw:
+- Company
+- Fintech
+- Lending
+- Loans
+- Student Loans
+- Credit Unions
+- Banking
+- Loan Origination
 - Financial Services
 - Payments
 - E-Signature
@@ -80,6 +93,8 @@ apis:
   humanURL: https://developer.lendkey.com/default/documentation/integration-api
   baseURL: https://proxy.kong.lkeyprod.com/integration/
   tags:
+  - Application
+  tags_raw:
   - applications
   properties:
   - type: OpenAPI
@@ -99,6 +114,8 @@ apis:
   humanURL: https://developer.lendkey.com/default/documentation/integration-api
   baseURL: https://proxy.kong.lkeyprod.com/integration/
   tags:
+  - Authentication
+  tags_raw:
   - auth
   properties:
   - type: OpenAPI
@@ -175,6 +192,8 @@ apis:
   humanURL: https://developer.lendkey.com/default/documentation/integration-api
   baseURL: https://proxy.kong.lkeyprod.com/integration/
   tags:
+  - Email
+  tags_raw:
   - email
   properties:
   - type: OpenAPI
@@ -194,6 +213,8 @@ apis:
   humanURL: https://developer.lendkey.com/default/documentation/integration-api
   baseURL: https://proxy.kong.lkeyprod.com/integration/
   tags:
+  - Internal
+  tags_raw:
   - internal
   properties:
   - type: OpenAPI
@@ -213,6 +234,8 @@ apis:
   humanURL: https://developer.lendkey.com/default/documentation/integration-api
   baseURL: https://proxy.kong.lkeyprod.com/integration/
   tags:
+  - Leads
+  tags_raw:
   - leads
   properties:
   - type: OpenAPI
@@ -289,6 +312,8 @@ apis:
   humanURL: https://developer.lendkey.com/default/documentation/integration-api
   baseURL: https://proxy.kong.lkeyprod.com/integration/
   tags:
+  - Onboarding
+  tags_raw:
   - onboarding
   properties:
   - type: OpenAPI
@@ -327,6 +352,8 @@ apis:
   humanURL: https://developer.lendkey.com/default/documentation/integration-api
   baseURL: https://proxy.kong.lkeyprod.com/integration/
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI
