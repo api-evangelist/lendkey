@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: LendKey E-Sign API (via Kong Gateway) Application Contracts API
   version: 0.1
@@ -273,28 +273,155 @@ paths:
           description: Internal server error
 components:
   schemas:
-    EnvelopeStatus:
+    Address:
+      type: object
+      required:
+      - address_line_1
+      - city
+      - state
+      - zip
+      properties:
+        address_line_1:
+          type: string
+          example: 123 Main St
+        address_line_2:
+          type: string
+          example: Apt 4B
+        address_line_3:
+          type: string
+          example: ''
+        city:
+          type: string
+          example: Springfield
+        state:
+          type: string
+          example: IL
+        zip:
+          type: string
+          example: '62701'
+    EmbeddedSigningLinkResponse:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
-          example: 123
-        applicationEnvelopeId:
-          type: integer
-          format: int64
-          example: 456
-        status:
+        signing_url:
           type: string
-          example: sent
-        eventData:
-          type: object
-          additionalProperties: true
-          description: DocuSign event data
-        createdAt:
+          format: uri
+          example: https://demo.docusign.net/Signing/MTRedeem/v1/abc123...
+        envelope_id:
+          type: string
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+    SignerDetailsResponse:
+      type: object
+      properties:
+        customerUuid:
+          type: string
+          format: uuid
+          example: 770e8400-e29b-41d4-a716-446655440000
+        roleName:
+          type: string
+          example: Borrower
+        signerCreatedAt:
           type: string
           format: date-time
           example: '2025-01-15T10:30:00Z'
+        signerData:
+          type: object
+          additionalProperties: true
+          description: Form field data collected from signer
+    Borrower:
+      type: object
+      required:
+      - customer_uuid
+      - first_name
+      - last_name
+      - email
+      - address
+      properties:
+        customer_uuid:
+          type: string
+          format: uuid
+          example: 770e8400-e29b-41d4-a716-446655440000
+        first_name:
+          type: string
+          example: John
+        last_name:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        address:
+          $ref: '#/components/schemas/Address'
+        fico_score:
+          type: integer
+          example: 720
+        fico_score_percentile:
+          type: integer
+          example: 75
+        fico_score_date:
+          type: string
+          format: date
+          example: '2025-01-01'
+        dob:
+          type: string
+          format: date
+          example: '1985-06-15'
+        home_phone:
+          type: string
+          example: '5551234567'
+        work_phone:
+          type: string
+          example: '5551234568'
+        cell_phone:
+          type: string
+          example: '5551234569'
+        preferred_phone:
+          type: string
+          example: '5551234567'
+        ssn:
+          type: string
+          example: '123456789'
+        other_fields:
+          type: object
+          additionalProperties: true
+    Coborrower:
+      type: object
+      required:
+      - customer_uuid
+      - first_name
+      - last_name
+      - email
+      - address
+      properties:
+        customer_uuid:
+          type: string
+          format: uuid
+          example: 880e8400-e29b-41d4-a716-446655440000
+        first_name:
+          type: string
+          example: Jane
+        last_name:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: jane.doe@example.com
+        address:
+          $ref: '#/components/schemas/Address'
+        fico_score:
+          type: integer
+          example: 740
+        fico_score_percentile:
+          type: integer
+          example: 80
+        fico_score_date:
+          type: string
+          format: date
+          example: '2025-01-01'
+        other_fields:
+          type: object
+          additionalProperties: true
     NewApplicationRequest:
       type: object
       required:
@@ -409,155 +536,28 @@ components:
           type: string
           format: date-time
           example: '2025-01-15T10:30:00Z'
-    SignerDetailsResponse:
+    EnvelopeStatus:
       type: object
       properties:
-        customerUuid:
+        id:
+          type: integer
+          format: int64
+          example: 123
+        applicationEnvelopeId:
+          type: integer
+          format: int64
+          example: 456
+        status:
           type: string
-          format: uuid
-          example: 770e8400-e29b-41d4-a716-446655440000
-        roleName:
-          type: string
-          example: Borrower
-        signerCreatedAt:
+          example: sent
+        eventData:
+          type: object
+          additionalProperties: true
+          description: DocuSign event data
+        createdAt:
           type: string
           format: date-time
           example: '2025-01-15T10:30:00Z'
-        signerData:
-          type: object
-          additionalProperties: true
-          description: Form field data collected from signer
-    Address:
-      type: object
-      required:
-      - address_line_1
-      - city
-      - state
-      - zip
-      properties:
-        address_line_1:
-          type: string
-          example: 123 Main St
-        address_line_2:
-          type: string
-          example: Apt 4B
-        address_line_3:
-          type: string
-          example: ''
-        city:
-          type: string
-          example: Springfield
-        state:
-          type: string
-          example: IL
-        zip:
-          type: string
-          example: '62701'
-    Coborrower:
-      type: object
-      required:
-      - customer_uuid
-      - first_name
-      - last_name
-      - email
-      - address
-      properties:
-        customer_uuid:
-          type: string
-          format: uuid
-          example: 880e8400-e29b-41d4-a716-446655440000
-        first_name:
-          type: string
-          example: Jane
-        last_name:
-          type: string
-          example: Doe
-        email:
-          type: string
-          format: email
-          example: jane.doe@example.com
-        address:
-          $ref: '#/components/schemas/Address'
-        fico_score:
-          type: integer
-          example: 740
-        fico_score_percentile:
-          type: integer
-          example: 80
-        fico_score_date:
-          type: string
-          format: date
-          example: '2025-01-01'
-        other_fields:
-          type: object
-          additionalProperties: true
-    Borrower:
-      type: object
-      required:
-      - customer_uuid
-      - first_name
-      - last_name
-      - email
-      - address
-      properties:
-        customer_uuid:
-          type: string
-          format: uuid
-          example: 770e8400-e29b-41d4-a716-446655440000
-        first_name:
-          type: string
-          example: John
-        last_name:
-          type: string
-          example: Doe
-        email:
-          type: string
-          format: email
-          example: john.doe@example.com
-        address:
-          $ref: '#/components/schemas/Address'
-        fico_score:
-          type: integer
-          example: 720
-        fico_score_percentile:
-          type: integer
-          example: 75
-        fico_score_date:
-          type: string
-          format: date
-          example: '2025-01-01'
-        dob:
-          type: string
-          format: date
-          example: '1985-06-15'
-        home_phone:
-          type: string
-          example: '5551234567'
-        work_phone:
-          type: string
-          example: '5551234568'
-        cell_phone:
-          type: string
-          example: '5551234569'
-        preferred_phone:
-          type: string
-          example: '5551234567'
-        ssn:
-          type: string
-          example: '123456789'
-        other_fields:
-          type: object
-          additionalProperties: true
-    EmbeddedSigningLinkResponse:
-      type: object
-      properties:
-        signing_url:
-          type: string
-          format: uri
-          example: https://demo.docusign.net/Signing/MTRedeem/v1/abc123...
-        envelope_id:
-          type: string
-          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
   securitySchemes:
     oauth2:
       type: oauth2

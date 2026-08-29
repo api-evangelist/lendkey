@@ -1,16 +1,58 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: LendKey E-Sign API (via Kong Gateway) Application Contracts email API
-  version: 0.1
-  description: "# LendKey E-Sign API - Kong Gateway Documentation\n\n## Overview\n\nThe LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.\nThis API is accessed through Kong Gateway, which handles authentication via OAuth2.\n\n## Authentication\n\nAll requests to this API require OAuth2 authentication through Kong Gateway.\n\n### Step 1: Get OAuth2 Token\n\nBefore calling any endpoint, you must obtain an access token:\n\n**Production Environment:**\n```bash\ncurl -X POST https://api.lendkey.com/esign/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Response:**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 7200\n}\n```\n\n### Step 2: Use Token in API Calls\n\nInclude the access token in the `Authorization` header:\n```\nAuthorization: Bearer YOUR_ACCESS_TOKEN\n```\n\n**Token Lifetime:** 2 hours (7200 seconds)\n\n## Base URLs (Kong Gateway)\n\n| Environment | Kong Base URL | Backend Kubernetes Service |\n|------------|---------------|---------------------------|\n| **Production** | `https://api.lendkey.com/esign` | `main-esign-kotlin.ci.lkeyprod.com` |\n\n## How Kong Routes Requests\n\nWhen you call Kong:\n```\nhttps://api.lendkey.com/esign/applications\n```\n\nKong:\n1. Validates your OAuth2 token\n2. Strips the `/esign` prefix\n3. Forwards to: `http://main-esign-kotlin.ci.lkeyprod.com/applications`\n\nYou don't need to manage any backend authentication - Kong handles everything!\n\n## Getting Started\n\n1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal\n2. **Get Token:** Use the OAuth2 token endpoint for your environment\n3. **Call API:** Use the token in the Authorization header\n4. **Refresh:** Get a new token every 2 hours\n"
+  title: Integration Email API
+  description: This API collection represents the integration APIs LendKey offers for 3rd party dependencies/integrations, and is for dev/qa use only. External connections are not prohibited following this document.
+  termsOfService: http://www.lendkey.com
+  license:
+    name: Lendkey License
+    url: http://www.lendkey.com
+  version: 1.0.0
   contact:
-    name: LendKey Platform Team
-    url: https://lendkey.com
+    name: LendKey Product Operations Team
+    url: http://www.lendkey.com
+    email: HIL_product_team@lendkey.com
 servers:
-- url: https://api.lendkey.com/esign
-  description: Production Environment
-security:
-- oauth2: []
+- url: https://proxy.kong.lkeyprod.com/integration/
+  description: This is the production host for our API endpoints.
+- url: https://proxy.kong.lkeystaging.com/integration/
+  description: This is the staging host for our API endpoints. Please note that the ability to create a soft-pull is disabled in this environment. If credit pull testing in this environment is needed, please reach out to coordinate that.
+- url: https://proxy.kong.eks-1.use-1.lkeyqa.com/integration/integration-api-spring-boot-main/
+  description: This is the QA host for our API endpoints. Please use this for all development and testing purposes.
+- url: '{protocol}://{env}-integration-api-spring-boot.ci.lkeyqa.com:{port}/{basePath}'
+  description: The testing API server
+  variables:
+    protocol:
+      enum:
+      - http
+      - https
+      default: https
+    env:
+      default: staging
+      description: 'This value is related to the environment you are running. ie: PR-1112, develop'
+    port:
+      enum:
+      - '8443'
+      - '443'
+      default: '8443'
+    basePath:
+      description: 'Version path. ie: v1'
+      default: ''
+- url: http://localhost:{port}/{basePath}
+  description: The local development server
+  variables:
+    protocol:
+      enum:
+      - http
+      - https
+      default: https
+    env:
+      default: develop
+      description: 'this value is related to the environment you are running. ie: PR-1112, develop'
+    port:
+      default: '8080'
+    basePath:
+      description: 'Version path. ie: v1'
+      default: ''
 tags:
 - name: email
 paths:
@@ -55,150 +97,32 @@ paths:
         500:
           $ref: '#/components/responses/UnexpectedError'
 components:
+  responses:
+    BadRequest:
+      description: Invalid request, unable to process the request with the information provided.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: BAD_REQUEST
+            timestamp: '2019-10-21 14:07:59'
+            message: Describes what was invalid about the request, if possible.
+            debugMessage: null
+    UnexpectedError:
+      description: An unexpected server error occurred.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: INTERNAL_SERVER_ERROR
+            timestamp: '2019-10-21 14:07:59'
+            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
+            debugMessage: null
   schemas:
-    emailRecordRequestPayload:
-      type: object
-      required:
-      - provider
-      - paylaod
-      properties:
-        provider:
-          type: string
-          description: The email service provider to use when sending this email.
-          example: SENDGRID
-        payload:
-          type: object
-          anyOf:
-          - $ref: '#/components/schemas/emailRecordDto'
-    emailSubstitution:
-      type: object
-      properties:
-        id:
-          type: integer
-        tag:
-          type: string
-      example:
-        id: 2
-        tag: clientName
-    emailTemplateList:
-      type: object
-      properties:
-        _embedded:
-          type: object
-          properties:
-            emailTemplates:
-              type: array
-              items:
-                $ref: '#/components/schemas/emailTemplate'
-        _links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/link'
-        page:
-          $ref: '#/components/schemas/page'
-      example:
-        _embedded:
-          emailTemplates:
-          - keyName: HIL_Application_Invitation
-            externalTemplateProvider: SendGrid
-            externalTemplateId: ''
-            emailSubstitutions:
-            - id: 2
-              tag: clientName
-            - id: 1
-              tag: dealName
-        _links:
-          self:
-            href: http://localhost:8080/v1/emailTemplates?page=0&size=20
-          first:
-            href: http://localhost:8080/v1/emailTemplates?page=0&size=20
-          next:
-            href: http://localhost:8080/v1/emailTemplates?page=1&size=20
-          last:
-            href: http://localhost:8080/v1/emailTemplates?page=1&size=20
-        page:
-          size: 20
-          totalElements: 1
-          totalPages: 1
-          number: 0
-    error:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        status:
-          type: string
-        timestamp:
-          type: string
-        message:
-          type: string
-        debugMessage:
-          type: string
-        subErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/suberror'
-      example:
-        id: null
-        status: BAD_REQUEST
-        timestamp: '2019-10-21 14:07:59'
-        message: Validation error
-        debugMessage: null
-        subErrors:
-        - object: Resource
-          field: name
-          rejectedValue: null
-          message: must not be null
-    page:
-      type: object
-      properties:
-        size:
-          type: integer
-        totalElements:
-          type: integer
-        totalPages:
-          type: integer
-        number:
-          type: integer
-    recipient:
-      type: object
-      required:
-      - recipientAddress
-      - recipientName
-      properties:
-        recipientAddress:
-          type: string
-        recipientName:
-          type: string
-      example:
-        recipientName: John Doe
-        recipientAddress: doe.john@gmali.com
-    emailTemplate:
-      type: object
-      properties:
-        keyName:
-          type: string
-        externalTemplateProvider:
-          type: string
-        externalTemplateId:
-          type: string
-        emailSubstitutions:
-          type: array
-          items:
-            $ref: '#/components/schemas/emailSubstitution'
-      example:
-        keyName: HIL_Application_Invitation
-        externalTemplateProvider: SendGrid
-        externalTemplateId: ''
-        emailSubstitutions:
-        - $ref: '#/components/schemas/emailSubstitution'
-    link:
-      type: object
-      properties:
-        href:
-          type: string
     suberror:
       type: object
       properties:
@@ -276,6 +200,109 @@ components:
             firstName: John
             lastName: Doe
             body: We've received your document.
+    recipient:
+      type: object
+      required:
+      - recipientAddress
+      - recipientName
+      properties:
+        recipientAddress:
+          type: string
+        recipientName:
+          type: string
+      example:
+        recipientName: John Doe
+        recipientAddress: doe.john@gmali.com
+    emailTemplateList:
+      type: object
+      properties:
+        _embedded:
+          type: object
+          properties:
+            emailTemplates:
+              type: array
+              items:
+                $ref: '#/components/schemas/emailTemplate'
+        _links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/link'
+        page:
+          $ref: '#/components/schemas/page'
+      example:
+        _embedded:
+          emailTemplates:
+          - keyName: HIL_Application_Invitation
+            externalTemplateProvider: SendGrid
+            externalTemplateId: ''
+            emailSubstitutions:
+            - id: 2
+              tag: clientName
+            - id: 1
+              tag: dealName
+        _links:
+          self:
+            href: http://localhost:8080/v1/emailTemplates?page=0&size=20
+          first:
+            href: http://localhost:8080/v1/emailTemplates?page=0&size=20
+          next:
+            href: http://localhost:8080/v1/emailTemplates?page=1&size=20
+          last:
+            href: http://localhost:8080/v1/emailTemplates?page=1&size=20
+        page:
+          size: 20
+          totalElements: 1
+          totalPages: 1
+          number: 0
+    link:
+      type: object
+      properties:
+        href:
+          type: string
+    error:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        timestamp:
+          type: string
+        message:
+          type: string
+        debugMessage:
+          type: string
+        subErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/suberror'
+      example:
+        id: null
+        status: BAD_REQUEST
+        timestamp: '2019-10-21 14:07:59'
+        message: Validation error
+        debugMessage: null
+        subErrors:
+        - object: Resource
+          field: name
+          rejectedValue: null
+          message: must not be null
+    emailRecordRequestPayload:
+      type: object
+      required:
+      - provider
+      - paylaod
+      properties:
+        provider:
+          type: string
+          description: The email service provider to use when sending this email.
+          example: SENDGRID
+        payload:
+          type: object
+          anyOf:
+          - $ref: '#/components/schemas/emailRecordDto'
     emailRecord:
       type: object
       properties:
@@ -375,36 +402,43 @@ components:
           firstName: John
           lastName: Doe
           body: We've received your document.
-  responses:
-    UnexpectedError:
-      description: An unexpected server error occurred.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: INTERNAL_SERVER_ERROR
-            timestamp: '2019-10-21 14:07:59'
-            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
-            debugMessage: null
-    BadRequest:
-      description: Invalid request, unable to process the request with the information provided.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: BAD_REQUEST
-            timestamp: '2019-10-21 14:07:59'
-            message: Describes what was invalid about the request, if possible.
-            debugMessage: null
-  securitySchemes:
-    oauth2:
-      type: oauth2
-      description: OAuth2 client credentials flow via Kong Gateway
-      flows:
-        clientCredentials:
-          tokenUrl: /oauth2/token
-          scopes: {}
+    emailTemplate:
+      type: object
+      properties:
+        keyName:
+          type: string
+        externalTemplateProvider:
+          type: string
+        externalTemplateId:
+          type: string
+        emailSubstitutions:
+          type: array
+          items:
+            $ref: '#/components/schemas/emailSubstitution'
+      example:
+        keyName: HIL_Application_Invitation
+        externalTemplateProvider: SendGrid
+        externalTemplateId: ''
+        emailSubstitutions:
+        - $ref: '#/components/schemas/emailSubstitution'
+    page:
+      type: object
+      properties:
+        size:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+        number:
+          type: integer
+    emailSubstitution:
+      type: object
+      properties:
+        id:
+          type: integer
+        tag:
+          type: string
+      example:
+        id: 2
+        tag: clientName
