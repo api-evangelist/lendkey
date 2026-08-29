@@ -1,0 +1,71 @@
+slug: lendkey
+provider: LendKey
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Banking & Capital Markets
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 5
+edges:
+- tag: Credit Risk
+  spec_file: lendkey-credit-risk-api-openapi.yml
+  capability_id: BC-1320.20
+  capability_id_l1: BC-1320
+  capability_name: Credit Underwriting & Decisioning Management
+  confidence: 0.78
+  evidence: POST /v1/credit/soft_pull 'Performs a soft credit pull'; POST /v1/scoring/score 'Score a given
+    set of attributes against a PMML model'; POST /v1/credit/combined_monthly_debt 'Calculates the combined
+    monthly debt between two credit profiles'
+  reason: Credit bureau pull, debt calculation and model scoring of applicant attributes are the decisioning/underwriting
+    inputs of consumer loan origination. Some ambiguity with credit risk modelling (BC-1320.60), but the
+    operations execute per-applicant decisioning rather than model development.
+- tag: onboarding
+  spec_file: lendkey-onboarding-api-openapi.yml
+  capability_id: BC-1320.10
+  capability_id_l1: BC-1320
+  capability_name: Credit Origination Management
+  confidence: 0.75
+  evidence: POST /v1/onboarding/onboard — "Submits an application LendKey for boarding"; schemas applicant,
+    eligibility, selectedOffer, driversLicense
+  reason: Submitting a loan application with applicant, eligibility and selected offer data into a consumer-lending
+    origination platform is credit application intake/origination. Some chance it is better read as customer
+    account onboarding.
+- tag: applications
+  spec_file: lendkey-applications-api-openapi.yml
+  capability_id: BC-1320.10
+  capability_id_l1: BC-1320
+  capability_name: Credit Origination Management
+  confidence: 0.72
+  evidence: POST /v1/application/status 'Retrieve the current status of one or more applications'; schemas
+    applicationStatusResponse, applicationStatus, requester
+  reason: Status tracking of loan applications on a consumer lending origination platform — credit application
+    intake/origination workflow visibility.
+- tag: Application Contracts
+  spec_file: lendkey-application-contracts-api-openapi.yml
+  capability_id: BC-1320.10
+  capability_id_l1: BC-1320
+  capability_name: Credit Origination Management
+  confidence: 0.7
+  evidence: POST /applications createApplicationContract 'Create New Application Contract'; schemas Borrower,
+    Coborrower, NewApplicationRequest, ApplicationEnvelopeSummary
+  reason: E-signature envelopes bound to loan applications with Borrower/Coborrower signers — document
+    execution within the credit application/origination workflow of a lending platform. Mapped to credit
+    origination rather than generic contract management because the artefacts are loan applications and
+    borrowers.
+- tag: Payments
+  spec_file: lendkey-payments-api-openapi.yml
+  capability_id: BC-1320.30
+  capability_id_l1: BC-1320
+  capability_name: Loan Servicing Management
+  confidence: 0.7
+  evidence: POST /v1/createPayment createPayment 'Create Payment'; description 'endpoints for managing
+    loan inventory, disbursements, payments'
+  reason: Payments recorded against loans in a loan treasury service map to loan servicing, whose definition
+    explicitly includes 'loan servicing, payments'. Not a payment-rail capability since there is no clearing/settlement
+    or instruction routing surface.

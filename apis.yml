@@ -380,6 +380,9 @@ apis:
     url: >-
       https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
 common:
+- type: CapabilityMap
+  url: capabilities/lendkey-capability-edges.yml
+  name: LendKey Business Capability Map
 - type: Overlay
   url: overlays/lendkey-esign-overlay.yaml
 - type: Website
