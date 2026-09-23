@@ -54,13 +54,13 @@ servers:
       description: 'Version path. ie: v1'
       default: ''
 tags:
-- name: onboarding
+- name: Onboarding
 paths:
   /v1/onboarding/onboard:
     post:
       tags:
-      - onboarding
-      summary: Submits an application LendKey for boarding.
+      - Onboarding
+      summary: Submits an application LendKey for boarding
       description: Includes all application information as well as accepted loan offer information to board the application as a loan within LendKeys LOS.
       requestBody:
         content:
@@ -78,25 +78,185 @@ paths:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/UnexpectedError'
+      operationId: postV1OnboardingOnboard
+      x-operation-id-source: derived
 components:
   schemas:
-    driversLicense:
+    project:
       type: object
       required:
-      - number
+      - projectCost
+      - projectAddress
+      - addressLineOne
+      - city
       - state
-      - expirationDate
+      - zipCode
       properties:
-        number:
+        projectCost:
+          type: number
+        projectAddress:
+          type: string
+        addressLineOne:
+          type: string
+        addressLineTwo:
+          type: string
+        city:
           type: string
         state:
           type: string
-        expirationDate:
+        zipCode:
+          type: string
+        isSameAsPrimaryResidence:
+          type: boolean
+        yearOfHomePurchase:
+          type: string
+        housingStatus:
+          type: string
+        applicantsOnDeedOrTitle:
+          type: boolean
+        currentHomeValue:
+          type: number
+        mortgageBalance:
+          type: number
+        monthlyHousingPayments:
+          type: number
+        projectType:
+          type: string
+        projectDescription:
+          type: string
+        projectExpectedDuration:
+          type: string
+        projectStatus:
+          type: string
+        termsRequested:
           type: string
       example:
-        number: TA923290
-        state: OH
-        expirationDate: 11-22-2023
+        projectCost: 500000
+        projectAddress: 500 Main Street, PORTLAND, OR 97209
+        addressLineOne: 500 Main Street
+        addressLineTwo: null
+        city: PORTLAND
+        state: OR
+        zipCode: '97209'
+        isSameAsPrimaryResidence: null
+        yearOfHomePurchase: null
+        housingStatus: null
+        applicantsOnDeedOrTitle: null
+        currentHomeValue: null
+        mortgageBalance: null
+        monthlyHousingPayments: null
+        projectType: null
+        projectDescription: null
+        projectExpectedDuration: null
+        projectStatus: null
+        termsRequested: null
+    boardApplicationRequest:
+      type: object
+      required:
+      - submissionUuid
+      - applicants
+      - project
+      - consentOfDisclosures
+      - contractorId
+      - requestedLoanAmount
+      - selectedOffer
+      properties:
+        submissionUuid:
+          type: string
+          format: uuid
+          description: A unique identifying UUID that will be used to correlate this application to the loan it is transforming into.
+          example: 40121260-4082-4c22-b70c-b5be137bf2a0
+        applicants:
+          type: array
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/applicant'
+        project:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/project'
+        authorizedUser:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/authorizedUser'
+        consentOfDisclosures:
+          type: boolean
+          example: true
+        contractorNetworkId:
+          type: string
+        contractorId:
+          type: integer
+        requestedLoanAmount:
+          type: number
+        selectedOffer:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/selectedOffer'
+        merchantUseOnly:
+          type: string
+          example: ''
+        promoCode:
+          type: string
+          example: null
+        applicationType:
+          type: string
+          example: null
+        preferredLanguage:
+          type: string
+          example: english
+        referenceNumber:
+          type: string
+          example: ''
+    address:
+      type: object
+      required:
+      - addressLineOne
+      - city
+      - state
+      - zipCode
+      properties:
+        addressLineOne:
+          type: string
+        addressLineTwo:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        country:
+          type: string
+        township:
+          type: string
+      example:
+        addressLineOne: 500 Main Street
+        addressLineTwo: ''
+        city: PORTLAND
+        state: OR
+        zipCode: '97209'
+        country: null
+        township: null
+    authorizedUser:
+      type: object
+      required:
+      - name
+      - email
+      - relationship
+      properties:
+        name:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/name'
+        phoneNumber:
+          type: string
+          example: '8005882300'
+        email:
+          type: string
+          example: j.doe@gmail.com
+        relationship:
+          type: string
+          example: Father
     suberror:
       type: object
       properties:
@@ -113,35 +273,33 @@ components:
         field: name
         rejectedValue: null
         message: must not be null
-    error:
+    boardApplicationResponse:
       type: object
+      required:
+      - loanId
+      - loanKey
+      - url
+      - applicants
       properties:
-        id:
+        applicantId:
+          type: integer
+        coApplicantId:
+          type: integer
+        loanId:
+          type: integer
+        loanKey:
           type: string
-          format: uuid
-        status:
+        url:
           type: string
-        timestamp:
-          type: string
-        message:
-          type: string
-        debugMessage:
-          type: string
-        subErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/suberror'
       example:
-        id: null
-        status: BAD_REQUEST
-        timestamp: '2019-10-21 14:07:59'
-        message: Validation error
-        debugMessage: null
-        subErrors:
-        - object: Resource
-          field: name
-          rejectedValue: null
-          message: must not be null
+        loanId: 9323
+        loanKey: HIL-615486020
+        url: http://homeImprovement-apply.lvh.me/access/HIL-615486020/by_token?auth=a7127e56d48a6cd5cc4054451c26530b67813c3a0f754d4f502037db96a199b71b26a1c404c30bc2834451a7c1b2be9a2c5c4bbd61567f1d91b71e89b0
+        applicants:
+        - role: primaryApplicant
+          returningApplicantId: 593093
+        - role: coborrower
+          returningApplicantId: 593094
     applicant:
       type: object
       required:
@@ -227,20 +385,6 @@ components:
           type: string
           description: Required for coApplicant.  Valid values are Parent, Spouse, Relative, Friend, Other
           example: Relative
-    phoneNumber:
-      type: object
-      required:
-      - type
-      - phoneNumber
-      properties:
-        type:
-          type: string
-          description: The type of phone number.  Only valid values are Cell, Home, Work
-        phoneNumber:
-          type: string
-      example:
-        type: Cell
-        phoneNumber: '8005882300'
     eligibility:
       type: object
       required:
@@ -259,63 +403,6 @@ components:
         primaryResidence: true
         propertyOwnership: true
         citizenship: US
-    boardApplicationRequest:
-      type: object
-      required:
-      - submissionUuid
-      - applicants
-      - project
-      - consentOfDisclosures
-      - contractorId
-      - requestedLoanAmount
-      - selectedOffer
-      properties:
-        submissionUuid:
-          type: string
-          format: uuid
-          description: A unique identifying UUID that will be used to correlate this application to the loan it is transforming into.
-          example: 40121260-4082-4c22-b70c-b5be137bf2a0
-        applicants:
-          type: array
-          items:
-            anyOf:
-            - $ref: '#/components/schemas/applicant'
-        project:
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/project'
-        authorizedUser:
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/authorizedUser'
-        consentOfDisclosures:
-          type: boolean
-          example: true
-        contractorNetworkId:
-          type: string
-        contractorId:
-          type: integer
-        requestedLoanAmount:
-          type: number
-        selectedOffer:
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/selectedOffer'
-        merchantUseOnly:
-          type: string
-          example: ''
-        promoCode:
-          type: string
-          example: null
-        applicationType:
-          type: string
-          example: null
-        preferredLanguage:
-          type: string
-          example: english
-        referenceNumber:
-          type: string
-          example: ''
     name:
       type: object
       properties:
@@ -333,151 +420,6 @@ components:
         middleName: M
         lastName: Doe
         suffix: Jr.
-    authorizedUser:
-      type: object
-      required:
-      - name
-      - email
-      - relationship
-      properties:
-        name:
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/name'
-        phoneNumber:
-          type: string
-          example: '8005882300'
-        email:
-          type: string
-          example: j.doe@gmail.com
-        relationship:
-          type: string
-          example: Father
-    project:
-      type: object
-      required:
-      - projectCost
-      - projectAddress
-      - addressLineOne
-      - city
-      - state
-      - zipCode
-      properties:
-        projectCost:
-          type: number
-        projectAddress:
-          type: string
-        addressLineOne:
-          type: string
-        addressLineTwo:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        zipCode:
-          type: string
-        isSameAsPrimaryResidence:
-          type: boolean
-        yearOfHomePurchase:
-          type: string
-        housingStatus:
-          type: string
-        applicantsOnDeedOrTitle:
-          type: boolean
-        currentHomeValue:
-          type: number
-        mortgageBalance:
-          type: number
-        monthlyHousingPayments:
-          type: number
-        projectType:
-          type: string
-        projectDescription:
-          type: string
-        projectExpectedDuration:
-          type: string
-        projectStatus:
-          type: string
-        termsRequested:
-          type: string
-      example:
-        projectCost: 500000
-        projectAddress: 500 Main Street, PORTLAND, OR 97209
-        addressLineOne: 500 Main Street
-        addressLineTwo: null
-        city: PORTLAND
-        state: OR
-        zipCode: '97209'
-        isSameAsPrimaryResidence: null
-        yearOfHomePurchase: null
-        housingStatus: null
-        applicantsOnDeedOrTitle: null
-        currentHomeValue: null
-        mortgageBalance: null
-        monthlyHousingPayments: null
-        projectType: null
-        projectDescription: null
-        projectExpectedDuration: null
-        projectStatus: null
-        termsRequested: null
-    boardApplicationResponse:
-      type: object
-      required:
-      - loanId
-      - loanKey
-      - url
-      - applicants
-      properties:
-        applicantId:
-          type: integer
-        coApplicantId:
-          type: integer
-        loanId:
-          type: integer
-        loanKey:
-          type: string
-        url:
-          type: string
-      example:
-        loanId: 9323
-        loanKey: HIL-615486020
-        url: http://homeImprovement-apply.lvh.me/access/HIL-615486020/by_token?auth=a7127e56d48a6cd5cc4054451c26530b67813c3a0f754d4f502037db96a199b71b26a1c404c30bc2834451a7c1b2be9a2c5c4bbd61567f1d91b71e89b0
-        applicants:
-        - role: primaryApplicant
-          returningApplicantId: 593093
-        - role: coborrower
-          returningApplicantId: 593094
-    address:
-      type: object
-      required:
-      - addressLineOne
-      - city
-      - state
-      - zipCode
-      properties:
-        addressLineOne:
-          type: string
-        addressLineTwo:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        zipCode:
-          type: string
-        country:
-          type: string
-        township:
-          type: string
-      example:
-        addressLineOne: 500 Main Street
-        addressLineTwo: ''
-        city: PORTLAND
-        state: OR
-        zipCode: '97209'
-        country: null
-        township: null
     selectedOffer:
       type: object
       required:
@@ -506,6 +448,66 @@ components:
         rateIndex: prime
         termInMonths: 120
         maximumLoanAmount: 85000
+    phoneNumber:
+      type: object
+      required:
+      - type
+      - phoneNumber
+      properties:
+        type:
+          type: string
+          description: The type of phone number.  Only valid values are Cell, Home, Work
+        phoneNumber:
+          type: string
+      example:
+        type: Cell
+        phoneNumber: '8005882300'
+    driversLicense:
+      type: object
+      required:
+      - number
+      - state
+      - expirationDate
+      properties:
+        number:
+          type: string
+        state:
+          type: string
+        expirationDate:
+          type: string
+      example:
+        number: TA923290
+        state: OH
+        expirationDate: 11-22-2023
+    error:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        timestamp:
+          type: string
+        message:
+          type: string
+        debugMessage:
+          type: string
+        subErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/suberror'
+      example:
+        id: null
+        status: BAD_REQUEST
+        timestamp: '2019-10-21 14:07:59'
+        message: Validation error
+        debugMessage: null
+        subErrors:
+        - object: Resource
+          field: name
+          rejectedValue: null
+          message: must not be null
   responses:
     BadRequest:
       description: Invalid request, unable to process the request with the information provided.

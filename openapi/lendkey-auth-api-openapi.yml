@@ -54,12 +54,12 @@ servers:
       description: 'Version path. ie: v1'
       default: ''
 tags:
-- name: auth
+- name: Auth
 paths:
   /v1/oauth2/token:
     post:
       tags:
-      - auth
+      - Auth
       summary: Obtain an authorization token
       description: Performs client credentials authentication and returns an access token that is valid for 60 minutes.
       parameters:
@@ -92,33 +92,25 @@ paths:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/UnexpectedError'
+      operationId: postV1Oauth2Token
+      x-operation-id-source: derived
 components:
-  responses:
-    BadRequest:
-      description: Invalid request, unable to process the request with the information provided.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: BAD_REQUEST
-            timestamp: '2019-10-21 14:07:59'
-            message: Describes what was invalid about the request, if possible.
-            debugMessage: null
-    UnexpectedError:
-      description: An unexpected server error occurred.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: INTERNAL_SERVER_ERROR
-            timestamp: '2019-10-21 14:07:59'
-            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
-            debugMessage: null
   schemas:
+    authenticationResponse:
+      type: object
+      properties:
+        expires_in:
+          type: integer
+          description: The number of milliseconds the access token will expire in.
+          example: 3600
+        token_type:
+          type: string
+          description: The type of authentication token returned
+          example: bearer
+        access_token:
+          type: string
+          description: The access token to use
+          example: A3IaUdTbwrZcYjeKKKgTsUDgrsmwbTRx
     suberror:
       type: object
       properties:
@@ -164,18 +156,28 @@ components:
           field: name
           rejectedValue: null
           message: must not be null
-    authenticationResponse:
-      type: object
-      properties:
-        expires_in:
-          type: integer
-          description: The number of milliseconds the access token will expire in.
-          example: 3600
-        token_type:
-          type: string
-          description: The type of authentication token returned
-          example: bearer
-        access_token:
-          type: string
-          description: The access token to use
-          example: A3IaUdTbwrZcYjeKKKgTsUDgrsmwbTRx
+  responses:
+    BadRequest:
+      description: Invalid request, unable to process the request with the information provided.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: BAD_REQUEST
+            timestamp: '2019-10-21 14:07:59'
+            message: Describes what was invalid about the request, if possible.
+            debugMessage: null
+    UnexpectedError:
+      description: An unexpected server error occurred.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: INTERNAL_SERVER_ERROR
+            timestamp: '2019-10-21 14:07:59'
+            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
+            debugMessage: null

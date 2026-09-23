@@ -54,13 +54,13 @@ servers:
       description: 'Version path. ie: v1'
       default: ''
 tags:
-- name: email
+- name: Email
 paths:
   /v1/notifications/emails:
     summary: Endpoints for all things email related.
     post:
       tags:
-      - email
+      - Email
       summary: Send An Email Notification
       description: Sends an email notification.
       requestBody:
@@ -79,11 +79,13 @@ paths:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/UnexpectedError'
+      operationId: postV1NotificationsEmails
+      x-operation-id-source: derived
   /v1/notifications/emails/templates:
     get:
       tags:
-      - email
-      summary: Returns a list of ALL email templates available for use via notifier-api.
+      - Email
+      summary: Returns a list of ALL email templates available for use via notifier-api
       description: Lists out ALL email templates known to this service, regardless of their provider (i.e. SendGrid).
       responses:
         200:
@@ -96,123 +98,10 @@ paths:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/UnexpectedError'
+      operationId: getV1NotificationsEmailsTemplates
+      x-operation-id-source: derived
 components:
-  responses:
-    BadRequest:
-      description: Invalid request, unable to process the request with the information provided.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: BAD_REQUEST
-            timestamp: '2019-10-21 14:07:59'
-            message: Describes what was invalid about the request, if possible.
-            debugMessage: null
-    UnexpectedError:
-      description: An unexpected server error occurred.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: INTERNAL_SERVER_ERROR
-            timestamp: '2019-10-21 14:07:59'
-            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
-            debugMessage: null
   schemas:
-    suberror:
-      type: object
-      properties:
-        object:
-          type: string
-        field:
-          type: string
-        rejectedValue:
-          type: string
-        message:
-          type: string
-      example:
-        object: Resource
-        field: name
-        rejectedValue: null
-        message: must not be null
-    emailRecordDto:
-      type: object
-      required:
-      - fromName
-      - contentType
-      properties:
-        emailTemplate:
-          type: string
-          description: Optional. Specifies which email template should be used - uses a default template with no handlebar tags if one is not provided.
-          example: HIL_Application_Invitation
-        fromAddress:
-          type: string
-          description: Required. Specifies who the recipient will see the email is from.
-          example: john.doe@test.com
-        fromName:
-          type: string
-          description: Required. Specifies the name the recipient will see the email is from.
-          example: John Doe
-        to:
-          type: array
-          items:
-            anyOf:
-            - $ref: '#/components/schemas/recipient'
-          description: Optional, if at least one bcc recipient is provided - otherwise at least one required. The Recipient(s) of the email.
-        bcc:
-          type: array
-          items:
-            anyOf:
-            - $ref: '#/components/schemas/recipient'
-          description: Optional, if at least one to recipient is provided - otherwise at least one required. The BCC Recipient(s) of the email.
-        subject:
-          type: string
-          description: Optional - however certain templates may not support overriding the subject contents.
-          example: Your Attention Required!
-        body:
-          type: string
-          description: Optional - however certain templates may not support overriding the body contents.
-          example: We need more information from you before we can proceed with your application. Please call us!
-        contentType:
-          type: string
-          description: Required if body is provided. The content type of the email.
-          example: text/plain
-        personalizations:
-          type: object
-          description: Optional. Required only if a template is specified that contains handlebar tags.
-          additionalProperties:
-            type: object
-            properties:
-              personalizationTagKeyName:
-                type: string
-                description: The handlebar tag name, as specified in the email template, which is to be overridden with the corresponding value.
-              personalizaitonTagValue:
-                type: string
-                description: The value to be inserted for the given handlebar tag in the specified email template.
-          example:
-            dealName: Example
-            clientName: Some Credit Union
-            subject: Boarding File Success
-            firstName: John
-            lastName: Doe
-            body: We've received your document.
-    recipient:
-      type: object
-      required:
-      - recipientAddress
-      - recipientName
-      properties:
-        recipientAddress:
-          type: string
-        recipientName:
-          type: string
-      example:
-        recipientName: John Doe
-        recipientAddress: doe.john@gmali.com
     emailTemplateList:
       type: object
       properties:
@@ -255,54 +144,41 @@ components:
           totalElements: 1
           totalPages: 1
           number: 0
-    link:
+    emailTemplate:
       type: object
       properties:
-        href:
+        keyName:
           type: string
-    error:
+        externalTemplateProvider:
+          type: string
+        externalTemplateId:
+          type: string
+        emailSubstitutions:
+          type: array
+          items:
+            $ref: '#/components/schemas/emailSubstitution'
+      example:
+        keyName: HIL_Application_Invitation
+        externalTemplateProvider: SendGrid
+        externalTemplateId: ''
+        emailSubstitutions:
+        - $ref: '#/components/schemas/emailSubstitution'
+    suberror:
       type: object
       properties:
-        id:
+        object:
           type: string
-          format: uuid
-        status:
+        field:
           type: string
-        timestamp:
+        rejectedValue:
           type: string
         message:
           type: string
-        debugMessage:
-          type: string
-        subErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/suberror'
       example:
-        id: null
-        status: BAD_REQUEST
-        timestamp: '2019-10-21 14:07:59'
-        message: Validation error
-        debugMessage: null
-        subErrors:
-        - object: Resource
-          field: name
-          rejectedValue: null
-          message: must not be null
-    emailRecordRequestPayload:
-      type: object
-      required:
-      - provider
-      - paylaod
-      properties:
-        provider:
-          type: string
-          description: The email service provider to use when sending this email.
-          example: SENDGRID
-        payload:
-          type: object
-          anyOf:
-          - $ref: '#/components/schemas/emailRecordDto'
+        object: Resource
+        field: name
+        rejectedValue: null
+        message: must not be null
     emailRecord:
       type: object
       properties:
@@ -402,25 +278,90 @@ components:
           firstName: John
           lastName: Doe
           body: We've received your document.
-    emailTemplate:
+    emailSubstitution:
       type: object
       properties:
-        keyName:
+        id:
+          type: integer
+        tag:
           type: string
-        externalTemplateProvider:
+      example:
+        id: 2
+        tag: clientName
+    emailRecordDto:
+      type: object
+      required:
+      - fromName
+      - contentType
+      properties:
+        emailTemplate:
           type: string
-        externalTemplateId:
+          description: Optional. Specifies which email template should be used - uses a default template with no handlebar tags if one is not provided.
+          example: HIL_Application_Invitation
+        fromAddress:
           type: string
-        emailSubstitutions:
+          description: Required. Specifies who the recipient will see the email is from.
+          example: john.doe@test.com
+        fromName:
+          type: string
+          description: Required. Specifies the name the recipient will see the email is from.
+          example: John Doe
+        to:
           type: array
           items:
-            $ref: '#/components/schemas/emailSubstitution'
+            anyOf:
+            - $ref: '#/components/schemas/recipient'
+          description: Optional, if at least one bcc recipient is provided - otherwise at least one required. The Recipient(s) of the email.
+        bcc:
+          type: array
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/recipient'
+          description: Optional, if at least one to recipient is provided - otherwise at least one required. The BCC Recipient(s) of the email.
+        subject:
+          type: string
+          description: Optional - however certain templates may not support overriding the subject contents.
+          example: Your Attention Required!
+        body:
+          type: string
+          description: Optional - however certain templates may not support overriding the body contents.
+          example: We need more information from you before we can proceed with your application. Please call us!
+        contentType:
+          type: string
+          description: Required if body is provided. The content type of the email.
+          example: text/plain
+        personalizations:
+          type: object
+          description: Optional. Required only if a template is specified that contains handlebar tags.
+          additionalProperties:
+            type: object
+            properties:
+              personalizationTagKeyName:
+                type: string
+                description: The handlebar tag name, as specified in the email template, which is to be overridden with the corresponding value.
+              personalizaitonTagValue:
+                type: string
+                description: The value to be inserted for the given handlebar tag in the specified email template.
+          example:
+            dealName: Example
+            clientName: Some Credit Union
+            subject: Boarding File Success
+            firstName: John
+            lastName: Doe
+            body: We've received your document.
+    recipient:
+      type: object
+      required:
+      - recipientAddress
+      - recipientName
+      properties:
+        recipientAddress:
+          type: string
+        recipientName:
+          type: string
       example:
-        keyName: HIL_Application_Invitation
-        externalTemplateProvider: SendGrid
-        externalTemplateId: ''
-        emailSubstitutions:
-        - $ref: '#/components/schemas/emailSubstitution'
+        recipientName: John Doe
+        recipientAddress: doe.john@gmali.com
     page:
       type: object
       properties:
@@ -432,13 +373,76 @@ components:
           type: integer
         number:
           type: integer
-    emailSubstitution:
+    emailRecordRequestPayload:
+      type: object
+      required:
+      - provider
+      - paylaod
+      properties:
+        provider:
+          type: string
+          description: The email service provider to use when sending this email.
+          example: SENDGRID
+        payload:
+          type: object
+          anyOf:
+          - $ref: '#/components/schemas/emailRecordDto'
+    error:
       type: object
       properties:
         id:
-          type: integer
-        tag:
           type: string
+          format: uuid
+        status:
+          type: string
+        timestamp:
+          type: string
+        message:
+          type: string
+        debugMessage:
+          type: string
+        subErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/suberror'
       example:
-        id: 2
-        tag: clientName
+        id: null
+        status: BAD_REQUEST
+        timestamp: '2019-10-21 14:07:59'
+        message: Validation error
+        debugMessage: null
+        subErrors:
+        - object: Resource
+          field: name
+          rejectedValue: null
+          message: must not be null
+    link:
+      type: object
+      properties:
+        href:
+          type: string
+  responses:
+    BadRequest:
+      description: Invalid request, unable to process the request with the information provided.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: BAD_REQUEST
+            timestamp: '2019-10-21 14:07:59'
+            message: Describes what was invalid about the request, if possible.
+            debugMessage: null
+    UnexpectedError:
+      description: An unexpected server error occurred.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: INTERNAL_SERVER_ERROR
+            timestamp: '2019-10-21 14:07:59'
+            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
+            debugMessage: null

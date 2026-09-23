@@ -1,8 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Treasury Management API (via Kong Gateway) Ledger Management API
+  title: Treasury Management API (via Kong Gateway) Ledger…
   version: v1
-  description: "# Treasury Management API - Kong Gateway Documentation\n\n## Overview\n\nThe Treasury Management API provides endpoints for managing loan inventory, disbursements, payments, and treasury operations.\nThis API is accessed through Kong Gateway, which handles authentication via OAuth2.\n\n## Authentication\n\nAll requests to this API require OAuth2 authentication through Kong Gateway.\n\n### Step 1: Get OAuth2 Token\n\nBefore calling any endpoint, you must obtain an access token:\n\n**QA Environment:**\n```bash\ncurl -X POST https://api.lkeyqa.com/TreasuryMgmtQa/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**DEV Environment:**\n```bash\ncurl -X POST https://api.lkeyqa.com/TreasuryMgmtDev/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Staging Environment:**\n```bash\ncurl -X POST https://api.lkeystaging.com/TreasuryMgmt/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Production Environment:**\n```bash\ncurl -X POST https://api.lendkey.com/TreasuryMgmt/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Response:**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 7200\n}\n```\n\n### Step 2: Use Token in API Calls\n\nInclude the access token in the `Authorization` header:\n```\nAuthorization: Bearer YOUR_ACCESS_TOKEN\n```\n\n**Token Lifetime:** 2 hours (7200 seconds)\n\n## Base URLs (Kong Gateway)\n\n| Environment | Kong Base URL | Backend OutSystems URL |\n|------------|---------------|------------------------|\n| **DEV** | `https://api.lkeyqa.com/TreasuryMgmtDev` | `https://lendkey-dev.outsystemsenterprise.com` |\n| **QA** | `https://api.lkeyqa.com/TreasuryMgmtQa` | `https://os.lkeyqa.com` |\n| **Staging** | `https://api.lkeystaging.com/TreasuryMgmt` | `https://os.lkeystaging.com` |\n| **Production** | `https://api.lendkey.com/TreasuryMgmt` | `https://os.lendkey.com` |\n\n**Note:** Route names are case-insensitive (`/TreasuryMgmt`, `/treasurymgmt`, `/TREASURYMGMT` all work)\n\n## How Kong Routes Requests\n\nWhen you call Kong:\n```\nhttps://api.lkeyqa.com/TreasuryMgmtQa/v1/createLoan\n```\n\nKong:\n1. Validates your OAuth2 token\n2. Strips the `/TreasuryMgmtQa` prefix\n3. Adds OutSystems authentication headers (X-Auth-Key, X-Auth-AppId)\n4. Forwards to: `https://os.lkeyqa.com/TreasuryManagement_API/rest/v1/createLoan`\n\nYou never need to manage OutSystems credentials directly!\n\n## Getting Started\n\n1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal\n2. **Get Token:** Use the OAuth2 token endpoint for your environment\n3. **Call API:** Use the token in the Authorization header\n4. **Refresh:** Get a new token every 2 hours\n"
+  description: '# Treasury Management API - Kong Gateway Documentation
+
+
+    ## Overview
+
+
+    The Treasury Management API provides endpoints for managing loan inventory, disbursements, payments, and treasury operations.'
   contact:
     name: LendKey Platform Team
     url: https://lendkey.com
@@ -26,9 +32,7 @@ paths:
 
         **Kong Route:** `/v1/updateExternalId`
 
-        **Backend:** `/TreasuryManagement_API/rest/v1/updateExternalId`
-
-        '
+        **Backend:** `/TreasuryManagement_API/rest/v1/updateExternalId`'
       tags:
       - Ledger Management
       operationId: updateExternalId

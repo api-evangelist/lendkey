@@ -38,7 +38,8 @@
     "lendkey-integration-openapi.yml: declared missing tag: onboarding",
     "lendkey-partner-integration-internal-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
     "lendkey-treasury-management-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
-    "tag 'Authentication' spans 2 source specs (lendkey-esign-openapi.yml, lendkey-treasury-management-openapi.yml): per-path servers applied"
+    "tag 'Authentication' spans 2 source specs (lendkey-esign-openapi.yml, lendkey-treasury-management-openapi.yml): per-path servers applied",
+    "apis.yml register: already-registered"
   ],
   "skipped": [
     "lendkey-application-contracts-api-openapi.yml: previously refined output, superseded by openapi/_original/",

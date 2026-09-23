@@ -54,12 +54,12 @@ servers:
       description: 'Version path. ie: v1'
       default: ''
 tags:
-- name: applications
+- name: Applications
 paths:
   /v1/application/status:
     post:
       tags:
-      - applications
+      - Applications
       summary: Retrieve the current status of one or more applications
       description: Provide your requester identification UUID and a set of application/loan reference keys to get an up-to-date status on them.
       requestBody:
@@ -78,32 +78,9 @@ paths:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/UnexpectedError'
+      operationId: postV1ApplicationStatus
+      x-operation-id-source: derived
 components:
-  responses:
-    BadRequest:
-      description: Invalid request, unable to process the request with the information provided.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: BAD_REQUEST
-            timestamp: '2019-10-21 14:07:59'
-            message: Describes what was invalid about the request, if possible.
-            debugMessage: null
-    UnexpectedError:
-      description: An unexpected server error occurred.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: INTERNAL_SERVER_ERROR
-            timestamp: '2019-10-21 14:07:59'
-            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
-            debugMessage: null
   schemas:
     suberror:
       type: object
@@ -135,6 +112,24 @@ components:
             allOf:
             - type: string
               example: String reference key of unretrievable application.
+    applicationStatusRequest:
+      type: object
+      required:
+      - referenceKeys
+      - requester
+      properties:
+        referenceKeys:
+          type: array
+          items:
+            allOf:
+            - type: string
+          example:
+          - HIL-12345
+          - HIL-98765
+        requester:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/requester'
     error:
       type: object
       properties:
@@ -164,24 +159,6 @@ components:
           field: name
           rejectedValue: null
           message: must not be null
-    applicationStatusRequest:
-      type: object
-      required:
-      - referenceKeys
-      - requester
-      properties:
-        referenceKeys:
-          type: array
-          items:
-            allOf:
-            - type: string
-          example:
-          - HIL-12345
-          - HIL-98765
-        requester:
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/requester'
     applicationStatus:
       type: object
       properties:
@@ -211,3 +188,28 @@ components:
           type: string
           format: uuid
           example: 40121260-4082-4c22-b70c-b5be137bf2a0
+  responses:
+    BadRequest:
+      description: Invalid request, unable to process the request with the information provided.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: BAD_REQUEST
+            timestamp: '2019-10-21 14:07:59'
+            message: Describes what was invalid about the request, if possible.
+            debugMessage: null
+    UnexpectedError:
+      description: An unexpected server error occurred.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: INTERNAL_SERVER_ERROR
+            timestamp: '2019-10-21 14:07:59'
+            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
+            debugMessage: null

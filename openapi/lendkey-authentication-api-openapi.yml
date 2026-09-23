@@ -25,9 +25,7 @@ paths:
         This endpoint is provided by Kong Gateway.
 
 
-        **Token expires after 2 hours** - you''ll need to request a new token when it expires.
-
-        '
+        **Token expires after 2 hours** - you''ll need to request a new token when it expires.'
       tags:
       - Authentication
       operationId: getOAuth2Token

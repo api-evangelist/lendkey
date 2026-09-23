@@ -78,6 +78,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/UnexpectedError'
+      operationId: postV1CreditSoftPull
+      x-operation-id-source: derived
   /v1/credit/combined_monthly_debt:
     post:
       tags:
@@ -100,11 +102,13 @@ paths:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/UnexpectedError'
+      operationId: postV1CreditCombinedMonthlyDebt
+      x-operation-id-source: derived
   /v1/credit/resolve_attributes:
     post:
       tags:
       - Credit Risk
-      summary: Resolves the values for all credit attributes passed.
+      summary: Resolves the values for all credit attributes passed
       description: Given a credit profile ID, calculates/resolves all the values for the attributes requested.
       requestBody:
         content:
@@ -122,6 +126,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/UnexpectedError'
+      operationId: postV1CreditResolveAttributes
+      x-operation-id-source: derived
   /v1/scoring/score:
     post:
       tags:
@@ -146,49 +152,10 @@ paths:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/UnexpectedError'
+      operationId: postV1ScoringScore
+      x-operation-id-source: derived
 components:
-  responses:
-    BadRequest:
-      description: Invalid request, unable to process the request with the information provided.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: BAD_REQUEST
-            timestamp: '2019-10-21 14:07:59'
-            message: Describes what was invalid about the request, if possible.
-            debugMessage: null
-    UnexpectedError:
-      description: An unexpected server error occurred.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: INTERNAL_SERVER_ERROR
-            timestamp: '2019-10-21 14:07:59'
-            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
-            debugMessage: null
   schemas:
-    suberror:
-      type: object
-      properties:
-        object:
-          type: string
-        field:
-          type: string
-        rejectedValue:
-          type: string
-        message:
-          type: string
-      example:
-        object: Resource
-        field: name
-        rejectedValue: null
-        message: must not be null
     resolveCreditAttributesRequest:
       type: object
       properties:
@@ -209,13 +176,22 @@ components:
         - attribute_four_tbd
         - attribute_five_tbd
         - attribute_six_tbd
-    combinedMonthlyDebtResponse:
+    softCreditResponse:
       type: object
       properties:
-        amount:
+        id:
           type: integer
-          description: The combined total monthly debt for the two given credit profiles.
-          example: 2423
+          example: 1234
+    combinedMonthlyDebtRequest:
+      type: object
+      properties:
+        creditProfileA:
+          type: integer
+          description: The credit profile ID for the first credit profile to include in the calculation.
+          example: 32423
+        creditProfileB:
+          description: The credit profile ID for the second credit profile to include in the calculation.
+          example: 92343
     scoringResponsePass:
       type: object
       properties:
@@ -315,6 +291,22 @@ components:
                 Reason Code 20: null
                 Reason Code 21: null
                 Reason Code 22: null
+    suberror:
+      type: object
+      properties:
+        object:
+          type: string
+        field:
+          type: string
+        rejectedValue:
+          type: string
+        message:
+          type: string
+      example:
+        object: Resource
+        field: name
+        rejectedValue: null
+        message: must not be null
     scoringRequest:
       type: object
       properties:
@@ -363,16 +355,6 @@ components:
                 bcob_joint_monthly_debt: 764.9
                 longest_qualified_term: 180
                 rate_for_longest_qualified_term: 5.24
-    combinedMonthlyDebtRequest:
-      type: object
-      properties:
-        creditProfileA:
-          type: integer
-          description: The credit profile ID for the first credit profile to include in the calculation.
-          example: 32423
-        creditProfileB:
-          description: The credit profile ID for the second credit profile to include in the calculation.
-          example: 92343
     scoringResponseFail:
       type: object
       properties:
@@ -466,35 +448,30 @@ components:
                 Reason Code 31: null
                 Reason Code 32: null
                 Reason Code 33: null
-    error:
+    resolvedAttributesResponse:
+      type: object
+      additionalProperties:
+        anyOf:
+        - type: string
+        - type: boolean
+        - type: integer
+        - type: number
+        - type: array
+      example:
+        attribute_one_tbd: some string value
+        attribute_two_tbd: true
+        attribute_three_tbd: 132
+        attribute_four_tbd: 32000.12
+        attribute_five_tbd: 0.00249
+        attribute_six_tbd:
+        - could be array of strings or numbers
+    combinedMonthlyDebtResponse:
       type: object
       properties:
-        id:
-          type: string
-          format: uuid
-        status:
-          type: string
-        timestamp:
-          type: string
-        message:
-          type: string
-        debugMessage:
-          type: string
-        subErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/suberror'
-      example:
-        id: null
-        status: BAD_REQUEST
-        timestamp: '2019-10-21 14:07:59'
-        message: Validation error
-        debugMessage: null
-        subErrors:
-        - object: Resource
-          field: name
-          rejectedValue: null
-          message: must not be null
+        amount:
+          type: integer
+          description: The combined total monthly debt for the two given credit profiles.
+          example: 2423
     softCreditRequest:
       type: object
       required:
@@ -553,26 +530,57 @@ components:
           type: string
           description: Varies by lender.
           example: 1928032
-    softCreditResponse:
+    error:
       type: object
       properties:
         id:
-          type: integer
-          example: 1234
-    resolvedAttributesResponse:
-      type: object
-      additionalProperties:
-        anyOf:
-        - type: string
-        - type: boolean
-        - type: integer
-        - type: number
-        - type: array
+          type: string
+          format: uuid
+        status:
+          type: string
+        timestamp:
+          type: string
+        message:
+          type: string
+        debugMessage:
+          type: string
+        subErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/suberror'
       example:
-        attribute_one_tbd: some string value
-        attribute_two_tbd: true
-        attribute_three_tbd: 132
-        attribute_four_tbd: 32000.12
-        attribute_five_tbd: 0.00249
-        attribute_six_tbd:
-        - could be array of strings or numbers
+        id: null
+        status: BAD_REQUEST
+        timestamp: '2019-10-21 14:07:59'
+        message: Validation error
+        debugMessage: null
+        subErrors:
+        - object: Resource
+          field: name
+          rejectedValue: null
+          message: must not be null
+  responses:
+    BadRequest:
+      description: Invalid request, unable to process the request with the information provided.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: BAD_REQUEST
+            timestamp: '2019-10-21 14:07:59'
+            message: Describes what was invalid about the request, if possible.
+            debugMessage: null
+    UnexpectedError:
+      description: An unexpected server error occurred.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: INTERNAL_SERVER_ERROR
+            timestamp: '2019-10-21 14:07:59'
+            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
+            debugMessage: null

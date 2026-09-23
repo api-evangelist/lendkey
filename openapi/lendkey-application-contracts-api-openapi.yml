@@ -1,8 +1,14 @@
 openapi: 3.2.0
 info:
-  title: LendKey E-Sign API (via Kong Gateway) Application Contracts API
+  title: LendKey E-Sign API (via Kong Gateway) Application Contracts…
   version: 0.1
-  description: "# LendKey E-Sign API - Kong Gateway Documentation\n\n## Overview\n\nThe LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.\nThis API is accessed through Kong Gateway, which handles authentication via OAuth2.\n\n## Authentication\n\nAll requests to this API require OAuth2 authentication through Kong Gateway.\n\n### Step 1: Get OAuth2 Token\n\nBefore calling any endpoint, you must obtain an access token:\n\n**Production Environment:**\n```bash\ncurl -X POST https://api.lendkey.com/esign/oauth2/token \\\n  -d \"grant_type=client_credentials\" \\\n  -d \"client_id=YOUR_CLIENT_ID\" \\\n  -d \"client_secret=YOUR_CLIENT_SECRET\"\n```\n\n**Response:**\n```json\n{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 7200\n}\n```\n\n### Step 2: Use Token in API Calls\n\nInclude the access token in the `Authorization` header:\n```\nAuthorization: Bearer YOUR_ACCESS_TOKEN\n```\n\n**Token Lifetime:** 2 hours (7200 seconds)\n\n## Base URLs (Kong Gateway)\n\n| Environment | Kong Base URL | Backend Kubernetes Service |\n|------------|---------------|---------------------------|\n| **Production** | `https://api.lendkey.com/esign` | `main-esign-kotlin.ci.lkeyprod.com` |\n\n## How Kong Routes Requests\n\nWhen you call Kong:\n```\nhttps://api.lendkey.com/esign/applications\n```\n\nKong:\n1. Validates your OAuth2 token\n2. Strips the `/esign` prefix\n3. Forwards to: `http://main-esign-kotlin.ci.lkeyprod.com/applications`\n\nYou don't need to manage any backend authentication - Kong handles everything!\n\n## Getting Started\n\n1. **Get Credentials:** Contact your Kong admin or use the Kong Developer Portal\n2. **Get Token:** Use the OAuth2 token endpoint for your environment\n3. **Call API:** Use the token in the Authorization header\n4. **Refresh:** Get a new token every 2 hours\n"
+  description: '# LendKey E-Sign API - Kong Gateway Documentation
+
+
+    ## Overview
+
+
+    The LendKey E-Sign API provides endpoints for creating and managing electronic signature contracts using DocuSign.'
   contact:
     name: LendKey Platform Team
     url: https://lendkey.com
@@ -23,9 +29,7 @@ paths:
 
         **Kong Route:** `/applications`
 
-        **Backend:** `/applications`
-
-        '
+        **Backend:** `/applications`'
       tags:
       - Application Contracts
       operationId: getApplicationContracts
@@ -71,9 +75,7 @@ paths:
 
         **Kong Route:** `/applications`
 
-        **Backend:** `/applications`
-
-        '
+        **Backend:** `/applications`'
       tags:
       - Application Contracts
       operationId: createApplicationContract
@@ -140,9 +142,7 @@ paths:
 
         **Kong Route:** `/applications/{application_uuid}/statuses`
 
-        **Backend:** `/applications/{application_uuid}/statuses`
-
-        '
+        **Backend:** `/applications/{application_uuid}/statuses`'
       tags:
       - Application Contracts
       operationId: getApplicationStatuses
@@ -183,9 +183,7 @@ paths:
 
         **Kong Route:** `/applications/{application_uuid}/signers/{customer_uuid}`
 
-        **Backend:** `/applications/{application_uuid}/signers/{customer_uuid}`
-
-        '
+        **Backend:** `/applications/{application_uuid}/signers/{customer_uuid}`'
       tags:
       - Application Contracts
       operationId: getSignerDetails
@@ -229,9 +227,7 @@ paths:
 
         **Kong Route:** `/applications/{application_uuid}/signers/{customer_uuid}/embedded-link`
 
-        **Backend:** `/applications/{application_uuid}/signers/{customer_uuid}/embedded-link`
-
-        '
+        **Backend:** `/applications/{application_uuid}/signers/{customer_uuid}/embedded-link`'
       tags:
       - Application Contracts
       operationId: generateEmbeddedSigningLink
@@ -273,6 +269,16 @@ paths:
           description: Internal server error
 components:
   schemas:
+    EmbeddedSigningLinkResponse:
+      type: object
+      properties:
+        signing_url:
+          type: string
+          format: uri
+          example: https://demo.docusign.net/Signing/MTRedeem/v1/abc123...
+        envelope_id:
+          type: string
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
     Address:
       type: object
       required:
@@ -299,16 +305,96 @@ components:
         zip:
           type: string
           example: '62701'
-    EmbeddedSigningLinkResponse:
+    NewApplicationRequest:
       type: object
+      required:
+      - application_uuid
+      - organization_uuid
+      - program_id
+      - loan_consumation_date
+      - loan_maturity_date
+      - loan_identifier
+      - merchant_name
+      - borrower
       properties:
-        signing_url:
+        application_uuid:
           type: string
-          format: uri
-          example: https://demo.docusign.net/Signing/MTRedeem/v1/abc123...
-        envelope_id:
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        organization_uuid:
           type: string
-          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+          format: uuid
+          example: 660e8400-e29b-41d4-a716-446655440000
+        program_id:
+          type: string
+          example: '1234567890'
+        loan_consumation_date:
+          type: string
+          format: date
+          example: '2025-01-15'
+        loan_maturity_date:
+          type: string
+          format: date
+          example: '2030-01-15'
+        loan_identifier:
+          type: string
+          example: LOAN-2025-001
+        apr:
+          type: number
+          format: double
+          example: 5.99
+        finance_charge:
+          type: number
+          format: double
+          example: 5000.0
+        amount_financed:
+          type: number
+          format: double
+          example: 50000.0
+        total_of_payments:
+          type: number
+          format: double
+          example: 55000.0
+        variable_rate:
+          type: boolean
+          example: false
+        term_months:
+          type: integer
+          example: 60
+        payment_amount:
+          type: number
+          format: double
+          example: 966.67
+        interest_rate_percent:
+          type: number
+          format: double
+          example: 5.99
+        loan_amount:
+          type: number
+          format: double
+          example: 50000.0
+        construction_period_days:
+          type: integer
+          example: 0
+        staged_funding_percent_before_final_distribution:
+          type: number
+          format: double
+          example: 0.0
+        staged_funding_percent_reserved_for_final_distribution:
+          type: number
+          format: double
+          example: 0.0
+        merchant_name:
+          type: string
+          example: ABC Home Improvements
+        borrower:
+          $ref: '#/components/schemas/Borrower'
+        coborrower:
+          $ref: '#/components/schemas/Coborrower'
+        other_fields:
+          type: object
+          additionalProperties: true
+          description: Custom fields
     SignerDetailsResponse:
       type: object
       properties:
@@ -327,6 +413,30 @@ components:
           type: object
           additionalProperties: true
           description: Form field data collected from signer
+    ApplicationEnvelopeSummary:
+      type: object
+      properties:
+        applicationEnvelopeId:
+          type: integer
+          format: int64
+          example: 123
+        applicationUuid:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        envelopeId:
+          type: string
+          description: DocuSign envelope ID
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        roleUserIds:
+          type: object
+          additionalProperties:
+            type: string
+          description: Map of role names to user IDs
+        createdAt:
+          type: string
+          format: date-time
+          example: '2025-01-15T10:30:00Z'
     Borrower:
       type: object
       required:
@@ -422,120 +532,6 @@ components:
         other_fields:
           type: object
           additionalProperties: true
-    NewApplicationRequest:
-      type: object
-      required:
-      - application_uuid
-      - organization_uuid
-      - program_id
-      - loan_consumation_date
-      - loan_maturity_date
-      - loan_identifier
-      - merchant_name
-      - borrower
-      properties:
-        application_uuid:
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        organization_uuid:
-          type: string
-          format: uuid
-          example: 660e8400-e29b-41d4-a716-446655440000
-        program_id:
-          type: string
-          example: '1234567890'
-        loan_consumation_date:
-          type: string
-          format: date
-          example: '2025-01-15'
-        loan_maturity_date:
-          type: string
-          format: date
-          example: '2030-01-15'
-        loan_identifier:
-          type: string
-          example: LOAN-2025-001
-        apr:
-          type: number
-          format: double
-          example: 5.99
-        finance_charge:
-          type: number
-          format: double
-          example: 5000.0
-        amount_financed:
-          type: number
-          format: double
-          example: 50000.0
-        total_of_payments:
-          type: number
-          format: double
-          example: 55000.0
-        variable_rate:
-          type: boolean
-          example: false
-        term_months:
-          type: integer
-          example: 60
-        payment_amount:
-          type: number
-          format: double
-          example: 966.67
-        interest_rate_percent:
-          type: number
-          format: double
-          example: 5.99
-        loan_amount:
-          type: number
-          format: double
-          example: 50000.0
-        construction_period_days:
-          type: integer
-          example: 0
-        staged_funding_percent_before_final_distribution:
-          type: number
-          format: double
-          example: 0.0
-        staged_funding_percent_reserved_for_final_distribution:
-          type: number
-          format: double
-          example: 0.0
-        merchant_name:
-          type: string
-          example: ABC Home Improvements
-        borrower:
-          $ref: '#/components/schemas/Borrower'
-        coborrower:
-          $ref: '#/components/schemas/Coborrower'
-        other_fields:
-          type: object
-          additionalProperties: true
-          description: Custom fields
-    ApplicationEnvelopeSummary:
-      type: object
-      properties:
-        applicationEnvelopeId:
-          type: integer
-          format: int64
-          example: 123
-        applicationUuid:
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        envelopeId:
-          type: string
-          description: DocuSign envelope ID
-          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
-        roleUserIds:
-          type: object
-          additionalProperties:
-            type: string
-          description: Map of role names to user IDs
-        createdAt:
-          type: string
-          format: date-time
-          example: '2025-01-15T10:30:00Z'
     EnvelopeStatus:
       type: object
       properties:
