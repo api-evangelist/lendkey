@@ -117,6 +117,54 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Success indicator (always false for errors)
+          example: false
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        error:
+          type: string
+          description: Error message
+          example: Invalid request
+        errors:
+          type: array
+          description: Detailed error messages
+          items:
+            type: string
+          example:
+          - Field 'loanUUID' is required
+          - Field 'amount' must be greater than 0
+    CreatePaymentResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Overall success indicator
+          example: true
+        statusCode:
+          type: integer
+          description: HTTP status code (200, 207, 400, 500)
+          example: 200
+        responseDetails:
+          type: array
+          items:
+            type: object
+            properties:
+              paymentId:
+                type: string
+                description: Payment identifier
+                example: PMT-2025-001
+              errors:
+                type: array
+                description: Array of error messages (if any)
+                items:
+                  type: string
     CreatePaymentRequest:
       type: object
       required:
@@ -169,54 +217,6 @@ components:
           type: string
           description: Optional payment purpose/description
           example: Monthly principal payment
-    ErrorResponse:
-      type: object
-      properties:
-        isSuccess:
-          type: boolean
-          description: Success indicator (always false for errors)
-          example: false
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        error:
-          type: string
-          description: Error message
-          example: Invalid request
-        errors:
-          type: array
-          description: Detailed error messages
-          items:
-            type: string
-          example:
-          - Field 'loanUUID' is required
-          - Field 'amount' must be greater than 0
-    CreatePaymentResponse:
-      type: object
-      properties:
-        isSuccess:
-          type: boolean
-          description: Overall success indicator
-          example: true
-        statusCode:
-          type: integer
-          description: HTTP status code (200, 207, 400, 500)
-          example: 200
-        responseDetails:
-          type: array
-          items:
-            type: object
-            properties:
-              paymentId:
-                type: string
-                description: Payment identifier
-                example: PMT-2025-001
-              errors:
-                type: array
-                description: Array of error messages (if any)
-                items:
-                  type: string
   securitySchemes:
     oauth2:
       type: oauth2

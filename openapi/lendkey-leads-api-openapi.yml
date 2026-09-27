@@ -82,47 +82,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    suberror:
-      type: object
-      properties:
-        object:
-          type: string
-        field:
-          type: string
-        rejectedValue:
-          type: string
-        message:
-          type: string
-      example:
-        object: Resource
-        field: name
-        rejectedValue: null
-        message: must not be null
-    createLeadRequest:
-      type: object
-      properties:
-        email:
-          type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
-        source:
-          type: string
-        sourceKey:
-          type: string
-        sourceApplicationId:
-          type: string
-        creditRiskModel:
-          type: string
-      example:
-        email: no-reply@lendkey.com
-        firstName: John
-        lastName: Doe
-        source: unqork
-        sourceKey: 8f8898ae-dda1-4bde-a627-44d6fb5977dd
-        sourceApplicationId: 'null'
-        creditRiskModel: 0f2f1ce6-7bed-4df4-8b04-aff593dd4d23
     leadResponse:
       type: object
       properties:
@@ -192,6 +151,47 @@ components:
           field: name
           rejectedValue: null
           message: must not be null
+    suberror:
+      type: object
+      properties:
+        object:
+          type: string
+        field:
+          type: string
+        rejectedValue:
+          type: string
+        message:
+          type: string
+      example:
+        object: Resource
+        field: name
+        rejectedValue: null
+        message: must not be null
+    createLeadRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        source:
+          type: string
+        sourceKey:
+          type: string
+        sourceApplicationId:
+          type: string
+        creditRiskModel:
+          type: string
+      example:
+        email: no-reply@lendkey.com
+        firstName: John
+        lastName: Doe
+        source: unqork
+        sourceKey: 8f8898ae-dda1-4bde-a627-44d6fb5977dd
+        sourceApplicationId: 'null'
+        creditRiskModel: 0f2f1ce6-7bed-4df4-8b04-aff593dd4d23
   responses:
     BadRequest:
       description: Invalid request, unable to process the request with the information provided.

@@ -176,22 +176,64 @@ components:
         - attribute_four_tbd
         - attribute_five_tbd
         - attribute_six_tbd
-    softCreditResponse:
+    softCreditRequest:
       type: object
+      required:
+      - firstName
+      - lastName
+      - ssn
+      - street
+      - city
+      - state
+      - zipCode
+      - creditBureauName
+      - creditRiskModel
+      - preamble
+      - subCode
       properties:
-        id:
-          type: integer
-          example: 1234
-    combinedMonthlyDebtRequest:
-      type: object
-      properties:
-        creditProfileA:
-          type: integer
-          description: The credit profile ID for the first credit profile to include in the calculation.
-          example: 32423
-        creditProfileB:
-          description: The credit profile ID for the second credit profile to include in the calculation.
-          example: 92343
+        firstName:
+          type: string
+          description: The full first name should be entered when available. The minimum entry is the first name initial. Blanks and special characters (except dash) are not allowed. Compound names should contain a dash (e.g., Billy-Bob)
+          example: John
+        lastName:
+          type: string
+          description: The full applicant’s surname is required. If the surname contains two surnames, then split the surnames with a hyphen (e.g., Smith-Jones). The surname can also be input with an apostrophe (e.g., O’Brien), although apostrophe usage is limited to the letters D, L, and O.
+          example: Doe
+        ssn:
+          type: string
+          description: Full Social Security number should be entered. The social may be input with or without hyphens (e.g., 123456789 or 123-45-6789).
+          example: 999-99-9999
+        street:
+          type: string
+          description: Include the house number, directional, street name, street type, and street suffix data (Apt
+          example: 9999 Carver Road Suite 400
+        city:
+          type: string
+          example: Cincinnati
+        state:
+          type: string
+          description: The 2-letter state abbreviation
+          example: OH
+        zipCode:
+          type: string
+          description: ZIP code designation. It may be 9 characters and may contain a hyphen to separate the first 5 digits from the last 4 digits. It is required on all current address data. Canadian zip codes (6 digits), Mexican and Canadian country codes are allowed.
+          example: '45242'
+        creditBureauName:
+          type: string
+          description: Only "Experian" is currently supported.
+          example: Experian
+        creditRiskModel:
+          type: string
+          description: FICOv3, FICOv8, and FICOv9 are supported. Which one to use is defined by the program.
+          example: FICOv8
+        preamble:
+          type: string
+          description: Varies by lender.
+          example: TBD2
+        subCode:
+          type: string
+          description: Varies by lender.
+          example: 1928032
     scoringResponsePass:
       type: object
       properties:
@@ -291,22 +333,6 @@ components:
                 Reason Code 20: null
                 Reason Code 21: null
                 Reason Code 22: null
-    suberror:
-      type: object
-      properties:
-        object:
-          type: string
-        field:
-          type: string
-        rejectedValue:
-          type: string
-        message:
-          type: string
-      example:
-        object: Resource
-        field: name
-        rejectedValue: null
-        message: must not be null
     scoringRequest:
       type: object
       properties:
@@ -355,6 +381,91 @@ components:
                 bcob_joint_monthly_debt: 764.9
                 longest_qualified_term: 180
                 rate_for_longest_qualified_term: 5.24
+    resolvedAttributesResponse:
+      type: object
+      additionalProperties:
+        anyOf:
+        - type: string
+        - type: boolean
+        - type: integer
+        - type: number
+        - type: array
+      example:
+        attribute_one_tbd: some string value
+        attribute_two_tbd: true
+        attribute_three_tbd: 132
+        attribute_four_tbd: 32000.12
+        attribute_five_tbd: 0.00249
+        attribute_six_tbd:
+        - could be array of strings or numbers
+    error:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        timestamp:
+          type: string
+        message:
+          type: string
+        debugMessage:
+          type: string
+        subErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/suberror'
+      example:
+        id: null
+        status: BAD_REQUEST
+        timestamp: '2019-10-21 14:07:59'
+        message: Validation error
+        debugMessage: null
+        subErrors:
+        - object: Resource
+          field: name
+          rejectedValue: null
+          message: must not be null
+    combinedMonthlyDebtResponse:
+      type: object
+      properties:
+        amount:
+          type: integer
+          description: The combined total monthly debt for the two given credit profiles.
+          example: 2423
+    combinedMonthlyDebtRequest:
+      type: object
+      properties:
+        creditProfileA:
+          type: integer
+          description: The credit profile ID for the first credit profile to include in the calculation.
+          example: 32423
+        creditProfileB:
+          description: The credit profile ID for the second credit profile to include in the calculation.
+          example: 92343
+    softCreditResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1234
+    suberror:
+      type: object
+      properties:
+        object:
+          type: string
+        field:
+          type: string
+        rejectedValue:
+          type: string
+        message:
+          type: string
+      example:
+        object: Resource
+        field: name
+        rejectedValue: null
+        message: must not be null
     scoringResponseFail:
       type: object
       properties:
@@ -448,130 +559,7 @@ components:
                 Reason Code 31: null
                 Reason Code 32: null
                 Reason Code 33: null
-    resolvedAttributesResponse:
-      type: object
-      additionalProperties:
-        anyOf:
-        - type: string
-        - type: boolean
-        - type: integer
-        - type: number
-        - type: array
-      example:
-        attribute_one_tbd: some string value
-        attribute_two_tbd: true
-        attribute_three_tbd: 132
-        attribute_four_tbd: 32000.12
-        attribute_five_tbd: 0.00249
-        attribute_six_tbd:
-        - could be array of strings or numbers
-    combinedMonthlyDebtResponse:
-      type: object
-      properties:
-        amount:
-          type: integer
-          description: The combined total monthly debt for the two given credit profiles.
-          example: 2423
-    softCreditRequest:
-      type: object
-      required:
-      - firstName
-      - lastName
-      - ssn
-      - street
-      - city
-      - state
-      - zipCode
-      - creditBureauName
-      - creditRiskModel
-      - preamble
-      - subCode
-      properties:
-        firstName:
-          type: string
-          description: The full first name should be entered when available. The minimum entry is the first name initial. Blanks and special characters (except dash) are not allowed. Compound names should contain a dash (e.g., Billy-Bob)
-          example: John
-        lastName:
-          type: string
-          description: The full applicant’s surname is required. If the surname contains two surnames, then split the surnames with a hyphen (e.g., Smith-Jones). The surname can also be input with an apostrophe (e.g., O’Brien), although apostrophe usage is limited to the letters D, L, and O.
-          example: Doe
-        ssn:
-          type: string
-          description: Full Social Security number should be entered. The social may be input with or without hyphens (e.g., 123456789 or 123-45-6789).
-          example: 999-99-9999
-        street:
-          type: string
-          description: Include the house number, directional, street name, street type, and street suffix data (Apt
-          example: 9999 Carver Road Suite 400
-        city:
-          type: string
-          example: Cincinnati
-        state:
-          type: string
-          description: The 2-letter state abbreviation
-          example: OH
-        zipCode:
-          type: string
-          description: ZIP code designation. It may be 9 characters and may contain a hyphen to separate the first 5 digits from the last 4 digits. It is required on all current address data. Canadian zip codes (6 digits), Mexican and Canadian country codes are allowed.
-          example: '45242'
-        creditBureauName:
-          type: string
-          description: Only "Experian" is currently supported.
-          example: Experian
-        creditRiskModel:
-          type: string
-          description: FICOv3, FICOv8, and FICOv9 are supported. Which one to use is defined by the program.
-          example: FICOv8
-        preamble:
-          type: string
-          description: Varies by lender.
-          example: TBD2
-        subCode:
-          type: string
-          description: Varies by lender.
-          example: 1928032
-    error:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        status:
-          type: string
-        timestamp:
-          type: string
-        message:
-          type: string
-        debugMessage:
-          type: string
-        subErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/suberror'
-      example:
-        id: null
-        status: BAD_REQUEST
-        timestamp: '2019-10-21 14:07:59'
-        message: Validation error
-        debugMessage: null
-        subErrors:
-        - object: Resource
-          field: name
-          rejectedValue: null
-          message: must not be null
   responses:
-    BadRequest:
-      description: Invalid request, unable to process the request with the information provided.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: BAD_REQUEST
-            timestamp: '2019-10-21 14:07:59'
-            message: Describes what was invalid about the request, if possible.
-            debugMessage: null
     UnexpectedError:
       description: An unexpected server error occurred.
       content:
@@ -583,4 +571,16 @@ components:
             status: INTERNAL_SERVER_ERROR
             timestamp: '2019-10-21 14:07:59'
             message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
+            debugMessage: null
+    BadRequest:
+      description: Invalid request, unable to process the request with the information provided.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: BAD_REQUEST
+            timestamp: '2019-10-21 14:07:59'
+            message: Describes what was invalid about the request, if possible.
             debugMessage: null

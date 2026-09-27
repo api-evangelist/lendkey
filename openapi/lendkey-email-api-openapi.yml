@@ -144,6 +144,27 @@ components:
           totalElements: 1
           totalPages: 1
           number: 0
+    emailSubstitution:
+      type: object
+      properties:
+        id:
+          type: integer
+        tag:
+          type: string
+      example:
+        id: 2
+        tag: clientName
+    page:
+      type: object
+      properties:
+        size:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+        number:
+          type: integer
     emailTemplate:
       type: object
       properties:
@@ -163,22 +184,35 @@ components:
         externalTemplateId: ''
         emailSubstitutions:
         - $ref: '#/components/schemas/emailSubstitution'
-    suberror:
+    error:
       type: object
       properties:
-        object:
+        id:
           type: string
-        field:
+          format: uuid
+        status:
           type: string
-        rejectedValue:
+        timestamp:
           type: string
         message:
           type: string
+        debugMessage:
+          type: string
+        subErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/suberror'
       example:
-        object: Resource
-        field: name
-        rejectedValue: null
-        message: must not be null
+        id: null
+        status: BAD_REQUEST
+        timestamp: '2019-10-21 14:07:59'
+        message: Validation error
+        debugMessage: null
+        subErrors:
+        - object: Resource
+          field: name
+          rejectedValue: null
+          message: must not be null
     emailRecord:
       type: object
       properties:
@@ -278,16 +312,20 @@ components:
           firstName: John
           lastName: Doe
           body: We've received your document.
-    emailSubstitution:
+    emailRecordRequestPayload:
       type: object
+      required:
+      - provider
+      - paylaod
       properties:
-        id:
-          type: integer
-        tag:
+        provider:
           type: string
-      example:
-        id: 2
-        tag: clientName
+          description: The email service provider to use when sending this email.
+          example: SENDGRID
+        payload:
+          type: object
+          anyOf:
+          - $ref: '#/components/schemas/emailRecordDto'
     emailRecordDto:
       type: object
       required:
@@ -349,6 +387,11 @@ components:
             firstName: John
             lastName: Doe
             body: We've received your document.
+    link:
+      type: object
+      properties:
+        href:
+          type: string
     recipient:
       type: object
       required:
@@ -362,65 +405,22 @@ components:
       example:
         recipientName: John Doe
         recipientAddress: doe.john@gmali.com
-    page:
+    suberror:
       type: object
       properties:
-        size:
-          type: integer
-        totalElements:
-          type: integer
-        totalPages:
-          type: integer
-        number:
-          type: integer
-    emailRecordRequestPayload:
-      type: object
-      required:
-      - provider
-      - paylaod
-      properties:
-        provider:
+        object:
           type: string
-          description: The email service provider to use when sending this email.
-          example: SENDGRID
-        payload:
-          type: object
-          anyOf:
-          - $ref: '#/components/schemas/emailRecordDto'
-    error:
-      type: object
-      properties:
-        id:
+        field:
           type: string
-          format: uuid
-        status:
-          type: string
-        timestamp:
+        rejectedValue:
           type: string
         message:
           type: string
-        debugMessage:
-          type: string
-        subErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/suberror'
       example:
-        id: null
-        status: BAD_REQUEST
-        timestamp: '2019-10-21 14:07:59'
-        message: Validation error
-        debugMessage: null
-        subErrors:
-        - object: Resource
-          field: name
-          rejectedValue: null
-          message: must not be null
-    link:
-      type: object
-      properties:
-        href:
-          type: string
+        object: Resource
+        field: name
+        rejectedValue: null
+        message: must not be null
   responses:
     BadRequest:
       description: Invalid request, unable to process the request with the information provided.

@@ -269,6 +269,86 @@ paths:
           description: Internal server error
 components:
   schemas:
+    SignerDetailsResponse:
+      type: object
+      properties:
+        customerUuid:
+          type: string
+          format: uuid
+          example: 770e8400-e29b-41d4-a716-446655440000
+        roleName:
+          type: string
+          example: Borrower
+        signerCreatedAt:
+          type: string
+          format: date-time
+          example: '2025-01-15T10:30:00Z'
+        signerData:
+          type: object
+          additionalProperties: true
+          description: Form field data collected from signer
+    Coborrower:
+      type: object
+      required:
+      - customer_uuid
+      - first_name
+      - last_name
+      - email
+      - address
+      properties:
+        customer_uuid:
+          type: string
+          format: uuid
+          example: 880e8400-e29b-41d4-a716-446655440000
+        first_name:
+          type: string
+          example: Jane
+        last_name:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: jane.doe@example.com
+        address:
+          $ref: '#/components/schemas/Address'
+        fico_score:
+          type: integer
+          example: 740
+        fico_score_percentile:
+          type: integer
+          example: 80
+        fico_score_date:
+          type: string
+          format: date
+          example: '2025-01-01'
+        other_fields:
+          type: object
+          additionalProperties: true
+    ApplicationEnvelopeSummary:
+      type: object
+      properties:
+        applicationEnvelopeId:
+          type: integer
+          format: int64
+          example: 123
+        applicationUuid:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        envelopeId:
+          type: string
+          description: DocuSign envelope ID
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        roleUserIds:
+          type: object
+          additionalProperties:
+            type: string
+          description: Map of role names to user IDs
+        createdAt:
+          type: string
+          format: date-time
+          example: '2025-01-15T10:30:00Z'
     EmbeddedSigningLinkResponse:
       type: object
       properties:
@@ -279,6 +359,28 @@ components:
         envelope_id:
           type: string
           example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+    EnvelopeStatus:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123
+        applicationEnvelopeId:
+          type: integer
+          format: int64
+          example: 456
+        status:
+          type: string
+          example: sent
+        eventData:
+          type: object
+          additionalProperties: true
+          description: DocuSign event data
+        createdAt:
+          type: string
+          format: date-time
+          example: '2025-01-15T10:30:00Z'
     Address:
       type: object
       required:
@@ -305,6 +407,63 @@ components:
         zip:
           type: string
           example: '62701'
+    Borrower:
+      type: object
+      required:
+      - customer_uuid
+      - first_name
+      - last_name
+      - email
+      - address
+      properties:
+        customer_uuid:
+          type: string
+          format: uuid
+          example: 770e8400-e29b-41d4-a716-446655440000
+        first_name:
+          type: string
+          example: John
+        last_name:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        address:
+          $ref: '#/components/schemas/Address'
+        fico_score:
+          type: integer
+          example: 720
+        fico_score_percentile:
+          type: integer
+          example: 75
+        fico_score_date:
+          type: string
+          format: date
+          example: '2025-01-01'
+        dob:
+          type: string
+          format: date
+          example: '1985-06-15'
+        home_phone:
+          type: string
+          example: '5551234567'
+        work_phone:
+          type: string
+          example: '5551234568'
+        cell_phone:
+          type: string
+          example: '5551234569'
+        preferred_phone:
+          type: string
+          example: '5551234567'
+        ssn:
+          type: string
+          example: '123456789'
+        other_fields:
+          type: object
+          additionalProperties: true
     NewApplicationRequest:
       type: object
       required:
@@ -395,165 +554,6 @@ components:
           type: object
           additionalProperties: true
           description: Custom fields
-    SignerDetailsResponse:
-      type: object
-      properties:
-        customerUuid:
-          type: string
-          format: uuid
-          example: 770e8400-e29b-41d4-a716-446655440000
-        roleName:
-          type: string
-          example: Borrower
-        signerCreatedAt:
-          type: string
-          format: date-time
-          example: '2025-01-15T10:30:00Z'
-        signerData:
-          type: object
-          additionalProperties: true
-          description: Form field data collected from signer
-    ApplicationEnvelopeSummary:
-      type: object
-      properties:
-        applicationEnvelopeId:
-          type: integer
-          format: int64
-          example: 123
-        applicationUuid:
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        envelopeId:
-          type: string
-          description: DocuSign envelope ID
-          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
-        roleUserIds:
-          type: object
-          additionalProperties:
-            type: string
-          description: Map of role names to user IDs
-        createdAt:
-          type: string
-          format: date-time
-          example: '2025-01-15T10:30:00Z'
-    Borrower:
-      type: object
-      required:
-      - customer_uuid
-      - first_name
-      - last_name
-      - email
-      - address
-      properties:
-        customer_uuid:
-          type: string
-          format: uuid
-          example: 770e8400-e29b-41d4-a716-446655440000
-        first_name:
-          type: string
-          example: John
-        last_name:
-          type: string
-          example: Doe
-        email:
-          type: string
-          format: email
-          example: john.doe@example.com
-        address:
-          $ref: '#/components/schemas/Address'
-        fico_score:
-          type: integer
-          example: 720
-        fico_score_percentile:
-          type: integer
-          example: 75
-        fico_score_date:
-          type: string
-          format: date
-          example: '2025-01-01'
-        dob:
-          type: string
-          format: date
-          example: '1985-06-15'
-        home_phone:
-          type: string
-          example: '5551234567'
-        work_phone:
-          type: string
-          example: '5551234568'
-        cell_phone:
-          type: string
-          example: '5551234569'
-        preferred_phone:
-          type: string
-          example: '5551234567'
-        ssn:
-          type: string
-          example: '123456789'
-        other_fields:
-          type: object
-          additionalProperties: true
-    Coborrower:
-      type: object
-      required:
-      - customer_uuid
-      - first_name
-      - last_name
-      - email
-      - address
-      properties:
-        customer_uuid:
-          type: string
-          format: uuid
-          example: 880e8400-e29b-41d4-a716-446655440000
-        first_name:
-          type: string
-          example: Jane
-        last_name:
-          type: string
-          example: Doe
-        email:
-          type: string
-          format: email
-          example: jane.doe@example.com
-        address:
-          $ref: '#/components/schemas/Address'
-        fico_score:
-          type: integer
-          example: 740
-        fico_score_percentile:
-          type: integer
-          example: 80
-        fico_score_date:
-          type: string
-          format: date
-          example: '2025-01-01'
-        other_fields:
-          type: object
-          additionalProperties: true
-    EnvelopeStatus:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 123
-        applicationEnvelopeId:
-          type: integer
-          format: int64
-          example: 456
-        status:
-          type: string
-          example: sent
-        eventData:
-          type: object
-          additionalProperties: true
-          description: DocuSign event data
-        createdAt:
-          type: string
-          format: date-time
-          example: '2025-01-15T10:30:00Z'
   securitySchemes:
     oauth2:
       type: oauth2

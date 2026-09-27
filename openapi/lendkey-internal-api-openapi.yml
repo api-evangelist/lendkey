@@ -138,6 +138,22 @@ components:
         error:
           type: string
           default: ''
+    RequestLog:
+      description: Request log details to be created
+      type: object
+      properties:
+        requestBody:
+          type: string
+          default: ''
+        requestUrl:
+          type: string
+          default: ''
+        requestCallType:
+          type: string
+          default: ''
+        searchableValues:
+          type: string
+          default: ''
     ResponseLog:
       description: Response log details to update an existing request log
       type: object
@@ -152,22 +168,6 @@ components:
         wasRequestSuccessful:
           type: boolean
           example: false
-        searchableValues:
-          type: string
-          default: ''
-    RequestLog:
-      description: Request log details to be created
-      type: object
-      properties:
-        requestBody:
-          type: string
-          default: ''
-        requestUrl:
-          type: string
-          default: ''
-        requestCallType:
-          type: string
-          default: ''
         searchableValues:
           type: string
           default: ''

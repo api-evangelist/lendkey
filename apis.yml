@@ -57,7 +57,7 @@ tags:
 - Credit Union
 - Banking
 - Loan Origination
-- Financial-Services
+- Financial Services
 - Payments
 - E-Signature
 - Treasury
@@ -74,6 +74,7 @@ tags_raw:
 - Payments
 - E-Signature
 - Treasury
+- Financial-Services
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -100,7 +101,7 @@ apis:
     url: >-
       https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
 - aid: lendkey:lendkey-applications-api
-  name: LendKey applications API
+  name: LendKey Applications API
   description: The applications API from LendKey — 1 operation(s) for applications.
   humanURL: https://developer.lendkey.com/default/documentation/integration-api
   baseURL: https://proxy.kong.lkeyprod.com/integration/
@@ -121,7 +122,7 @@ apis:
     url: >-
       https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
 - aid: lendkey:lendkey-auth-api
-  name: LendKey auth API
+  name: LendKey Auth API
   description: The auth API from LendKey — 1 operation(s) for auth.
   humanURL: https://developer.lendkey.com/default/documentation/integration-api
   baseURL: https://proxy.kong.lkeyprod.com/integration/
@@ -199,7 +200,7 @@ apis:
     url: >-
       https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
 - aid: lendkey:lendkey-email-api
-  name: LendKey email API
+  name: LendKey Email API
   description: The email API from LendKey — 2 operation(s) for email.
   humanURL: https://developer.lendkey.com/default/documentation/integration-api
   baseURL: https://proxy.kong.lkeyprod.com/integration/
@@ -220,7 +221,7 @@ apis:
     url: >-
       https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
 - aid: lendkey:lendkey-internal-api
-  name: LendKey internal API
+  name: LendKey Internal API
   description: Internal API operations for request logging
   humanURL: https://developer.lendkey.com/default/documentation/integration-api
   baseURL: https://proxy.kong.lkeyprod.com/integration/
@@ -241,7 +242,7 @@ apis:
     url: >-
       https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
 - aid: lendkey:lendkey-leads-api
-  name: LendKey leads API
+  name: LendKey Leads API
   description: The leads API from LendKey — 1 operation(s) for leads.
   humanURL: https://developer.lendkey.com/default/documentation/integration-api
   baseURL: https://proxy.kong.lkeyprod.com/integration/
@@ -319,7 +320,7 @@ apis:
     url: >-
       https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
 - aid: lendkey:lendkey-onboarding-api
-  name: LendKey onboarding API
+  name: LendKey Onboarding API
   description: The onboarding API from LendKey — 1 operation(s) for onboarding.
   humanURL: https://developer.lendkey.com/default/documentation/integration-api
   baseURL: https://proxy.kong.lkeyprod.com/integration/

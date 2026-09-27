@@ -82,54 +82,28 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    suberror:
+    applicationStatus:
       type: object
       properties:
-        object:
+        loanStatus:
           type: string
-        field:
+          description: What stage the application/loan is on within the LendKey system.
+        loanKey:
           type: string
-        rejectedValue:
-          type: string
-        message:
-          type: string
-      example:
-        object: Resource
-        field: name
-        rejectedValue: null
-        message: must not be null
-    applicationStatusResponse:
-      type: object
-      properties:
-        applications:
-          type: array
-          items:
-            allOf:
-            - $ref: '#/components/schemas/applicationStatus'
-        errors:
+          description: Unique identifier for application/loan
+          example: HIL-12345
+        loanAmount:
+          type: number
+          description: The loan amount for the application/loan - this is not the current balance for the account.
+          example: 50000.0
+        blockages:
           type: array
           items:
             allOf:
             - type: string
-              example: String reference key of unretrievable application.
-    applicationStatusRequest:
-      type: object
-      required:
-      - referenceKeys
-      - requester
-      properties:
-        referenceKeys:
-          type: array
-          items:
-            allOf:
-            - type: string
+          description: A set of text describing what may be preventing the application/loan from advancing.
           example:
-          - HIL-12345
-          - HIL-98765
-        requester:
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/requester'
+          - Waiting for contractor to submit a disbursement request.
     error:
       type: object
       properties:
@@ -159,28 +133,6 @@ components:
           field: name
           rejectedValue: null
           message: must not be null
-    applicationStatus:
-      type: object
-      properties:
-        loanStatus:
-          type: string
-          description: What stage the application/loan is on within the LendKey system.
-        loanKey:
-          type: string
-          description: Unique identifier for application/loan
-          example: HIL-12345
-        loanAmount:
-          type: number
-          description: The loan amount for the application/loan - this is not the current balance for the account.
-          example: 50000.0
-        blockages:
-          type: array
-          items:
-            allOf:
-            - type: string
-          description: A set of text describing what may be preventing the application/loan from advancing.
-          example:
-          - Waiting for contractor to submit a disbursement request.
     requester:
       type: object
       properties:
@@ -188,6 +140,54 @@ components:
           type: string
           format: uuid
           example: 40121260-4082-4c22-b70c-b5be137bf2a0
+    applicationStatusResponse:
+      type: object
+      properties:
+        applications:
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/applicationStatus'
+        errors:
+          type: array
+          items:
+            allOf:
+            - type: string
+              example: String reference key of unretrievable application.
+    suberror:
+      type: object
+      properties:
+        object:
+          type: string
+        field:
+          type: string
+        rejectedValue:
+          type: string
+        message:
+          type: string
+      example:
+        object: Resource
+        field: name
+        rejectedValue: null
+        message: must not be null
+    applicationStatusRequest:
+      type: object
+      required:
+      - referenceKeys
+      - requester
+      properties:
+        referenceKeys:
+          type: array
+          items:
+            allOf:
+            - type: string
+          example:
+          - HIL-12345
+          - HIL-98765
+        requester:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/requester'
   responses:
     BadRequest:
       description: Invalid request, unable to process the request with the information provided.

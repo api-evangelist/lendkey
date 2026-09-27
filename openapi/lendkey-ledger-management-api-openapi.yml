@@ -75,21 +75,6 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    UpdateExternalIdRequest:
-      type: object
-      required:
-      - capitalLedgerTargetId
-      - externalId
-      properties:
-        capitalLedgerTargetId:
-          type: integer
-          format: int64
-          description: Capital Ledger Target record ID
-          example: 12345
-        externalId:
-          type: string
-          description: New external identifier
-          example: NEW-EXT-ID-2025
     ErrorResponse:
       type: object
       properties:
@@ -113,6 +98,21 @@ components:
           example:
           - Field 'loanUUID' is required
           - Field 'amount' must be greater than 0
+    UpdateExternalIdRequest:
+      type: object
+      required:
+      - capitalLedgerTargetId
+      - externalId
+      properties:
+        capitalLedgerTargetId:
+          type: integer
+          format: int64
+          description: Capital Ledger Target record ID
+          example: 12345
+        externalId:
+          type: string
+          description: New external identifier
+          example: NEW-EXT-ID-2025
     UpdateExternalIdResponse:
       type: object
       properties:
