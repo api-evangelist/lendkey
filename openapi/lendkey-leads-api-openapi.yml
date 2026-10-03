@@ -122,6 +122,22 @@ components:
         sourceKey: 8f8898ae-dda1-4bde-a627-44d6fb5977dd
         sourceApplicationId: 'null'
         creditRiskModel: 0f2f1ce6-7bed-4df4-8b04-aff593dd4d23
+    suberror:
+      type: object
+      properties:
+        object:
+          type: string
+        field:
+          type: string
+        rejectedValue:
+          type: string
+        message:
+          type: string
+      example:
+        object: Resource
+        field: name
+        rejectedValue: null
+        message: must not be null
     error:
       type: object
       properties:
@@ -151,22 +167,6 @@ components:
           field: name
           rejectedValue: null
           message: must not be null
-    suberror:
-      type: object
-      properties:
-        object:
-          type: string
-        field:
-          type: string
-        rejectedValue:
-          type: string
-        message:
-          type: string
-      example:
-        object: Resource
-        field: name
-        rejectedValue: null
-        message: must not be null
     createLeadRequest:
       type: object
       properties:
@@ -193,18 +193,6 @@ components:
         sourceApplicationId: 'null'
         creditRiskModel: 0f2f1ce6-7bed-4df4-8b04-aff593dd4d23
   responses:
-    BadRequest:
-      description: Invalid request, unable to process the request with the information provided.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: BAD_REQUEST
-            timestamp: '2019-10-21 14:07:59'
-            message: Describes what was invalid about the request, if possible.
-            debugMessage: null
     UnexpectedError:
       description: An unexpected server error occurred.
       content:
@@ -216,4 +204,16 @@ components:
             status: INTERNAL_SERVER_ERROR
             timestamp: '2019-10-21 14:07:59'
             message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
+            debugMessage: null
+    BadRequest:
+      description: Invalid request, unable to process the request with the information provided.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: BAD_REQUEST
+            timestamp: '2019-10-21 14:07:59'
+            message: Describes what was invalid about the request, if possible.
             debugMessage: null

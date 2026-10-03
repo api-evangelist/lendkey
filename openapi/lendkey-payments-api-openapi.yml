@@ -117,29 +117,6 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    ErrorResponse:
-      type: object
-      properties:
-        isSuccess:
-          type: boolean
-          description: Success indicator (always false for errors)
-          example: false
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        error:
-          type: string
-          description: Error message
-          example: Invalid request
-        errors:
-          type: array
-          description: Detailed error messages
-          items:
-            type: string
-          example:
-          - Field 'loanUUID' is required
-          - Field 'amount' must be greater than 0
     CreatePaymentResponse:
       type: object
       properties:
@@ -165,6 +142,29 @@ components:
                 description: Array of error messages (if any)
                 items:
                   type: string
+    ErrorResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Success indicator (always false for errors)
+          example: false
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        error:
+          type: string
+          description: Error message
+          example: Invalid request
+        errors:
+          type: array
+          description: Detailed error messages
+          items:
+            type: string
+          example:
+          - Field 'loanUUID' is required
+          - Field 'amount' must be greater than 0
     CreatePaymentRequest:
       type: object
       required:

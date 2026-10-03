@@ -146,6 +146,88 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Success indicator (always false for errors)
+          example: false
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        error:
+          type: string
+          description: Error message
+          example: Invalid request
+        errors:
+          type: array
+          description: Detailed error messages
+          items:
+            type: string
+          example:
+          - Field 'loanUUID' is required
+          - Field 'amount' must be greater than 0
+    CancelDisbursementResponse:
+      type: object
+      properties:
+        IsSuccess:
+          type: boolean
+          description: Success indicator
+          example: true
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 200
+        errors:
+          type: array
+          description: Array of error messages (if any)
+          items:
+            type: string
+    CancelDisbursementRequest:
+      type: object
+      required:
+      - subledger_Category
+      - external_id
+      - account_id
+      - entity_type
+      - amount
+      - disbursement_uuid
+      - created_by
+      properties:
+        subledger_Category:
+          type: string
+          enum:
+          - Disbursement Cancellation
+          description: Category (must be "Disbursement Cancellation")
+          example: Disbursement Cancellation
+        external_id:
+          type: string
+          description: External disbursement identifier
+          example: DISB-2025-001
+        account_id:
+          type: string
+          description: Account identifier
+          example: ACC-12345
+        entity_type:
+          type: string
+          description: Entity type (e.g., Borrower, Lender)
+          example: Borrower
+        amount:
+          type: number
+          format: double
+          description: Disbursement amount to cancel
+          example: 25000.5
+        disbursement_uuid:
+          type: string
+          format: uuid
+          description: UUID of the disbursement to cancel
+          example: 550e8400-e29b-41d4-a716-446655440000
+        created_by:
+          type: string
+          description: User or system initiating the cancellation
+          example: system_admin
     CreateDisbursementRequest:
       type: object
       required:
@@ -198,88 +280,6 @@ components:
                 description: Array of error messages (if any)
                 items:
                   type: string
-    ErrorResponse:
-      type: object
-      properties:
-        isSuccess:
-          type: boolean
-          description: Success indicator (always false for errors)
-          example: false
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        error:
-          type: string
-          description: Error message
-          example: Invalid request
-        errors:
-          type: array
-          description: Detailed error messages
-          items:
-            type: string
-          example:
-          - Field 'loanUUID' is required
-          - Field 'amount' must be greater than 0
-    CancelDisbursementRequest:
-      type: object
-      required:
-      - subledger_Category
-      - external_id
-      - account_id
-      - entity_type
-      - amount
-      - disbursement_uuid
-      - created_by
-      properties:
-        subledger_Category:
-          type: string
-          enum:
-          - Disbursement Cancellation
-          description: Category (must be "Disbursement Cancellation")
-          example: Disbursement Cancellation
-        external_id:
-          type: string
-          description: External disbursement identifier
-          example: DISB-2025-001
-        account_id:
-          type: string
-          description: Account identifier
-          example: ACC-12345
-        entity_type:
-          type: string
-          description: Entity type (e.g., Borrower, Lender)
-          example: Borrower
-        amount:
-          type: number
-          format: double
-          description: Disbursement amount to cancel
-          example: 25000.5
-        disbursement_uuid:
-          type: string
-          format: uuid
-          description: UUID of the disbursement to cancel
-          example: 550e8400-e29b-41d4-a716-446655440000
-        created_by:
-          type: string
-          description: User or system initiating the cancellation
-          example: system_admin
-    CancelDisbursementResponse:
-      type: object
-      properties:
-        IsSuccess:
-          type: boolean
-          description: Success indicator
-          example: true
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 200
-        errors:
-          type: array
-          description: Array of error messages (if any)
-          items:
-            type: string
   securitySchemes:
     oauth2:
       type: oauth2

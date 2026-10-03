@@ -81,7 +81,73 @@ paths:
       operationId: postV1ApplicationStatus
       x-operation-id-source: derived
 components:
+  responses:
+    UnexpectedError:
+      description: An unexpected server error occurred.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: INTERNAL_SERVER_ERROR
+            timestamp: '2019-10-21 14:07:59'
+            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
+            debugMessage: null
+    BadRequest:
+      description: Invalid request, unable to process the request with the information provided.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: BAD_REQUEST
+            timestamp: '2019-10-21 14:07:59'
+            message: Describes what was invalid about the request, if possible.
+            debugMessage: null
   schemas:
+    applicationStatusRequest:
+      type: object
+      required:
+      - referenceKeys
+      - requester
+      properties:
+        referenceKeys:
+          type: array
+          items:
+            allOf:
+            - type: string
+          example:
+          - HIL-12345
+          - HIL-98765
+        requester:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/requester'
+    requester:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          example: 40121260-4082-4c22-b70c-b5be137bf2a0
+    suberror:
+      type: object
+      properties:
+        object:
+          type: string
+        field:
+          type: string
+        rejectedValue:
+          type: string
+        message:
+          type: string
+      example:
+        object: Resource
+        field: name
+        rejectedValue: null
+        message: must not be null
     applicationStatus:
       type: object
       properties:
@@ -133,13 +199,6 @@ components:
           field: name
           rejectedValue: null
           message: must not be null
-    requester:
-      type: object
-      properties:
-        uuid:
-          type: string
-          format: uuid
-          example: 40121260-4082-4c22-b70c-b5be137bf2a0
     applicationStatusResponse:
       type: object
       properties:
@@ -154,62 +213,3 @@ components:
             allOf:
             - type: string
               example: String reference key of unretrievable application.
-    suberror:
-      type: object
-      properties:
-        object:
-          type: string
-        field:
-          type: string
-        rejectedValue:
-          type: string
-        message:
-          type: string
-      example:
-        object: Resource
-        field: name
-        rejectedValue: null
-        message: must not be null
-    applicationStatusRequest:
-      type: object
-      required:
-      - referenceKeys
-      - requester
-      properties:
-        referenceKeys:
-          type: array
-          items:
-            allOf:
-            - type: string
-          example:
-          - HIL-12345
-          - HIL-98765
-        requester:
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/requester'
-  responses:
-    BadRequest:
-      description: Invalid request, unable to process the request with the information provided.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: BAD_REQUEST
-            timestamp: '2019-10-21 14:07:59'
-            message: Describes what was invalid about the request, if possible.
-            debugMessage: null
-    UnexpectedError:
-      description: An unexpected server error occurred.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: INTERNAL_SERVER_ERROR
-            timestamp: '2019-10-21 14:07:59'
-            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
-            debugMessage: null

@@ -81,7 +81,227 @@ paths:
       operationId: postV1OnboardingOnboard
       x-operation-id-source: derived
 components:
+  responses:
+    UnexpectedError:
+      description: An unexpected server error occurred.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: INTERNAL_SERVER_ERROR
+            timestamp: '2019-10-21 14:07:59'
+            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
+            debugMessage: null
+    BadRequest:
+      description: Invalid request, unable to process the request with the information provided.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: BAD_REQUEST
+            timestamp: '2019-10-21 14:07:59'
+            message: Describes what was invalid about the request, if possible.
+            debugMessage: null
   schemas:
+    driversLicense:
+      type: object
+      required:
+      - number
+      - state
+      - expirationDate
+      properties:
+        number:
+          type: string
+        state:
+          type: string
+        expirationDate:
+          type: string
+      example:
+        number: TA923290
+        state: OH
+        expirationDate: 11-22-2023
+    selectedOffer:
+      type: object
+      required:
+      - programId
+      - termInMonths
+      - loanRate
+      - rateIndex
+      - maximumLoanAmount
+      properties:
+        programId:
+          type: integer
+        fomQueryId:
+          type: integer
+        termInMonths:
+          type: integer
+        loanRate:
+          type: number
+        rateIndex:
+          type: string
+        maximumLoanAmount:
+          type: number
+      example:
+        program_id: 1473
+        fom_query_id: 4146689
+        loanRate: 1.5
+        rateIndex: prime
+        termInMonths: 120
+        maximumLoanAmount: 85000
+    eligibility:
+      type: object
+      required:
+      - primaryResidence
+      - propertyOwnership
+      - citizenship
+      properties:
+        primaryResidence:
+          type: boolean
+        propertyOwnership:
+          type: boolean
+        citizenship:
+          type: string
+          description: One of US, permanentResident, non-US
+      example:
+        primaryResidence: true
+        propertyOwnership: true
+        citizenship: US
+    boardApplicationResponse:
+      type: object
+      required:
+      - loanId
+      - loanKey
+      - url
+      - applicants
+      properties:
+        applicantId:
+          type: integer
+        coApplicantId:
+          type: integer
+        loanId:
+          type: integer
+        loanKey:
+          type: string
+        url:
+          type: string
+      example:
+        loanId: 9323
+        loanKey: HIL-615486020
+        url: http://homeImprovement-apply.lvh.me/access/HIL-615486020/by_token?auth=a7127e56d48a6cd5cc4054451c26530b67813c3a0f754d4f502037db96a199b71b26a1c404c30bc2834451a7c1b2be9a2c5c4bbd61567f1d91b71e89b0
+        applicants:
+        - role: primaryApplicant
+          returningApplicantId: 593093
+        - role: coborrower
+          returningApplicantId: 593094
+    authorizedUser:
+      type: object
+      required:
+      - name
+      - email
+      - relationship
+      properties:
+        name:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/name'
+        phoneNumber:
+          type: string
+          example: '8005882300'
+        email:
+          type: string
+          example: j.doe@gmail.com
+        relationship:
+          type: string
+          example: Father
+    name:
+      type: object
+      properties:
+        firstName:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        suffix:
+          type: string
+          description: Valid values are Jr. Sr. II III IV V
+      example:
+        firstName: John
+        middleName: M
+        lastName: Doe
+        suffix: Jr.
+    project:
+      type: object
+      required:
+      - projectCost
+      - projectAddress
+      - addressLineOne
+      - city
+      - state
+      - zipCode
+      properties:
+        projectCost:
+          type: number
+        projectAddress:
+          type: string
+        addressLineOne:
+          type: string
+        addressLineTwo:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        isSameAsPrimaryResidence:
+          type: boolean
+        yearOfHomePurchase:
+          type: string
+        housingStatus:
+          type: string
+        applicantsOnDeedOrTitle:
+          type: boolean
+        currentHomeValue:
+          type: number
+        mortgageBalance:
+          type: number
+        monthlyHousingPayments:
+          type: number
+        projectType:
+          type: string
+        projectDescription:
+          type: string
+        projectExpectedDuration:
+          type: string
+        projectStatus:
+          type: string
+        termsRequested:
+          type: string
+      example:
+        projectCost: 500000
+        projectAddress: 500 Main Street, PORTLAND, OR 97209
+        addressLineOne: 500 Main Street
+        addressLineTwo: null
+        city: PORTLAND
+        state: OR
+        zipCode: '97209'
+        isSameAsPrimaryResidence: null
+        yearOfHomePurchase: null
+        housingStatus: null
+        applicantsOnDeedOrTitle: null
+        currentHomeValue: null
+        mortgageBalance: null
+        monthlyHousingPayments: null
+        projectType: null
+        projectDescription: null
+        projectExpectedDuration: null
+        projectStatus: null
+        termsRequested: null
     applicant:
       type: object
       required:
@@ -167,74 +387,65 @@ components:
           type: string
           description: Required for coApplicant.  Valid values are Parent, Spouse, Relative, Friend, Other
           example: Relative
-    project:
+    phoneNumber:
       type: object
       required:
-      - projectCost
-      - projectAddress
-      - addressLineOne
-      - city
-      - state
-      - zipCode
+      - type
+      - phoneNumber
       properties:
-        projectCost:
-          type: number
-        projectAddress:
+        type:
           type: string
-        addressLineOne:
-          type: string
-        addressLineTwo:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        zipCode:
-          type: string
-        isSameAsPrimaryResidence:
-          type: boolean
-        yearOfHomePurchase:
-          type: string
-        housingStatus:
-          type: string
-        applicantsOnDeedOrTitle:
-          type: boolean
-        currentHomeValue:
-          type: number
-        mortgageBalance:
-          type: number
-        monthlyHousingPayments:
-          type: number
-        projectType:
-          type: string
-        projectDescription:
-          type: string
-        projectExpectedDuration:
-          type: string
-        projectStatus:
-          type: string
-        termsRequested:
+          description: The type of phone number.  Only valid values are Cell, Home, Work
+        phoneNumber:
           type: string
       example:
-        projectCost: 500000
-        projectAddress: 500 Main Street, PORTLAND, OR 97209
-        addressLineOne: 500 Main Street
-        addressLineTwo: null
-        city: PORTLAND
-        state: OR
-        zipCode: '97209'
-        isSameAsPrimaryResidence: null
-        yearOfHomePurchase: null
-        housingStatus: null
-        applicantsOnDeedOrTitle: null
-        currentHomeValue: null
-        mortgageBalance: null
-        monthlyHousingPayments: null
-        projectType: null
-        projectDescription: null
-        projectExpectedDuration: null
-        projectStatus: null
-        termsRequested: null
+        type: Cell
+        phoneNumber: '8005882300'
+    suberror:
+      type: object
+      properties:
+        object:
+          type: string
+        field:
+          type: string
+        rejectedValue:
+          type: string
+        message:
+          type: string
+      example:
+        object: Resource
+        field: name
+        rejectedValue: null
+        message: must not be null
+    error:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        timestamp:
+          type: string
+        message:
+          type: string
+        debugMessage:
+          type: string
+        subErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/suberror'
+      example:
+        id: null
+        status: BAD_REQUEST
+        timestamp: '2019-10-21 14:07:59'
+        message: Validation error
+        debugMessage: null
+        subErrors:
+        - object: Resource
+          field: name
+          rejectedValue: null
+          message: must not be null
     address:
       type: object
       required:
@@ -265,44 +476,6 @@ components:
         zipCode: '97209'
         country: null
         township: null
-    authorizedUser:
-      type: object
-      required:
-      - name
-      - email
-      - relationship
-      properties:
-        name:
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/name'
-        phoneNumber:
-          type: string
-          example: '8005882300'
-        email:
-          type: string
-          example: j.doe@gmail.com
-        relationship:
-          type: string
-          example: Father
-    eligibility:
-      type: object
-      required:
-      - primaryResidence
-      - propertyOwnership
-      - citizenship
-      properties:
-        primaryResidence:
-          type: boolean
-        propertyOwnership:
-          type: boolean
-        citizenship:
-          type: string
-          description: One of US, permanentResident, non-US
-      example:
-        primaryResidence: true
-        propertyOwnership: true
-        citizenship: US
     boardApplicationRequest:
       type: object
       required:
@@ -360,176 +533,3 @@ components:
         referenceNumber:
           type: string
           example: ''
-    error:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        status:
-          type: string
-        timestamp:
-          type: string
-        message:
-          type: string
-        debugMessage:
-          type: string
-        subErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/suberror'
-      example:
-        id: null
-        status: BAD_REQUEST
-        timestamp: '2019-10-21 14:07:59'
-        message: Validation error
-        debugMessage: null
-        subErrors:
-        - object: Resource
-          field: name
-          rejectedValue: null
-          message: must not be null
-    suberror:
-      type: object
-      properties:
-        object:
-          type: string
-        field:
-          type: string
-        rejectedValue:
-          type: string
-        message:
-          type: string
-      example:
-        object: Resource
-        field: name
-        rejectedValue: null
-        message: must not be null
-    phoneNumber:
-      type: object
-      required:
-      - type
-      - phoneNumber
-      properties:
-        type:
-          type: string
-          description: The type of phone number.  Only valid values are Cell, Home, Work
-        phoneNumber:
-          type: string
-      example:
-        type: Cell
-        phoneNumber: '8005882300'
-    boardApplicationResponse:
-      type: object
-      required:
-      - loanId
-      - loanKey
-      - url
-      - applicants
-      properties:
-        applicantId:
-          type: integer
-        coApplicantId:
-          type: integer
-        loanId:
-          type: integer
-        loanKey:
-          type: string
-        url:
-          type: string
-      example:
-        loanId: 9323
-        loanKey: HIL-615486020
-        url: http://homeImprovement-apply.lvh.me/access/HIL-615486020/by_token?auth=a7127e56d48a6cd5cc4054451c26530b67813c3a0f754d4f502037db96a199b71b26a1c404c30bc2834451a7c1b2be9a2c5c4bbd61567f1d91b71e89b0
-        applicants:
-        - role: primaryApplicant
-          returningApplicantId: 593093
-        - role: coborrower
-          returningApplicantId: 593094
-    selectedOffer:
-      type: object
-      required:
-      - programId
-      - termInMonths
-      - loanRate
-      - rateIndex
-      - maximumLoanAmount
-      properties:
-        programId:
-          type: integer
-        fomQueryId:
-          type: integer
-        termInMonths:
-          type: integer
-        loanRate:
-          type: number
-        rateIndex:
-          type: string
-        maximumLoanAmount:
-          type: number
-      example:
-        program_id: 1473
-        fom_query_id: 4146689
-        loanRate: 1.5
-        rateIndex: prime
-        termInMonths: 120
-        maximumLoanAmount: 85000
-    name:
-      type: object
-      properties:
-        firstName:
-          type: string
-        middleName:
-          type: string
-        lastName:
-          type: string
-        suffix:
-          type: string
-          description: Valid values are Jr. Sr. II III IV V
-      example:
-        firstName: John
-        middleName: M
-        lastName: Doe
-        suffix: Jr.
-    driversLicense:
-      type: object
-      required:
-      - number
-      - state
-      - expirationDate
-      properties:
-        number:
-          type: string
-        state:
-          type: string
-        expirationDate:
-          type: string
-      example:
-        number: TA923290
-        state: OH
-        expirationDate: 11-22-2023
-  responses:
-    BadRequest:
-      description: Invalid request, unable to process the request with the information provided.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: BAD_REQUEST
-            timestamp: '2019-10-21 14:07:59'
-            message: Describes what was invalid about the request, if possible.
-            debugMessage: null
-    UnexpectedError:
-      description: An unexpected server error occurred.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: INTERNAL_SERVER_ERROR
-            timestamp: '2019-10-21 14:07:59'
-            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
-            debugMessage: null
