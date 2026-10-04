@@ -142,29 +142,6 @@ components:
                 description: Array of error messages (if any)
                 items:
                   type: string
-    ErrorResponse:
-      type: object
-      properties:
-        isSuccess:
-          type: boolean
-          description: Success indicator (always false for errors)
-          example: false
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 400
-        error:
-          type: string
-          description: Error message
-          example: Invalid request
-        errors:
-          type: array
-          description: Detailed error messages
-          items:
-            type: string
-          example:
-          - Field 'loanUUID' is required
-          - Field 'amount' must be greater than 0
     CreatePaymentRequest:
       type: object
       required:
@@ -217,6 +194,29 @@ components:
           type: string
           description: Optional payment purpose/description
           example: Monthly principal payment
+    ErrorResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Success indicator (always false for errors)
+          example: false
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        error:
+          type: string
+          description: Error message
+          example: Invalid request
+        errors:
+          type: array
+          description: Detailed error messages
+          items:
+            type: string
+          example:
+          - Field 'loanUUID' is required
+          - Field 'amount' must be greater than 0
   securitySchemes:
     oauth2:
       type: oauth2

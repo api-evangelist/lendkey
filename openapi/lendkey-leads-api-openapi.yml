@@ -82,62 +82,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    leadResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-        uuid:
-          type: string
-          format: uuid
-        email:
-          type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
-        createdAt:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date
-        source:
-          type: string
-        sourceKey:
-          type: string
-        sourceApplicationId:
-          type: string
-        creditRiskModel:
-          type: string
-      example:
-        id: 1
-        uuid: 3441eb74-e5e6-483a-bb53-4201edf7210e
-        email: no-reply@lendkey.com
-        firstName: John
-        lastName: Doe
-        createdAt: '2021-09-21T19:21:53.726626200Z'
-        updatedAt: '2021-09-21T19:21:53.726626200Z'
-        source: unqork
-        sourceKey: 8f8898ae-dda1-4bde-a627-44d6fb5977dd
-        sourceApplicationId: 'null'
-        creditRiskModel: 0f2f1ce6-7bed-4df4-8b04-aff593dd4d23
-    suberror:
-      type: object
-      properties:
-        object:
-          type: string
-        field:
-          type: string
-        rejectedValue:
-          type: string
-        message:
-          type: string
-      example:
-        object: Resource
-        field: name
-        rejectedValue: null
-        message: must not be null
     error:
       type: object
       properties:
@@ -192,19 +136,63 @@ components:
         sourceKey: 8f8898ae-dda1-4bde-a627-44d6fb5977dd
         sourceApplicationId: 'null'
         creditRiskModel: 0f2f1ce6-7bed-4df4-8b04-aff593dd4d23
+    suberror:
+      type: object
+      properties:
+        object:
+          type: string
+        field:
+          type: string
+        rejectedValue:
+          type: string
+        message:
+          type: string
+      example:
+        object: Resource
+        field: name
+        rejectedValue: null
+        message: must not be null
+    leadResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        uuid:
+          type: string
+          format: uuid
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        createdAt:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date
+        source:
+          type: string
+        sourceKey:
+          type: string
+        sourceApplicationId:
+          type: string
+        creditRiskModel:
+          type: string
+      example:
+        id: 1
+        uuid: 3441eb74-e5e6-483a-bb53-4201edf7210e
+        email: no-reply@lendkey.com
+        firstName: John
+        lastName: Doe
+        createdAt: '2021-09-21T19:21:53.726626200Z'
+        updatedAt: '2021-09-21T19:21:53.726626200Z'
+        source: unqork
+        sourceKey: 8f8898ae-dda1-4bde-a627-44d6fb5977dd
+        sourceApplicationId: 'null'
+        creditRiskModel: 0f2f1ce6-7bed-4df4-8b04-aff593dd4d23
   responses:
-    UnexpectedError:
-      description: An unexpected server error occurred.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: INTERNAL_SERVER_ERROR
-            timestamp: '2019-10-21 14:07:59'
-            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
-            debugMessage: null
     BadRequest:
       description: Invalid request, unable to process the request with the information provided.
       content:
@@ -216,4 +204,16 @@ components:
             status: BAD_REQUEST
             timestamp: '2019-10-21 14:07:59'
             message: Describes what was invalid about the request, if possible.
+            debugMessage: null
+    UnexpectedError:
+      description: An unexpected server error occurred.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: INTERNAL_SERVER_ERROR
+            timestamp: '2019-10-21 14:07:59'
+            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
             debugMessage: null

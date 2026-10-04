@@ -81,32 +81,50 @@ paths:
       operationId: postV1ApplicationStatus
       x-operation-id-source: derived
 components:
-  responses:
-    UnexpectedError:
-      description: An unexpected server error occurred.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: INTERNAL_SERVER_ERROR
-            timestamp: '2019-10-21 14:07:59'
-            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
-            debugMessage: null
-    BadRequest:
-      description: Invalid request, unable to process the request with the information provided.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: BAD_REQUEST
-            timestamp: '2019-10-21 14:07:59'
-            message: Describes what was invalid about the request, if possible.
-            debugMessage: null
   schemas:
+    error:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        timestamp:
+          type: string
+        message:
+          type: string
+        debugMessage:
+          type: string
+        subErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/suberror'
+      example:
+        id: null
+        status: BAD_REQUEST
+        timestamp: '2019-10-21 14:07:59'
+        message: Validation error
+        debugMessage: null
+        subErrors:
+        - object: Resource
+          field: name
+          rejectedValue: null
+          message: must not be null
+    applicationStatusResponse:
+      type: object
+      properties:
+        applications:
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/applicationStatus'
+        errors:
+          type: array
+          items:
+            allOf:
+            - type: string
+              example: String reference key of unretrievable application.
     applicationStatusRequest:
       type: object
       required:
@@ -170,46 +188,28 @@ components:
           description: A set of text describing what may be preventing the application/loan from advancing.
           example:
           - Waiting for contractor to submit a disbursement request.
-    error:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        status:
-          type: string
-        timestamp:
-          type: string
-        message:
-          type: string
-        debugMessage:
-          type: string
-        subErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/suberror'
-      example:
-        id: null
-        status: BAD_REQUEST
-        timestamp: '2019-10-21 14:07:59'
-        message: Validation error
-        debugMessage: null
-        subErrors:
-        - object: Resource
-          field: name
-          rejectedValue: null
-          message: must not be null
-    applicationStatusResponse:
-      type: object
-      properties:
-        applications:
-          type: array
-          items:
-            allOf:
-            - $ref: '#/components/schemas/applicationStatus'
-        errors:
-          type: array
-          items:
-            allOf:
-            - type: string
-              example: String reference key of unretrievable application.
+  responses:
+    BadRequest:
+      description: Invalid request, unable to process the request with the information provided.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: BAD_REQUEST
+            timestamp: '2019-10-21 14:07:59'
+            message: Describes what was invalid about the request, if possible.
+            debugMessage: null
+    UnexpectedError:
+      description: An unexpected server error occurred.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: INTERNAL_SERVER_ERROR
+            timestamp: '2019-10-21 14:07:59'
+            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
+            debugMessage: null

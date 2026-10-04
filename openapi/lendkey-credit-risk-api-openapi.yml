@@ -156,6 +156,78 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    error:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        timestamp:
+          type: string
+        message:
+          type: string
+        debugMessage:
+          type: string
+        subErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/suberror'
+      example:
+        id: null
+        status: BAD_REQUEST
+        timestamp: '2019-10-21 14:07:59'
+        message: Validation error
+        debugMessage: null
+        subErrors:
+        - object: Resource
+          field: name
+          rejectedValue: null
+          message: must not be null
+    combinedMonthlyDebtResponse:
+      type: object
+      properties:
+        amount:
+          type: integer
+          description: The combined total monthly debt for the two given credit profiles.
+          example: 2423
+    resolveCreditAttributesRequest:
+      type: object
+      properties:
+        creditProfileId:
+          type: integer
+          description: The credit profile ID for the credit profile to resolve the attributes for.
+        creditAttributes:
+          type: array
+          items:
+            type: string
+            description: The properties to resolve the values for.
+      example:
+        creditProfileId: 32423
+        creditAttributes:
+        - attribute_one_tbd
+        - attribute_two_tbd
+        - attribute_three_tbd
+        - attribute_four_tbd
+        - attribute_five_tbd
+        - attribute_six_tbd
+    combinedMonthlyDebtRequest:
+      type: object
+      properties:
+        creditProfileA:
+          type: integer
+          description: The credit profile ID for the first credit profile to include in the calculation.
+          example: 32423
+        creditProfileB:
+          description: The credit profile ID for the second credit profile to include in the calculation.
+          example: 92343
+    softCreditResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1234
     scoringResponseFail:
       type: object
       properties:
@@ -249,12 +321,6 @@ components:
                 Reason Code 31: null
                 Reason Code 32: null
                 Reason Code 33: null
-    softCreditResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1234
     scoringResponsePass:
       type: object
       properties:
@@ -354,108 +420,6 @@ components:
                 Reason Code 20: null
                 Reason Code 21: null
                 Reason Code 22: null
-    resolvedAttributesResponse:
-      type: object
-      additionalProperties:
-        anyOf:
-        - type: string
-        - type: boolean
-        - type: integer
-        - type: number
-        - type: array
-      example:
-        attribute_one_tbd: some string value
-        attribute_two_tbd: true
-        attribute_three_tbd: 132
-        attribute_four_tbd: 32000.12
-        attribute_five_tbd: 0.00249
-        attribute_six_tbd:
-        - could be array of strings or numbers
-    combinedMonthlyDebtRequest:
-      type: object
-      properties:
-        creditProfileA:
-          type: integer
-          description: The credit profile ID for the first credit profile to include in the calculation.
-          example: 32423
-        creditProfileB:
-          description: The credit profile ID for the second credit profile to include in the calculation.
-          example: 92343
-    resolveCreditAttributesRequest:
-      type: object
-      properties:
-        creditProfileId:
-          type: integer
-          description: The credit profile ID for the credit profile to resolve the attributes for.
-        creditAttributes:
-          type: array
-          items:
-            type: string
-            description: The properties to resolve the values for.
-      example:
-        creditProfileId: 32423
-        creditAttributes:
-        - attribute_one_tbd
-        - attribute_two_tbd
-        - attribute_three_tbd
-        - attribute_four_tbd
-        - attribute_five_tbd
-        - attribute_six_tbd
-    scoringRequest:
-      type: object
-      properties:
-        attributes:
-          type: object
-          description: The scoring attributes to use
-          properties:
-            modelId:
-              type: string
-              description: The scoring model UUID to use to score the given arguments against.
-              example: 3f77a5a0-9662-4cd9-93e8-881ba87a204f
-            arguments:
-              type: object
-              additionalProperties:
-                type: string
-              description: The attributes to provide to the scoring model
-              example:
-                bor_score_max: 720
-                cob_score_max: 820
-                bor_trlines_mortg_delinq_ls24m_count: 0
-                cob_trlines_mortg_delinq_ls24m_count: 0
-                bor_pbrecrds_judgements_ls60m_count: 0
-                cob_pbrecrds_judgements_ls60m_count: 0
-                bor_pbrecrds_repossessions_ls60m_count: 0
-                cob_pbrecrds_repossessions_ls60m_count: 0
-                bor_pbrecrds_chargeoffs_ls60m_count: 0
-                cob_pbrecrds_chargeoffs_ls60m_count: 0
-                bor_pbrecrds_collections_cumulative: 0
-                cob_pbrecrds_collections_cumulative: 0
-                bor_trlines_foreclosures_count: 0
-                cob_trlines_foreclosures_count: 0
-                bor_person_bankruptcies_count: 0
-                cob_person_bankruptcies_count: 0
-                bor_yearly_income_gross: 72000.0
-                cob_yearly_income_gross: 120000.0
-                cosigner: true
-                prescreen: true
-                requested_amount: 24000.0
-                stated_housing_expenses: 1200,
-                bor_reported_housing_expenses: 1245.0
-                cob_reported_housing_expenses: 814.0
-                bor_monthly_debt_excluding_housing_and_education: 1782.23
-                cob_monthly_debt_excluding_housing_and_education: 1689.51
-                bor_monthly_education_debt: 0
-                cob_monthly_education_debt: 256.32
-                bcob_joint_monthly_debt: 764.9
-                longest_qualified_term: 180
-                rate_for_longest_qualified_term: 5.24
-    combinedMonthlyDebtResponse:
-      type: object
-      properties:
-        amount:
-          type: integer
-          description: The combined total monthly debt for the two given credit profiles.
-          example: 2423
     suberror:
       type: object
       properties:
@@ -472,35 +436,6 @@ components:
         field: name
         rejectedValue: null
         message: must not be null
-    error:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        status:
-          type: string
-        timestamp:
-          type: string
-        message:
-          type: string
-        debugMessage:
-          type: string
-        subErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/suberror'
-      example:
-        id: null
-        status: BAD_REQUEST
-        timestamp: '2019-10-21 14:07:59'
-        message: Validation error
-        debugMessage: null
-        subErrors:
-        - object: Resource
-          field: name
-          rejectedValue: null
-          message: must not be null
     softCreditRequest:
       type: object
       required:
@@ -559,19 +494,72 @@ components:
           type: string
           description: Varies by lender.
           example: 1928032
+    resolvedAttributesResponse:
+      type: object
+      additionalProperties:
+        anyOf:
+        - type: string
+        - type: boolean
+        - type: integer
+        - type: number
+        - type: array
+      example:
+        attribute_one_tbd: some string value
+        attribute_two_tbd: true
+        attribute_three_tbd: 132
+        attribute_four_tbd: 32000.12
+        attribute_five_tbd: 0.00249
+        attribute_six_tbd:
+        - could be array of strings or numbers
+    scoringRequest:
+      type: object
+      properties:
+        attributes:
+          type: object
+          description: The scoring attributes to use
+          properties:
+            modelId:
+              type: string
+              description: The scoring model UUID to use to score the given arguments against.
+              example: 3f77a5a0-9662-4cd9-93e8-881ba87a204f
+            arguments:
+              type: object
+              additionalProperties:
+                type: string
+              description: The attributes to provide to the scoring model
+              example:
+                bor_score_max: 720
+                cob_score_max: 820
+                bor_trlines_mortg_delinq_ls24m_count: 0
+                cob_trlines_mortg_delinq_ls24m_count: 0
+                bor_pbrecrds_judgements_ls60m_count: 0
+                cob_pbrecrds_judgements_ls60m_count: 0
+                bor_pbrecrds_repossessions_ls60m_count: 0
+                cob_pbrecrds_repossessions_ls60m_count: 0
+                bor_pbrecrds_chargeoffs_ls60m_count: 0
+                cob_pbrecrds_chargeoffs_ls60m_count: 0
+                bor_pbrecrds_collections_cumulative: 0
+                cob_pbrecrds_collections_cumulative: 0
+                bor_trlines_foreclosures_count: 0
+                cob_trlines_foreclosures_count: 0
+                bor_person_bankruptcies_count: 0
+                cob_person_bankruptcies_count: 0
+                bor_yearly_income_gross: 72000.0
+                cob_yearly_income_gross: 120000.0
+                cosigner: true
+                prescreen: true
+                requested_amount: 24000.0
+                stated_housing_expenses: 1200,
+                bor_reported_housing_expenses: 1245.0
+                cob_reported_housing_expenses: 814.0
+                bor_monthly_debt_excluding_housing_and_education: 1782.23
+                cob_monthly_debt_excluding_housing_and_education: 1689.51
+                bor_monthly_education_debt: 0
+                cob_monthly_education_debt: 256.32
+                bcob_joint_monthly_debt: 764.9
+                longest_qualified_term: 180
+                rate_for_longest_qualified_term: 5.24
   responses:
-    UnexpectedError:
-      description: An unexpected server error occurred.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: INTERNAL_SERVER_ERROR
-            timestamp: '2019-10-21 14:07:59'
-            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
-            debugMessage: null
     BadRequest:
       description: Invalid request, unable to process the request with the information provided.
       content:
@@ -583,4 +571,16 @@ components:
             status: BAD_REQUEST
             timestamp: '2019-10-21 14:07:59'
             message: Describes what was invalid about the request, if possible.
+            debugMessage: null
+    UnexpectedError:
+      description: An unexpected server error occurred.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: INTERNAL_SERVER_ERROR
+            timestamp: '2019-10-21 14:07:59'
+            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
             debugMessage: null

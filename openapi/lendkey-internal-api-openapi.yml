@@ -144,6 +144,17 @@ components:
         searchableValues:
           type: string
           default: ''
+    LogRequestResponse:
+      description: Response containing the request log ID and optional error message
+      type: object
+      properties:
+        requestLogId:
+          type: integer
+          format: int64
+          example: 1234567891234567
+        error:
+          type: string
+          default: ''
     RequestLog:
       description: Request log details to be created
       type: object
@@ -158,17 +169,6 @@ components:
           type: string
           default: ''
         searchableValues:
-          type: string
-          default: ''
-    LogRequestResponse:
-      description: Response containing the request log ID and optional error message
-      type: object
-      properties:
-        requestLogId:
-          type: integer
-          format: int64
-          example: 1234567891234567
-        error:
           type: string
           default: ''
   securitySchemes:

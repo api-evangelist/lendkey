@@ -104,6 +104,36 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
+    CreateLoanResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Overall success indicator
+          example: true
+        statusCode:
+          type: integer
+          description: HTTP status code (200, 207, 400, 500)
+          example: 200
+        responseDetails:
+          type: array
+          items:
+            type: object
+            properties:
+              uuid:
+                type: string
+                format: uuid
+                description: Generated loan UUID
+                example: 550e8400-e29b-41d4-a716-446655440000
+              externalId:
+                type: string
+                description: External loan identifier
+                example: LOAN-12345
+              errors:
+                type: array
+                description: Array of error messages (if any)
+                items:
+                  type: string
     CreateLoanRequest:
       type: object
       required:
@@ -213,36 +243,6 @@ components:
           example:
           - Field 'loanUUID' is required
           - Field 'amount' must be greater than 0
-    CreateLoanResponse:
-      type: object
-      properties:
-        isSuccess:
-          type: boolean
-          description: Overall success indicator
-          example: true
-        statusCode:
-          type: integer
-          description: HTTP status code (200, 207, 400, 500)
-          example: 200
-        responseDetails:
-          type: array
-          items:
-            type: object
-            properties:
-              uuid:
-                type: string
-                format: uuid
-                description: Generated loan UUID
-                example: 550e8400-e29b-41d4-a716-446655440000
-              externalId:
-                type: string
-                description: External loan identifier
-                example: LOAN-12345
-              errors:
-                type: array
-                description: Array of error messages (if any)
-                items:
-                  type: string
   securitySchemes:
     oauth2:
       type: oauth2

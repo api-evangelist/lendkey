@@ -102,6 +102,64 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    error:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        timestamp:
+          type: string
+        message:
+          type: string
+        debugMessage:
+          type: string
+        subErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/suberror'
+      example:
+        id: null
+        status: BAD_REQUEST
+        timestamp: '2019-10-21 14:07:59'
+        message: Validation error
+        debugMessage: null
+        subErrors:
+        - object: Resource
+          field: name
+          rejectedValue: null
+          message: must not be null
+    recipient:
+      type: object
+      required:
+      - recipientAddress
+      - recipientName
+      properties:
+        recipientAddress:
+          type: string
+        recipientName:
+          type: string
+      example:
+        recipientName: John Doe
+        recipientAddress: doe.john@gmali.com
+    link:
+      type: object
+      properties:
+        href:
+          type: string
+    page:
+      type: object
+      properties:
+        size:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+        number:
+          type: integer
     emailRecord:
       type: object
       properties:
@@ -201,19 +259,41 @@ components:
           firstName: John
           lastName: Doe
           body: We've received your document.
-    recipient:
+    emailTemplate:
       type: object
-      required:
-      - recipientAddress
-      - recipientName
       properties:
-        recipientAddress:
+        keyName:
           type: string
-        recipientName:
+        externalTemplateProvider:
+          type: string
+        externalTemplateId:
+          type: string
+        emailSubstitutions:
+          type: array
+          items:
+            $ref: '#/components/schemas/emailSubstitution'
+      example:
+        keyName: HIL_Application_Invitation
+        externalTemplateProvider: SendGrid
+        externalTemplateId: ''
+        emailSubstitutions:
+        - $ref: '#/components/schemas/emailSubstitution'
+    suberror:
+      type: object
+      properties:
+        object:
+          type: string
+        field:
+          type: string
+        rejectedValue:
+          type: string
+        message:
           type: string
       example:
-        recipientName: John Doe
-        recipientAddress: doe.john@gmali.com
+        object: Resource
+        field: name
+        rejectedValue: null
+        message: must not be null
     emailRecordDto:
       type: object
       required:
@@ -275,6 +355,16 @@ components:
             firstName: John
             lastName: Doe
             body: We've received your document.
+    emailSubstitution:
+      type: object
+      properties:
+        id:
+          type: integer
+        tag:
+          type: string
+      example:
+        id: 2
+        tag: clientName
     emailTemplateList:
       type: object
       properties:
@@ -317,27 +407,6 @@ components:
           totalElements: 1
           totalPages: 1
           number: 0
-    link:
-      type: object
-      properties:
-        href:
-          type: string
-    suberror:
-      type: object
-      properties:
-        object:
-          type: string
-        field:
-          type: string
-        rejectedValue:
-          type: string
-        message:
-          type: string
-      example:
-        object: Resource
-        field: name
-        rejectedValue: null
-        message: must not be null
     emailRecordRequestPayload:
       type: object
       required:
@@ -352,88 +421,7 @@ components:
           type: object
           anyOf:
           - $ref: '#/components/schemas/emailRecordDto'
-    emailSubstitution:
-      type: object
-      properties:
-        id:
-          type: integer
-        tag:
-          type: string
-      example:
-        id: 2
-        tag: clientName
-    page:
-      type: object
-      properties:
-        size:
-          type: integer
-        totalElements:
-          type: integer
-        totalPages:
-          type: integer
-        number:
-          type: integer
-    error:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        status:
-          type: string
-        timestamp:
-          type: string
-        message:
-          type: string
-        debugMessage:
-          type: string
-        subErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/suberror'
-      example:
-        id: null
-        status: BAD_REQUEST
-        timestamp: '2019-10-21 14:07:59'
-        message: Validation error
-        debugMessage: null
-        subErrors:
-        - object: Resource
-          field: name
-          rejectedValue: null
-          message: must not be null
-    emailTemplate:
-      type: object
-      properties:
-        keyName:
-          type: string
-        externalTemplateProvider:
-          type: string
-        externalTemplateId:
-          type: string
-        emailSubstitutions:
-          type: array
-          items:
-            $ref: '#/components/schemas/emailSubstitution'
-      example:
-        keyName: HIL_Application_Invitation
-        externalTemplateProvider: SendGrid
-        externalTemplateId: ''
-        emailSubstitutions:
-        - $ref: '#/components/schemas/emailSubstitution'
   responses:
-    UnexpectedError:
-      description: An unexpected server error occurred.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: INTERNAL_SERVER_ERROR
-            timestamp: '2019-10-21 14:07:59'
-            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
-            debugMessage: null
     BadRequest:
       description: Invalid request, unable to process the request with the information provided.
       content:
@@ -445,4 +433,16 @@ components:
             status: BAD_REQUEST
             timestamp: '2019-10-21 14:07:59'
             message: Describes what was invalid about the request, if possible.
+            debugMessage: null
+    UnexpectedError:
+      description: An unexpected server error occurred.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: INTERNAL_SERVER_ERROR
+            timestamp: '2019-10-21 14:07:59'
+            message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
             debugMessage: null
