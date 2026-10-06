@@ -47,7 +47,7 @@ x-tier: enriched
 x-tier-reason: four-published-openapi-specs
 specificationVersion: '0.23'
 created: '2026-07-17'
-modified: '2026-07-19'
+modified: '2026-10-06'
 tags:
 - Company
 - Fintech
@@ -381,6 +381,8 @@ apis:
     url: >-
       https://developer.lendkey.com/default/documentation/loan-origination-partner-integration-prod
 common:
+- url: https://www.lendkey.com/blog/feed/
+  type: BlogRSS
 - type: CapabilityMap
   url: capabilities/lendkey-capability-edges.yml
   name: LendKey Business Capability Map
