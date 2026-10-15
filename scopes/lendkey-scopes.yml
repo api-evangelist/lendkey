@@ -1,23 +1,63 @@
-generated: '2026-07-19'
-method: derived
-source: openapi/lendkey-esign-openapi.yml, openapi/lendkey-partner-integration-internal-openapi.yml,
-  openapi/lendkey-treasury-management-openapi.yml
+generated: '2026-10-14'
+method: none
+source: openapi/lendkey-application-contracts-api-openapi.yml, openapi/lendkey-authentication-api-openapi.yml,
+  openapi/lendkey-disbursements-api-openapi.yml, openapi/lendkey-internal-api-openapi.yml, openapi/lendkey-ledger-management-api-openapi.yml,
+  openapi/lendkey-lender-templates-api-openapi.yml, openapi/lendkey-loans-api-openapi.yml, openapi/lendkey-payments-api-openapi.yml,
+  openapi/lendkey-webhooks-api-openapi.yml
 schemes:
 - name: oauth2
-  source: openapi/lendkey-esign-openapi.yml
+  source: openapi/lendkey-application-contracts-api-openapi.yml
   flows:
   - flow: clientCredentials
     tokenUrl: /oauth2/token
   description: OAuth2 client credentials flow via Kong Gateway
 - name: oauth2
-  source: openapi/lendkey-partner-integration-internal-openapi.yml
+  source: openapi/lendkey-authentication-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /oauth2/token
+  description: OAuth2 client credentials flow via Kong Gateway
+- name: oauth2
+  source: openapi/lendkey-disbursements-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /oauth2/token
+  description: OAuth2 client credentials flow via Kong Gateway
+- name: oauth2
+  source: openapi/lendkey-internal-api-openapi.yml
   flows:
   - flow: clientCredentials
     tokenUrl: https://api.lendkey.com/lo_partnerintegrationinternalapi/oauth2/token
 - name: oauth2
-  source: openapi/lendkey-treasury-management-openapi.yml
+  source: openapi/lendkey-ledger-management-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /oauth2/token
+  description: OAuth2 client credentials flow via Kong Gateway
+- name: oauth2
+  source: openapi/lendkey-lender-templates-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /oauth2/token
+  description: OAuth2 client credentials flow via Kong Gateway
+- name: oauth2
+  source: openapi/lendkey-loans-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /oauth2/token
+  description: OAuth2 client credentials flow via Kong Gateway
+- name: oauth2
+  source: openapi/lendkey-payments-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /oauth2/token
+  description: OAuth2 client credentials flow via Kong Gateway
+- name: oauth2
+  source: openapi/lendkey-webhooks-api-openapi.yml
   flows:
   - flow: clientCredentials
     tokenUrl: /oauth2/token
   description: OAuth2 client credentials flow via Kong Gateway
 scopes: []
+note: The OAuth2 security scheme(s) in the OpenAPI declare no scopes, and no security requirement
+  references one.
