@@ -75,22 +75,6 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    UpdateExternalIdResponse:
-      type: object
-      properties:
-        isSuccess:
-          type: boolean
-          description: Success indicator
-          example: true
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 200
-        errors:
-          type: array
-          description: Array of error messages (if any)
-          items:
-            type: string
     UpdateExternalIdRequest:
       type: object
       required:
@@ -129,6 +113,22 @@ components:
           example:
           - Field 'loanUUID' is required
           - Field 'amount' must be greater than 0
+    UpdateExternalIdResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Success indicator
+          example: true
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 200
+        errors:
+          type: array
+          description: Array of error messages (if any)
+          items:
+            type: string
   securitySchemes:
     oauth2:
       type: oauth2

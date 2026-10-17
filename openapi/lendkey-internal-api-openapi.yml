@@ -127,6 +127,17 @@ paths:
                 $ref: '#/components/schemas/LogRequestResponse'
 components:
   schemas:
+    LogRequestResponse:
+      description: Response containing the request log ID and optional error message
+      type: object
+      properties:
+        requestLogId:
+          type: integer
+          format: int64
+          example: 1234567891234567
+        error:
+          type: string
+          default: ''
     ResponseLog:
       description: Response log details to update an existing request log
       type: object
@@ -142,17 +153,6 @@ components:
           type: boolean
           example: false
         searchableValues:
-          type: string
-          default: ''
-    LogRequestResponse:
-      description: Response containing the request log ID and optional error message
-      type: object
-      properties:
-        requestLogId:
-          type: integer
-          format: int64
-          example: 1234567891234567
-        error:
           type: string
           default: ''
     RequestLog:

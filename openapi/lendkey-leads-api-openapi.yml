@@ -82,35 +82,46 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    error:
+    leadResponse:
       type: object
       properties:
         id:
+          type: integer
+        uuid:
           type: string
           format: uuid
-        status:
+        email:
           type: string
-        timestamp:
+        firstName:
           type: string
-        message:
+        lastName:
           type: string
-        debugMessage:
+        createdAt:
           type: string
-        subErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/suberror'
+          format: date
+        updatedAt:
+          type: string
+          format: date
+        source:
+          type: string
+        sourceKey:
+          type: string
+        sourceApplicationId:
+          type: string
+        creditRiskModel:
+          type: string
       example:
-        id: null
-        status: BAD_REQUEST
-        timestamp: '2019-10-21 14:07:59'
-        message: Validation error
-        debugMessage: null
-        subErrors:
-        - object: Resource
-          field: name
-          rejectedValue: null
-          message: must not be null
+        id: 1
+        uuid: 3441eb74-e5e6-483a-bb53-4201edf7210e
+        email: no-reply@lendkey.com
+        firstName: John
+        lastName: Doe
+        createdAt: '2021-09-21T19:21:53.726626200Z'
+        updatedAt: '2021-09-21T19:21:53.726626200Z'
+        source: unqork
+        sourceKey: 8f8898ae-dda1-4bde-a627-44d6fb5977dd
+        sourceApplicationId: 'null'
+        creditRiskModel: 0f2f1ce6-7bed-4df4-8b04-aff593dd4d23
     createLeadRequest:
       type: object
       properties:
@@ -152,46 +163,35 @@ components:
         field: name
         rejectedValue: null
         message: must not be null
-    leadResponse:
+    error:
       type: object
       properties:
         id:
-          type: integer
-        uuid:
           type: string
           format: uuid
-        email:
+        status:
           type: string
-        firstName:
+        timestamp:
           type: string
-        lastName:
+        message:
           type: string
-        createdAt:
+        debugMessage:
           type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date
-        source:
-          type: string
-        sourceKey:
-          type: string
-        sourceApplicationId:
-          type: string
-        creditRiskModel:
-          type: string
+        subErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/suberror'
       example:
-        id: 1
-        uuid: 3441eb74-e5e6-483a-bb53-4201edf7210e
-        email: no-reply@lendkey.com
-        firstName: John
-        lastName: Doe
-        createdAt: '2021-09-21T19:21:53.726626200Z'
-        updatedAt: '2021-09-21T19:21:53.726626200Z'
-        source: unqork
-        sourceKey: 8f8898ae-dda1-4bde-a627-44d6fb5977dd
-        sourceApplicationId: 'null'
-        creditRiskModel: 0f2f1ce6-7bed-4df4-8b04-aff593dd4d23
+        id: null
+        status: BAD_REQUEST
+        timestamp: '2019-10-21 14:07:59'
+        message: Validation error
+        debugMessage: null
+        subErrors:
+        - object: Resource
+          field: name
+          rejectedValue: null
+          message: must not be null
   responses:
     BadRequest:
       description: Invalid request, unable to process the request with the information provided.

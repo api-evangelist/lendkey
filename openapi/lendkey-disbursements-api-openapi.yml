@@ -146,58 +146,6 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    CreateDisbursementResponse:
-      type: object
-      properties:
-        isSuccess:
-          type: boolean
-          description: Overall success indicator
-          example: true
-        statusCode:
-          type: integer
-          description: HTTP status code
-          example: 200
-        responseDetails:
-          type: array
-          items:
-            type: object
-            properties:
-              uuid:
-                type: string
-                format: uuid
-                description: Generated disbursement UUID
-                example: 660e8400-e29b-41d4-a716-446655440000
-              errors:
-                type: array
-                description: Array of error messages (if any)
-                items:
-                  type: string
-    CreateDisbursementRequest:
-      type: object
-      required:
-      - loanUUID
-      - amount
-      - externalID
-      properties:
-        loanUUID:
-          type: string
-          format: uuid
-          description: UUID of the loan to disburse
-          example: 550e8400-e29b-41d4-a716-446655440000
-        amount:
-          type: number
-          format: double
-          description: Disbursement amount
-          example: 25000.5
-        externalID:
-          type: string
-          description: External disbursement identifier
-          example: DISB-2025-001
-        startDate:
-          type: string
-          format: date
-          description: Disbursement date (YYYY-MM-DD)
-          example: '2025-01-15'
     CancelDisbursementRequest:
       type: object
       required:
@@ -264,6 +212,58 @@ components:
           example:
           - Field 'loanUUID' is required
           - Field 'amount' must be greater than 0
+    CreateDisbursementResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Overall success indicator
+          example: true
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 200
+        responseDetails:
+          type: array
+          items:
+            type: object
+            properties:
+              uuid:
+                type: string
+                format: uuid
+                description: Generated disbursement UUID
+                example: 660e8400-e29b-41d4-a716-446655440000
+              errors:
+                type: array
+                description: Array of error messages (if any)
+                items:
+                  type: string
+    CreateDisbursementRequest:
+      type: object
+      required:
+      - loanUUID
+      - amount
+      - externalID
+      properties:
+        loanUUID:
+          type: string
+          format: uuid
+          description: UUID of the loan to disburse
+          example: 550e8400-e29b-41d4-a716-446655440000
+        amount:
+          type: number
+          format: double
+          description: Disbursement amount
+          example: 25000.5
+        externalID:
+          type: string
+          description: External disbursement identifier
+          example: DISB-2025-001
+        startDate:
+          type: string
+          format: date
+          description: Disbursement date (YYYY-MM-DD)
+          example: '2025-01-15'
     CancelDisbursementResponse:
       type: object
       properties:

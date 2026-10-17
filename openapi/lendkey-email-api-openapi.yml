@@ -102,35 +102,20 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    error:
+    emailRecordRequestPayload:
       type: object
+      required:
+      - provider
+      - paylaod
       properties:
-        id:
+        provider:
           type: string
-          format: uuid
-        status:
-          type: string
-        timestamp:
-          type: string
-        message:
-          type: string
-        debugMessage:
-          type: string
-        subErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/suberror'
-      example:
-        id: null
-        status: BAD_REQUEST
-        timestamp: '2019-10-21 14:07:59'
-        message: Validation error
-        debugMessage: null
-        subErrors:
-        - object: Resource
-          field: name
-          rejectedValue: null
-          message: must not be null
+          description: The email service provider to use when sending this email.
+          example: SENDGRID
+        payload:
+          type: object
+          anyOf:
+          - $ref: '#/components/schemas/emailRecordDto'
     recipient:
       type: object
       required:
@@ -144,22 +129,48 @@ components:
       example:
         recipientName: John Doe
         recipientAddress: doe.john@gmali.com
-    link:
+    emailTemplateList:
       type: object
       properties:
-        href:
-          type: string
-    page:
-      type: object
-      properties:
-        size:
-          type: integer
-        totalElements:
-          type: integer
-        totalPages:
-          type: integer
-        number:
-          type: integer
+        _embedded:
+          type: object
+          properties:
+            emailTemplates:
+              type: array
+              items:
+                $ref: '#/components/schemas/emailTemplate'
+        _links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/link'
+        page:
+          $ref: '#/components/schemas/page'
+      example:
+        _embedded:
+          emailTemplates:
+          - keyName: HIL_Application_Invitation
+            externalTemplateProvider: SendGrid
+            externalTemplateId: ''
+            emailSubstitutions:
+            - id: 2
+              tag: clientName
+            - id: 1
+              tag: dealName
+        _links:
+          self:
+            href: http://localhost:8080/v1/emailTemplates?page=0&size=20
+          first:
+            href: http://localhost:8080/v1/emailTemplates?page=0&size=20
+          next:
+            href: http://localhost:8080/v1/emailTemplates?page=1&size=20
+          last:
+            href: http://localhost:8080/v1/emailTemplates?page=1&size=20
+        page:
+          size: 20
+          totalElements: 1
+          totalPages: 1
+          number: 0
     emailRecord:
       type: object
       properties:
@@ -259,6 +270,21 @@ components:
           firstName: John
           lastName: Doe
           body: We've received your document.
+    link:
+      type: object
+      properties:
+        href:
+          type: string
+    emailSubstitution:
+      type: object
+      properties:
+        id:
+          type: integer
+        tag:
+          type: string
+      example:
+        id: 2
+        tag: clientName
     emailTemplate:
       type: object
       properties:
@@ -278,6 +304,17 @@ components:
         externalTemplateId: ''
         emailSubstitutions:
         - $ref: '#/components/schemas/emailSubstitution'
+    page:
+      type: object
+      properties:
+        size:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+        number:
+          type: integer
     suberror:
       type: object
       properties:
@@ -294,6 +331,35 @@ components:
         field: name
         rejectedValue: null
         message: must not be null
+    error:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        timestamp:
+          type: string
+        message:
+          type: string
+        debugMessage:
+          type: string
+        subErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/suberror'
+      example:
+        id: null
+        status: BAD_REQUEST
+        timestamp: '2019-10-21 14:07:59'
+        message: Validation error
+        debugMessage: null
+        subErrors:
+        - object: Resource
+          field: name
+          rejectedValue: null
+          message: must not be null
     emailRecordDto:
       type: object
       required:
@@ -355,72 +421,6 @@ components:
             firstName: John
             lastName: Doe
             body: We've received your document.
-    emailSubstitution:
-      type: object
-      properties:
-        id:
-          type: integer
-        tag:
-          type: string
-      example:
-        id: 2
-        tag: clientName
-    emailTemplateList:
-      type: object
-      properties:
-        _embedded:
-          type: object
-          properties:
-            emailTemplates:
-              type: array
-              items:
-                $ref: '#/components/schemas/emailTemplate'
-        _links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/link'
-        page:
-          $ref: '#/components/schemas/page'
-      example:
-        _embedded:
-          emailTemplates:
-          - keyName: HIL_Application_Invitation
-            externalTemplateProvider: SendGrid
-            externalTemplateId: ''
-            emailSubstitutions:
-            - id: 2
-              tag: clientName
-            - id: 1
-              tag: dealName
-        _links:
-          self:
-            href: http://localhost:8080/v1/emailTemplates?page=0&size=20
-          first:
-            href: http://localhost:8080/v1/emailTemplates?page=0&size=20
-          next:
-            href: http://localhost:8080/v1/emailTemplates?page=1&size=20
-          last:
-            href: http://localhost:8080/v1/emailTemplates?page=1&size=20
-        page:
-          size: 20
-          totalElements: 1
-          totalPages: 1
-          number: 0
-    emailRecordRequestPayload:
-      type: object
-      required:
-      - provider
-      - paylaod
-      properties:
-        provider:
-          type: string
-          description: The email service provider to use when sending this email.
-          example: SENDGRID
-        payload:
-          type: object
-          anyOf:
-          - $ref: '#/components/schemas/emailRecordDto'
   responses:
     BadRequest:
       description: Invalid request, unable to process the request with the information provided.

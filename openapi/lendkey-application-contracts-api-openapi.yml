@@ -269,6 +269,56 @@ paths:
           description: Internal server error
 components:
   schemas:
+    SignerDetailsResponse:
+      type: object
+      properties:
+        customerUuid:
+          type: string
+          format: uuid
+          example: 770e8400-e29b-41d4-a716-446655440000
+        roleName:
+          type: string
+          example: Borrower
+        signerCreatedAt:
+          type: string
+          format: date-time
+          example: '2025-01-15T10:30:00Z'
+        signerData:
+          type: object
+          additionalProperties: true
+          description: Form field data collected from signer
+    EnvelopeStatus:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123
+        applicationEnvelopeId:
+          type: integer
+          format: int64
+          example: 456
+        status:
+          type: string
+          example: sent
+        eventData:
+          type: object
+          additionalProperties: true
+          description: DocuSign event data
+        createdAt:
+          type: string
+          format: date-time
+          example: '2025-01-15T10:30:00Z'
+    EmbeddedSigningLinkResponse:
+      type: object
+      properties:
+        signing_url:
+          type: string
+          format: uri
+          example: https://demo.docusign.net/Signing/MTRedeem/v1/abc123...
+        envelope_id:
+          type: string
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
     Borrower:
       type: object
       required:
@@ -326,38 +376,6 @@ components:
         other_fields:
           type: object
           additionalProperties: true
-    EmbeddedSigningLinkResponse:
-      type: object
-      properties:
-        signing_url:
-          type: string
-          format: uri
-          example: https://demo.docusign.net/Signing/MTRedeem/v1/abc123...
-        envelope_id:
-          type: string
-          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
-    EnvelopeStatus:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 123
-        applicationEnvelopeId:
-          type: integer
-          format: int64
-          example: 456
-        status:
-          type: string
-          example: sent
-        eventData:
-          type: object
-          additionalProperties: true
-          description: DocuSign event data
-        createdAt:
-          type: string
-          format: date-time
-          example: '2025-01-15T10:30:00Z'
     NewApplicationRequest:
       type: object
       required:
@@ -472,24 +490,32 @@ components:
           type: string
           format: date-time
           example: '2025-01-15T10:30:00Z'
-    SignerDetailsResponse:
+    Address:
       type: object
+      required:
+      - address_line_1
+      - city
+      - state
+      - zip
       properties:
-        customerUuid:
+        address_line_1:
           type: string
-          format: uuid
-          example: 770e8400-e29b-41d4-a716-446655440000
-        roleName:
+          example: 123 Main St
+        address_line_2:
           type: string
-          example: Borrower
-        signerCreatedAt:
+          example: Apt 4B
+        address_line_3:
           type: string
-          format: date-time
-          example: '2025-01-15T10:30:00Z'
-        signerData:
-          type: object
-          additionalProperties: true
-          description: Form field data collected from signer
+          example: ''
+        city:
+          type: string
+          example: Springfield
+        state:
+          type: string
+          example: IL
+        zip:
+          type: string
+          example: '62701'
     Coborrower:
       type: object
       required:
@@ -528,32 +554,6 @@ components:
         other_fields:
           type: object
           additionalProperties: true
-    Address:
-      type: object
-      required:
-      - address_line_1
-      - city
-      - state
-      - zip
-      properties:
-        address_line_1:
-          type: string
-          example: 123 Main St
-        address_line_2:
-          type: string
-          example: Apt 4B
-        address_line_3:
-          type: string
-          example: ''
-        city:
-          type: string
-          example: Springfield
-        state:
-          type: string
-          example: IL
-        zip:
-          type: string
-          example: '62701'
   securitySchemes:
     oauth2:
       type: oauth2

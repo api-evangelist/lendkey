@@ -82,35 +82,88 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    error:
+    address:
       type: object
+      required:
+      - addressLineOne
+      - city
+      - state
+      - zipCode
       properties:
-        id:
+        addressLineOne:
           type: string
-          format: uuid
-        status:
+        addressLineTwo:
           type: string
-        timestamp:
+        city:
           type: string
-        message:
+        state:
           type: string
-        debugMessage:
+        zipCode:
           type: string
-        subErrors:
-          type: array
-          items:
-            $ref: '#/components/schemas/suberror'
+        country:
+          type: string
+        township:
+          type: string
       example:
-        id: null
-        status: BAD_REQUEST
-        timestamp: '2019-10-21 14:07:59'
-        message: Validation error
-        debugMessage: null
-        subErrors:
-        - object: Resource
-          field: name
-          rejectedValue: null
-          message: must not be null
+        addressLineOne: 500 Main Street
+        addressLineTwo: ''
+        city: PORTLAND
+        state: OR
+        zipCode: '97209'
+        country: null
+        township: null
+    eligibility:
+      type: object
+      required:
+      - primaryResidence
+      - propertyOwnership
+      - citizenship
+      properties:
+        primaryResidence:
+          type: boolean
+        propertyOwnership:
+          type: boolean
+        citizenship:
+          type: string
+          description: One of US, permanentResident, non-US
+      example:
+        primaryResidence: true
+        propertyOwnership: true
+        citizenship: US
+    phoneNumber:
+      type: object
+      required:
+      - type
+      - phoneNumber
+      properties:
+        type:
+          type: string
+          description: The type of phone number.  Only valid values are Cell, Home, Work
+        phoneNumber:
+          type: string
+      example:
+        type: Cell
+        phoneNumber: '8005882300'
+    authorizedUser:
+      type: object
+      required:
+      - name
+      - email
+      - relationship
+      properties:
+        name:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/name'
+        phoneNumber:
+          type: string
+          example: '8005882300'
+        email:
+          type: string
+          example: j.doe@gmail.com
+        relationship:
+          type: string
+          example: Father
     project:
       type: object
       required:
@@ -179,26 +232,63 @@ components:
         projectExpectedDuration: null
         projectStatus: null
         termsRequested: null
-    authorizedUser:
+    boardApplicationRequest:
       type: object
       required:
-      - name
-      - email
-      - relationship
+      - submissionUuid
+      - applicants
+      - project
+      - consentOfDisclosures
+      - contractorId
+      - requestedLoanAmount
+      - selectedOffer
       properties:
-        name:
+        submissionUuid:
+          type: string
+          format: uuid
+          description: A unique identifying UUID that will be used to correlate this application to the loan it is transforming into.
+          example: 40121260-4082-4c22-b70c-b5be137bf2a0
+        applicants:
+          type: array
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/applicant'
+        project:
           type: object
           allOf:
-          - $ref: '#/components/schemas/name'
-        phoneNumber:
+          - $ref: '#/components/schemas/project'
+        authorizedUser:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/authorizedUser'
+        consentOfDisclosures:
+          type: boolean
+          example: true
+        contractorNetworkId:
           type: string
-          example: '8005882300'
-        email:
+        contractorId:
+          type: integer
+        requestedLoanAmount:
+          type: number
+        selectedOffer:
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/selectedOffer'
+        merchantUseOnly:
           type: string
-          example: j.doe@gmail.com
-        relationship:
+          example: ''
+        promoCode:
           type: string
-          example: Father
+          example: null
+        applicationType:
+          type: string
+          example: null
+        preferredLanguage:
+          type: string
+          example: english
+        referenceNumber:
+          type: string
+          example: ''
     applicant:
       type: object
       required:
@@ -301,24 +391,6 @@ components:
         middleName: M
         lastName: Doe
         suffix: Jr.
-    eligibility:
-      type: object
-      required:
-      - primaryResidence
-      - propertyOwnership
-      - citizenship
-      properties:
-        primaryResidence:
-          type: boolean
-        propertyOwnership:
-          type: boolean
-        citizenship:
-          type: string
-          description: One of US, permanentResident, non-US
-      example:
-        primaryResidence: true
-        propertyOwnership: true
-        citizenship: US
     driversLicense:
       type: object
       required:
@@ -379,6 +451,35 @@ components:
         field: name
         rejectedValue: null
         message: must not be null
+    error:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        timestamp:
+          type: string
+        message:
+          type: string
+        debugMessage:
+          type: string
+        subErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/suberror'
+      example:
+        id: null
+        status: BAD_REQUEST
+        timestamp: '2019-10-21 14:07:59'
+        message: Validation error
+        debugMessage: null
+        subErrors:
+        - object: Resource
+          field: name
+          rejectedValue: null
+          message: must not be null
     selectedOffer:
       type: object
       required:
@@ -407,120 +508,7 @@ components:
         rateIndex: prime
         termInMonths: 120
         maximumLoanAmount: 85000
-    address:
-      type: object
-      required:
-      - addressLineOne
-      - city
-      - state
-      - zipCode
-      properties:
-        addressLineOne:
-          type: string
-        addressLineTwo:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        zipCode:
-          type: string
-        country:
-          type: string
-        township:
-          type: string
-      example:
-        addressLineOne: 500 Main Street
-        addressLineTwo: ''
-        city: PORTLAND
-        state: OR
-        zipCode: '97209'
-        country: null
-        township: null
-    phoneNumber:
-      type: object
-      required:
-      - type
-      - phoneNumber
-      properties:
-        type:
-          type: string
-          description: The type of phone number.  Only valid values are Cell, Home, Work
-        phoneNumber:
-          type: string
-      example:
-        type: Cell
-        phoneNumber: '8005882300'
-    boardApplicationRequest:
-      type: object
-      required:
-      - submissionUuid
-      - applicants
-      - project
-      - consentOfDisclosures
-      - contractorId
-      - requestedLoanAmount
-      - selectedOffer
-      properties:
-        submissionUuid:
-          type: string
-          format: uuid
-          description: A unique identifying UUID that will be used to correlate this application to the loan it is transforming into.
-          example: 40121260-4082-4c22-b70c-b5be137bf2a0
-        applicants:
-          type: array
-          items:
-            anyOf:
-            - $ref: '#/components/schemas/applicant'
-        project:
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/project'
-        authorizedUser:
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/authorizedUser'
-        consentOfDisclosures:
-          type: boolean
-          example: true
-        contractorNetworkId:
-          type: string
-        contractorId:
-          type: integer
-        requestedLoanAmount:
-          type: number
-        selectedOffer:
-          type: object
-          allOf:
-          - $ref: '#/components/schemas/selectedOffer'
-        merchantUseOnly:
-          type: string
-          example: ''
-        promoCode:
-          type: string
-          example: null
-        applicationType:
-          type: string
-          example: null
-        preferredLanguage:
-          type: string
-          example: english
-        referenceNumber:
-          type: string
-          example: ''
   responses:
-    BadRequest:
-      description: Invalid request, unable to process the request with the information provided.
-      content:
-        application/hal+json:
-          schema:
-            $ref: '#/components/schemas/error'
-          example:
-            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
-            status: BAD_REQUEST
-            timestamp: '2019-10-21 14:07:59'
-            message: Describes what was invalid about the request, if possible.
-            debugMessage: null
     UnexpectedError:
       description: An unexpected server error occurred.
       content:
@@ -532,4 +520,16 @@ components:
             status: INTERNAL_SERVER_ERROR
             timestamp: '2019-10-21 14:07:59'
             message: An internal issue occurred.  Please try again shortly.  If the issue persists, contact us with all of the data in this error message.
+            debugMessage: null
+    BadRequest:
+      description: Invalid request, unable to process the request with the information provided.
+      content:
+        application/hal+json:
+          schema:
+            $ref: '#/components/schemas/error'
+          example:
+            id: b6c52a48-551a-42ef-b361-f642d25cfeb7
+            status: BAD_REQUEST
+            timestamp: '2019-10-21 14:07:59'
+            message: Describes what was invalid about the request, if possible.
             debugMessage: null
